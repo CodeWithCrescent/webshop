@@ -1,0 +1,77 @@
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/network/api_endpoints.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+class AuthProvider with ChangeNotifier {
+  bool _isAuthenticated = false;
+  bool _isLoading = false;
+  String? _error;
+
+  bool get isAuthenticated => _isAuthenticated;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+
+  late SharedPreferences _prefs;
+
+  AuthProvider() {
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    _prefs = await SharedPreferences.getInstance();
+
+    final token = _prefs.getString('access_token');
+    if (token != null) {
+      _isAuthenticated = true;
+    }
+    notifyListeners();
+  }
+
+  Future<void> login(String username, String password) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    final url = Uri.parse(ApiEndpoints.login);
+
+    final headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    };
+
+    final body = {
+      'client_id': username,
+      'client_secret': password,
+    };
+
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      final data = jsonDecode(response.body);
+
+      if (data.containsKey('success') && data['success'] == false) {
+        _error = data['message'] ?? 'Invalid credentials.';
+        _isAuthenticated = false;
+      } 
+      else if (data.containsKey('access_token')) {
+        await _prefs.setString('access_token', data['access_token']);
+        await _prefs.setString('token_expires_in', data['expires_in']);
+        await _prefs.setString('name', data['name'] ?? '');
+        await _prefs.setString('email', data['email'] ?? '');
+        _isAuthenticated = true;
+      } 
+      // Catch any unexpected response
+      else {
+        _error = 'Unexpected response from server.';
+        _isAuthenticated = false;
+      }
+
+    } catch (e) {
+      _error = 'Unexpected error occurred.';
+      _isAuthenticated = false;
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+}
