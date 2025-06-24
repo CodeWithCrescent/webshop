@@ -1,11 +1,32 @@
-# webshop
+Got it! Here's a more professional, polished README example that highlights tools, technologies, and environment details clearly:
 
-A new Flutter project.
+---
+
+# Webshop
+
+A Flutter-based webshop application.
+
+---
+
+## Technologies & Tools Used
+
+* **Flutter** 3.13.6 (Stable channel)
+* **Dart** 3.1.3
+* **Java** 22.0.1 (for Android SDK compatibility)
+* **DevTools** 2.25.0
+* **IDE Recommendations:** Visual Studio Code, Android Studio
+
+---
 
 ## Getting Started
 
-PS C:\Users\HACKER-ME> flutter --version
-Flutter 3.13.6 • channel stable • https://github.com/flutter/flutter.git
-Framework • revision ead455963c (1 year, 9 months ago) • 2023-09-26 18:28:17 -0700
-Engine • revision a794cf2681
-Tools • Dart 3.1.3 • DevTools 2.25.0
+1. Clone the repository
+2. Run `flutter pub get` to install dependencies
+3. Connect your device or start an emulator
+4. Run the app using:
+
+   ```bash
+   flutter run
+   ```
+
+---
