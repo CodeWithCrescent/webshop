@@ -14,11 +14,9 @@ class DashboardProvider with ChangeNotifier {
   String? _totalMonthAmount;
   String? _date;
   String? _totalReceipts;
-  Map<String, dynamic>? _dashboardData;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
-  Map<String, dynamic>? get dashboardData => _dashboardData;
   String? get totalMonthAmount => _totalMonthAmount;
   String? get totalReceipts => _totalReceipts;
   String? get totalAmount => _totalAmount;
@@ -37,12 +35,12 @@ class DashboardProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        final dashboard = data['dashboard'];
 
-        _dashboardData = data['dashboard'];
-        _totalAmount = data['total_amount'] ?? '0';
-        _totalMonthAmount = data['total_month_amount'] ?? '0';
-        _date = data['date'] ?? '-';
-        _totalReceipts = data['total_rct'] ?? '0';
+        _totalAmount = dashboard['total_amount'] ?? '0';
+        _totalMonthAmount = dashboard['total_month_amount'] ?? '0';
+        _date = dashboard['date'] ?? '-';
+        _totalReceipts = dashboard['total_rct'] ?? '0';
         _error = null;
       } else {
         _error = 'Failed to load dashboard data';
