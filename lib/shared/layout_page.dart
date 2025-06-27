@@ -13,6 +13,7 @@ class LayoutPage extends StatefulWidget {
 
 class _LayoutPageState extends State<LayoutPage> {
   int _currentIndex = 0;
+  
   final List<Widget> _pages = [
     const DashboardPage(),
     // InventoryPage(),

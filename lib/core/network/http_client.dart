@@ -31,7 +31,7 @@ class HttpClient {
       final headers = await _getHeaders();
       return await http.get(Uri.parse(url), headers: headers);
     } catch (e) {
-      // Optionally handle logout or redirection from here
+      // handle logout or redirection here
       rethrow;
     }
   }
@@ -41,7 +41,7 @@ class HttpClient {
       final headers = await _getHeaders();
       return await http.post(Uri.parse(url), headers: headers, body: jsonEncode(data));
     } catch (e) {
-      // Optionally handle logout or redirection from here
+      // handle logout or redirection here
       rethrow;
     }
   }
