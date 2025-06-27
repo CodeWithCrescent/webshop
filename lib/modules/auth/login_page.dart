@@ -133,7 +133,7 @@ class _LoginFormState extends State<_LoginForm> {
     }
 
     if (authProvider.isAuthenticated) {
-      Future.microtask(() => Navigator.pushReplacementNamed(context, '/dashboard'));
+      Future.microtask(() => Navigator.pushReplacementNamed(context, '/layout'));
     }
 
     return Form(
