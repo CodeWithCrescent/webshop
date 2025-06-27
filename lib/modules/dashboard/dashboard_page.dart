@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:webshop/core/utils/format_utils.dart';
+import 'package:webshop/shared/widgets/bottom_bar.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/localization/app_localizations.dart';
@@ -15,6 +16,8 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  int _currentIndex = 0;
+  
   @override
   void initState() {
     super.initState();
@@ -46,12 +49,20 @@ class _DashboardPageState extends State<DashboardPage> {
           : provider.error != null
               ? Center(child: Text(provider.error!))
               : _buildDashboardContent(context, provider, loc),
+      bottomNavigationBar: BottomBar(
+        selectedIndex: _currentIndex,
+        onTap: (int index) {
+          setState(() {
+            _currentIndex = index;
+            // Handle navigation logic here 
+          });
+        },
+      ),
     );
   }
 
   Widget _buildDashboardContent(
       BuildContext context, DashboardProvider provider, AppLocalizations loc) {
-
     return RefreshIndicator(
       onRefresh: () async => provider.fetchDashboardData(),
       color: AppColors.primary,
