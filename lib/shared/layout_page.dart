@@ -41,15 +41,15 @@ class _LayoutPageState extends State<LayoutPage> {
               child: UserAccountsDrawerHeader(
                 decoration: BoxDecoration(color: Colors.green),
                 accountName: Text(
-                  "Abhishek Mishra",
+                  "Zalongwa User",
                   style: TextStyle(fontSize: 18),
                 ),
-                accountEmail: Text("abhishekm977@gmail.com"),
+                accountEmail: Text("ztl@gmail.com"),
                 currentAccountPictureSize: Size.square(50),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor: Color.fromARGB(255, 165, 255, 137),
                   child: Text(
-                    "A",
+                    "Z",
                     style: TextStyle(fontSize: 30.0, color: Colors.blue),
                   ),
                 ),
@@ -84,42 +84,50 @@ class _LayoutPageState extends State<LayoutPage> {
 
   void _onTabTapped(BuildContext context, int index, AppLocalizations? loc) {
     if (index == 2) {
-      // Show native bottom sheet instead of adaptive_action_sheet
       showModalBottomSheet(
         context: context,
+        useSafeArea: true,
         builder: (BuildContext context) {
-          return SafeArea(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ListTile(
-                    title: Center(child: Text(loc?.translate('cash_sales') ?? 'Cash Sales')),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  ListTile(
-                    title: Center(child: Text(loc?.translate('register_customer') ?? 'Register Customer')),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  ListTile(
-                    title: Center(child: Text(loc?.translate('create_invoice') ?? 'Create Invoice')),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  ListTile(
-                    title: Center(child: Text(loc?.translate('cancel') ?? 'Cancel')),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
+          return Wrap(
+            children: <Widget>[
+              ListTile(
+                title: Text(
+                  loc?.translate('cash_sales') ?? 'Cash Sales',
+                  textAlign: TextAlign.center,
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
               ),
-            ),
+              ListTile(
+                title: Text(
+                  loc?.translate('register_customer') ?? 'Register Customer',
+                  textAlign: TextAlign.center,
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                title: Text(
+                  loc?.translate('create_invoice') ?? 'Create Invoice',
+                  textAlign: TextAlign.center,
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                title: Text(
+                  loc?.translate('cancel') ?? 'Cancel',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.red),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
           );
         },
       );
