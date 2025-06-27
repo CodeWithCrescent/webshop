@@ -44,6 +44,7 @@ dependencies:
   provider: ^6.1.5
   http: ^1.1.0
   shared_preferences: ^2.2.3
+  awesome_bottom_bar: ^1.2.4
 
 dev_dependencies:
   flutter_test:
