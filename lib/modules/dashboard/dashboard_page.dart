@@ -51,7 +51,6 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildDashboardContent(
       BuildContext context, DashboardProvider provider, AppLocalizations loc) {
-    final data = provider.dashboardData!;
 
     return RefreshIndicator(
       onRefresh: () async => provider.fetchDashboardData(),
@@ -125,7 +124,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      '${loc.translate('last_updated')}: ----',
+                      '${loc.translate('last_updated')}: ${provider.date ?? '-'}',
                       style: AppTextStyles.bodySmall.copyWith(
                         color: Colors.white.withOpacity(0.9),
                         fontSize: 11,
@@ -150,26 +149,26 @@ class _DashboardPageState extends State<DashboardPage> {
               delegate: SliverChildListDelegate([
                 _buildModernStatCard(
                   title: loc.translate('today_receipts'),
-                  value: data['total_rct'].toString(),
+                  value: provider.totalReceipts.toString(),
                   icon: Icons.receipt_long,
                   color: AppColors.secondary,
                 ),
                 _buildModernStatCard(
                   title: loc.translate('today_sales'),
-                  value: FormatUtils.formatCurrency(data['total_amount']),
+                  value: FormatUtils.formatCurrency(provider.totalAmount),
                   icon: Icons.trending_up,
                   color: AppColors.primary,
                 ),
                 _buildModernStatCard(
                   title: loc.translate('monthly_revenue'),
-                  value: FormatUtils.formatCurrency(data['total_month_amount']),
+                  value: FormatUtils.formatCurrency(provider.totalMonthAmount),
                   icon: Icons.calendar_month,
                   color: AppColors.success,
                 ),
                 _buildModernStatCard(
                   title: loc.translate('avg_sale'),
                   value: FormatUtils.formatCurrencyRatio(
-                      data['total_amount'], data['total_rct']),
+                      provider.totalAmount, provider.totalReceipts),
                   icon: Icons.analytics,
                   color: AppColors.info,
                 ),
