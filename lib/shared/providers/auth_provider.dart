@@ -23,9 +23,17 @@ class AuthProvider with ChangeNotifier {
     _prefs = await SharedPreferences.getInstance();
 
     final token = _prefs.getString('access_token');
-    if (token != null) {
+    final expiry = _prefs.getInt('token_expiry');
+    final now = DateTime.now().millisecondsSinceEpoch;
+
+    if (token != null && expiry != null && now < expiry) {
       _isAuthenticated = true;
+    } else {
+      _isAuthenticated = false;
+      await _prefs.remove('access_token');
+      await _prefs.remove('token_expiry');
     }
+
     notifyListeners();
   }
 
@@ -52,20 +60,22 @@ class AuthProvider with ChangeNotifier {
       if (data.containsKey('success') && data['success'] == false) {
         _error = data['message'] ?? 'Invalid credentials.';
         _isAuthenticated = false;
-      } 
-      else if (data.containsKey('access_token')) {
+      } else if (data.containsKey('access_token')) {
+        final expiresIn = int.tryParse(data['expires_in'].toString()) ?? 0;
+        final expiryTimestamp = DateTime.now()
+            .add(Duration(seconds: expiresIn))
+            .millisecondsSinceEpoch;
+
         await _prefs.setString('access_token', data['access_token']);
-        await _prefs.setString('token_expires_in', data['expires_in']);
+        await _prefs.setInt('token_expiry', expiryTimestamp);
         await _prefs.setString('name', data['name'] ?? '');
         await _prefs.setString('email', data['email'] ?? '');
+
         _isAuthenticated = true;
-      } 
-      // Catch any unexpected response
-      else {
+      } else {
         _error = 'Unexpected response from server.';
         _isAuthenticated = false;
       }
-
     } catch (e) {
       _error = 'Unexpected error occurred.';
       _isAuthenticated = false;
