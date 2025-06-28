@@ -21,10 +21,10 @@
   "dashboard_subtitle": "Here is your business overview.",
   "today_sales": "Today Sales",
   "today_receipts": "Today's Receipts",
-  "total_month_amount": "Total Month Amount",
+  "monthy_revenue": "Total Month Amount",
   "sale_date": "Sale Date",
   "total_orders": "Total Orders",
-  "avg_order_value": "Avg. Order Value",
+  "avg_sale": "Avg. Sales",
   "top_selling": "Top Selling Item",
   "sales_overview": "Sales Overview",
   "daily": "Daily",
@@ -32,5 +32,12 @@
   "recent_sales": "Recent Sales",
   "view_all": "View All",
   "generate_z_report": "Generate Z Report",
-  "walk_in_customer": "Walk-in Customer"
+  "last_updated": "Last Updated",
+  "quick_actions": "Quick Actions",
+  "cash_sales": "Cash Sales",
+  "register_customer": "Register Customer",
+  "create_invoice": "Create Invoice",
+  "cancel": "Cancel",
+  "company_profile": "Company Profile",
+  "logout": "Logout"
 }

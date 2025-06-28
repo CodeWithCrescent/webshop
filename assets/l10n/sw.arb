@@ -21,9 +21,9 @@
   "dashboard_subtitle": "Muhtasari wa shughuli zako",
   "today_sales": "Mauzo ya Leo",
   "today_receipts": "Risiti za leo",
-  "total_month_amount": "Jumla ya Kiasi cha Mwezi",
+  "monthy_revenue": "Jumla ya Kiasi cha Mwezi",
   "sale_date": "Tarehe ya Mauzo",
-  "avg_order_value": "Thamani ya Wastani ya Agizo",
+  "avg_sale": "Wastani ya Mauzo",
   "top_selling": "Bidhaa Inayouzwa Zaidi",
   "sales_overview": "Muhtasari wa Mauzo",
   "daily": "Kila Siku",
@@ -31,5 +31,12 @@
   "recent_sales": "Mauzo ya Hivi Karibuni",
   "view_all": "Onyesha Zote",
   "generate_z_report": "Tengeneza Ripoti ya Z",
-  "walk_in_customer": "Mteja wa Kujitembelea"
+  "last_updated": "Imesasishwa mwisho",
+  "quick_actions": "",
+  "cash_sales": "",
+  "register_customer": "",
+  "create_invoice": "",
+  "cancel": "",
+  "company_profile": "",
+  "logout": ""
 }
