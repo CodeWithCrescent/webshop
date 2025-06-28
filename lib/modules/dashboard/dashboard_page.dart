@@ -33,19 +33,35 @@ class _DashboardPageState extends State<DashboardPage> {
     final provider = Provider.of<DashboardProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          loc!.translate('dashboard_title'),
-          style: const TextStyle(color: Colors.white),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: AppColors.primary,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: provider.fetchDashboardData,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
-        ],
+          child: AppBar(
+            title: Text(
+              loc!.translate('dashboard_title'),
+              style: const TextStyle(color: Colors.white),
+            ),
+            iconTheme: const IconThemeData(color: Colors.white),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: provider.fetchDashboardData,
+              ),
+            ],
+          ),
+        ),
       ),
       body: provider.isLoading
           ? const Center(child: SpinKitCircle(color: AppColors.primary))
@@ -74,7 +90,6 @@ class _DashboardPageState extends State<DashboardPage> {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.primary.withOpacity(0.3),
