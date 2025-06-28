@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:webshop/core/utils/format_utils.dart';
+import 'package:webshop/shared/widgets/app_left_drawer.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/localization/app_localizations.dart';
@@ -33,7 +34,12 @@ class _DashboardPageState extends State<DashboardPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(loc!.translate('dashboard_title')),
+        title: Text(
+          loc!.translate('dashboard_title'),
+          style: const TextStyle(color: Colors.white),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: AppColors.primary,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -46,6 +52,7 @@ class _DashboardPageState extends State<DashboardPage> {
           : provider.error != null
               ? Center(child: Text(provider.error!))
               : _buildDashboardContent(context, provider, loc),
+      drawer: const AppLeftDrawer(),
     );
   }
 
