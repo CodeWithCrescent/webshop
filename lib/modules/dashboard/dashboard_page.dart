@@ -50,14 +50,17 @@ class _DashboardPageState extends State<DashboardPage> {
       body: provider.isLoading
           ? const Center(child: SpinKitCircle(color: AppColors.primary))
           : provider.error != null
-              ? Center(child: Text(provider.error!))
-              : _buildDashboardContent(context, provider, loc),
+          ? Center(child: Text(provider.error!))
+          : _buildDashboardContent(context, provider, loc),
       drawer: const AppLeftDrawer(),
     );
   }
 
   Widget _buildDashboardContent(
-      BuildContext context, DashboardProvider provider, AppLocalizations loc) {
+    BuildContext context,
+    DashboardProvider provider,
+    AppLocalizations loc,
+  ) {
     return RefreshIndicator(
       onRefresh: () async => provider.fetchDashboardData(),
       color: AppColors.primary,
@@ -67,7 +70,7 @@ class _DashboardPageState extends State<DashboardPage> {
           // Welcome Section
           SliverToBoxAdapter(
             child: Container(
-              margin: const EdgeInsets.all(16),
+              margin: const EdgeInsets.only(bottom: 0),
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: AppColors.primaryGradient,
@@ -123,8 +126,10 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   const SizedBox(height: 16),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
@@ -174,7 +179,9 @@ class _DashboardPageState extends State<DashboardPage> {
                 _buildModernStatCard(
                   title: loc.translate('avg_sale'),
                   value: FormatUtils.formatCurrencyRatio(
-                      provider.totalAmount, provider.totalReceipts),
+                    provider.totalAmount,
+                    provider.totalReceipts,
+                  ),
                   icon: Icons.analytics,
                   color: AppColors.info,
                 ),
@@ -228,9 +235,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
 
           // Bottom padding
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 24),
-          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
         ],
       ),
     );
@@ -255,9 +260,7 @@ class _DashboardPageState extends State<DashboardPage> {
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(
-          color: AppColors.borderLight.withOpacity(0.3),
-        ),
+        border: Border.all(color: AppColors.borderLight.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -283,11 +286,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 20,
-                ),
+                child: Icon(icon, color: color, size: 20),
               ),
             ],
           ),
@@ -326,17 +325,11 @@ class _DashboardPageState extends State<DashboardPage> {
         decoration: BoxDecoration(
           color: color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: color.withOpacity(0.2),
-          ),
+          border: Border.all(color: color.withOpacity(0.2)),
         ),
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: color,
-              size: 28,
-            ),
+            Icon(icon, color: color, size: 28),
             const SizedBox(height: 8),
             Text(
               title,
