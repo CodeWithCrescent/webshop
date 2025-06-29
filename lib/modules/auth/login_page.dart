@@ -20,8 +20,8 @@ class LoginPage extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              AppColors.backgroundLight.withOpacity(0.95),
-              AppColors.backgroundLight.withOpacity(0.8),
+              AppColors.cardLight.withOpacity(0.25),
+              AppColors.primary.withOpacity(0.1),
             ],
           ),
         ),
@@ -41,11 +41,11 @@ class LoginPage extends StatelessWidget {
                     width: double.infinity,
                     constraints: const BoxConstraints(maxWidth: 500),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceLight,
+                      color: AppColors.cardLight.withOpacity(0.75),
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: AppColors.primary.withOpacity(0.1),
                           blurRadius: 20,
                           spreadRadius: 2,
                         ),
@@ -148,7 +148,7 @@ class _LoginFormState extends State<_LoginForm> {
             loc!.translate('auth.title'),
             style: AppTextStyles.headlineSmall.copyWith(
               fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+              color: AppColors.primary,
             ),
           ),
           const SizedBox(height: 8),
@@ -160,7 +160,6 @@ class _LoginFormState extends State<_LoginForm> {
           ),
           const SizedBox(height: 32),
 
-          // Inside your widget tree
           if (authProvider.error != null)
             Container(
               padding: const EdgeInsets.all(12),
@@ -192,7 +191,7 @@ class _LoginFormState extends State<_LoginForm> {
             loc.translate('auth.username'),
             style: AppTextStyles.labelLarge.copyWith(
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: 8),
@@ -200,7 +199,7 @@ class _LoginFormState extends State<_LoginForm> {
             controller: _usernameController,
             decoration: InputDecoration(
               hintText: loc.translate('auth.username_hint'),
-              prefixIcon: const Icon(Icons.person_outline),
+              prefixIcon: const Icon(Icons.person_outline, color: AppColors.textSecondary,),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -216,7 +215,7 @@ class _LoginFormState extends State<_LoginForm> {
             loc.translate('auth.password'),
             style: AppTextStyles.labelLarge.copyWith(
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: 8),
@@ -225,7 +224,7 @@ class _LoginFormState extends State<_LoginForm> {
             obscureText: true,
             decoration: InputDecoration(
               hintText: loc.translate('auth.password_hint'),
-              prefixIcon: const Icon(Icons.lock_outline),
+              prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary,),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
