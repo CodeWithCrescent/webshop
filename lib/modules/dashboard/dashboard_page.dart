@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:webshop/core/constants/app_colors.dart';
+import 'package:webshop/core/constants/app_text_styles.dart';
+import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/core/utils/format_utils.dart';
+import 'package:webshop/modules/dashboard/dashboard_provider.dart';
+import 'package:webshop/shared/widgets/action_button.dart';
+import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/app_left_drawer.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../core/localization/app_localizations.dart';
-import 'dashboard_provider.dart';
-import 'widgets/dashboard_app_bar.dart';
-import 'widgets/horizontal_stat_card.dart';
-import 'widgets/grid_stat_card.dart';
-import 'widgets/action_button.dart';
+import 'package:webshop/shared/widgets/grid_stat_card.dart';
+import 'package:webshop/shared/widgets/horizontal_stat_card.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
