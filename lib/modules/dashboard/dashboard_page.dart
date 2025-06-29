@@ -226,6 +226,18 @@ class _DashboardPageState extends State<DashboardPage> {
               ]),
             ),
           ),
+          
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            sliver: SliverToBoxAdapter(
+              child: buildReceiptStatCard(
+                receiptsTitle: loc.translate('dashboard.today_receipts'),
+                receiptsValue: provider.totalReceipts.toString(),
+                dateTitle: loc.translate('dashboard.last_receipt_date'),
+                dateValue: provider.date ?? '-',
+              ),
+            ),
+          ),
 
           // Quick Actions Section
           SliverToBoxAdapter(
@@ -274,6 +286,89 @@ class _DashboardPageState extends State<DashboardPage> {
 
           // Bottom padding
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReceiptStatCard({
+    required String receiptsTitle,
+    required String receiptsValue,
+    required String dateTitle,
+    required String dateValue,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: AppColors.borderLight.withOpacity(0.2)),
+      ),
+      child: Row(
+        children: [
+          // Left: Icon
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.secondary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(Icons.receipt_long, color: AppColors.secondary, size: 30),
+          ),
+
+          const SizedBox(width: 16),
+
+          // Right: Content
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Today’s Receipts
+                Text(
+                  receiptsTitle,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  receiptsValue,
+                  style: AppTextStyles.headlineSmall.copyWith(
+                    color: AppColors.secondary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Last Receipt Date
+                Row(
+                  children: [
+                    const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                    const SizedBox(width: 6),
+                    Text(
+                      '$dateTitle: $dateValue',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
