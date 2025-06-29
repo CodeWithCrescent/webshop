@@ -25,6 +25,7 @@ class _LayoutPageState extends State<LayoutPage> {
     final loc = AppLocalizations.of(context);
 
     return Scaffold(
+      backgroundColor: AppColors.primary.withOpacity(0.1),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomBar(
         selectedIndex: _currentIndex,
