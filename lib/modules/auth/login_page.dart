@@ -198,7 +198,11 @@ class _LoginFormState extends State<_LoginForm> {
             controller: _usernameController,
             decoration: InputDecoration(
               hintText: loc.translate('auth.username_hint'),
-              prefixIcon: Icon(Icons.person_outline, color: colorScheme.onSurface),
+              prefixIcon: Icon(
+                Icons.person_outline,
+                color: colorScheme.onSurface,
+                size: 20,
+              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -223,11 +227,16 @@ class _LoginFormState extends State<_LoginForm> {
             obscureText: _obscureText,
             decoration: InputDecoration(
               hintText: loc.translate('auth.password_hint'),
-              prefixIcon: Icon(Icons.lock_outline, color: colorScheme.onSurface),
+              prefixIcon: Icon(
+                Icons.lock_outline,
+                color: colorScheme.onSurface,
+                size: 20,
+              ),
               suffixIcon: IconButton(
                 icon: Icon(
-                  _obscureText ? Icons.visibility_off : Icons.visibility,
+                  _obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                   color: colorScheme.onSurface.withOpacity(0.7),
+                  size: 20,
                 ),
                 onPressed: () {
                   setState(() {
