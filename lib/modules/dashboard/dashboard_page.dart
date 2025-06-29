@@ -92,6 +92,8 @@ class _DashboardPageState extends State<DashboardPage> {
           // Welcome Section
           SliverToBoxAdapter(child: _buildWelcomeSection(provider, loc)),
 
+          const SliverToBoxAdapter(child: SizedBox(height: 8)),
+
           // Horizontal Stat Card Section
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
