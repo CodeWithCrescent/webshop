@@ -33,7 +33,7 @@ class _DashboardPageState extends State<DashboardPage> {
     final provider = Provider.of<DashboardProvider>(context);
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundDark,
+      backgroundColor: AppColors.primary.withOpacity(0.1),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
@@ -208,6 +208,7 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
           ),
+         const SizedBox(height: 8),
 
           // Stats Grid
           SliverPadding(
