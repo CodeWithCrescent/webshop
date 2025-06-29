@@ -16,10 +16,10 @@ class WebShopApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarIconBrightness: Brightness.light,
-          statusBarBrightness: Brightness.dark,
-        ));
+        // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        //   statusBarIconBrightness: Brightness.light,
+        //   statusBarBrightness: Brightness.dark,
+        // ));
 
         return MaterialApp(
           debugShowCheckedModeBanner: false,
