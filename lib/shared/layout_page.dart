@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:webshop/modules/dashboard/dashboard_page.dart';
 import 'package:webshop/shared/widgets/bottom_bar.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../../core/constants/app_colors.dart';
 
 class LayoutPage extends StatefulWidget {
   const LayoutPage({super.key});
