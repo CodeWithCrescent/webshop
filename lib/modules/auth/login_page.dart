@@ -111,21 +111,21 @@ class _LoginFormState extends State<_LoginForm> {
           lowerError.contains('network') ||
           lowerError.contains('connection') ||
           lowerError.contains('unable to connect')) {
-        return loc!.translate('auth.error.network');
+        return loc.translate('auth.error.network');
       } else if (lowerError.contains('dieexception') ||
           lowerError.contains('auth') ||
           lowerError.contains('unauthorized')) {
-        return loc!.translate('auth.error.login_failed');
+        return loc.translate('auth.error.login_failed');
       } else if (lowerError.contains('invalid credentials') ||
           lowerError.contains('invalid username') ||
           lowerError.contains('invalid password')) {
-        return loc!.translate('auth.error.invalid_credentials');
+        return loc.translate('auth.error.invalid_credentials');
       } else if (lowerError.contains('user not found') ||
           lowerError.contains('no user found')) {
-        return loc!.translate('auth.error.login_failed');
+        return loc.translate('auth.error.login_failed');
       } else if (lowerError.contains('server error') ||
           lowerError.contains('internal server error')) {
-        return loc!.translate('auth.error.server');
+        return loc.translate('auth.error.server');
       }
 
       // Fallback
