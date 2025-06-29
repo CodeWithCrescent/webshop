@@ -39,7 +39,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       backgroundColor: AppColors.primary.withOpacity(0.1),
       appBar: WebshopAppBar(
-        title: loc.translate('dashboard.title'),
+        title: loc.translate('common.app_name'),
         onRefresh: _fetchDashboardData,
       ),
       body: Consumer<DashboardProvider>(
