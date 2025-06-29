@@ -24,7 +24,7 @@ class BottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomBarCreative(
       items: items,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.surfaceLight,
       color: AppColors.textSecondary,
       colorSelected: AppColors.primary,
       indexSelected: selectedIndex,
