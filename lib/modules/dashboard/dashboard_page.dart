@@ -163,9 +163,8 @@ class _DashboardPageState extends State<DashboardPage> {
                         const SizedBox(width: 4),
                         Column(
                           children: [
-                              Text(loc!.translate("dashboard.today_sales"))
-                              Text(FormatUtils.formatCurrency(provider.totalAmount))
-                            )
+                              Text(loc.translate("dashboard.today_sales")),
+                              Text(FormatUtils.formatCurrency(provider.totalAmount)),
                           ]
                         )
                       ]
