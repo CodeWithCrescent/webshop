@@ -17,7 +17,7 @@ class BottomBar extends StatelessWidget {
     TabItem(icon: Icons.inventory_2_outlined, title: 'Inventory'),
     TabItem(icon: Icons.add, title: 'Cash Sales'),
     TabItem(icon: Icons.people_alt_outlined, title: 'Customers'),
-    TabItem(icon: Icons.receipt_long, title: 'Z-Reports'),
+    TabItem(icon: Icons.bar_chart, title: 'Z-Reports'),
   ];
 
   @override
