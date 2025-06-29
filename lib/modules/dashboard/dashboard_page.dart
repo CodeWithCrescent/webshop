@@ -86,9 +86,10 @@ class _DashboardPageState extends State<DashboardPage> {
           // Welcome Section
           SliverToBoxAdapter(
             child: Container(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 26),
               decoration: BoxDecoration(
                 gradient: AppColors.primaryGradient,
+                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(10)),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.primary.withOpacity(0.1),
@@ -145,11 +146,11 @@ class _DashboardPageState extends State<DashboardPage> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.textLight,
+                      color: AppColors.textLight.withOpacity(0.75),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: AppColors.textLight.withOpacity(0.05),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -161,7 +162,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
+                            color: AppColors.primary.withOpacity(0.15),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Icon(
@@ -186,9 +187,9 @@ class _DashboardPageState extends State<DashboardPage> {
                               Text(
                                 FormatUtils.formatCurrency(
                                     provider.totalAmount),
-                                style: AppTextStyles.headlineSmall.copyWith(
+                                style: AppTextStyles.titleLarge.copyWith(
                                   color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0,
                                 ),
                               ),
                             ],
