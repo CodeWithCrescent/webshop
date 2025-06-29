@@ -95,14 +95,47 @@ class _LoginFormState extends State<_LoginForm> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    final loc = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final loc = AppLocalizations.of(context);
 
-    if (authProvider.isAuthenticated) {
-      Future.microtask(() => Navigator.pushReplacementNamed(context, '/layout'));
+    // Map raw error to localized message
+    String getFriendlyError(String error) {
+      final lowerError = error.toLowerCase();
+
+      // Connection or network-related errors
+      if (lowerError.contains('socketexception') ||
+          lowerError.contains('handshakeexception') ||
+          lowerError.contains('failed host lookup') ||
+          lowerError.contains('timeout') ||
+          lowerError.contains('network') ||
+          lowerError.contains('connection') ||
+          lowerError.contains('unable to connect')) {
+        return loc!.translate('auth.error.network');
+      } else if (lowerError.contains('dieexception') ||
+          lowerError.contains('auth') ||
+          lowerError.contains('unauthorized')) {
+        return loc!.translate('auth.error.login_failed');
+      } else if (lowerError.contains('invalid credentials') ||
+          lowerError.contains('invalid username') ||
+          lowerError.contains('invalid password')) {
+        return loc!.translate('auth.error.invalid_credentials');
+      } else if (lowerError.contains('user not found') ||
+          lowerError.contains('no user found')) {
+        return loc!.translate('auth.error.login_failed');
+      } else if (lowerError.contains('server error') ||
+          lowerError.contains('internal server error')) {
+        return loc!.translate('auth.error.server');
+      }
+
+      // Fallback
+      return error;
     }
 
+    if (authProvider.isAuthenticated) {
+      Future.microtask(
+        () => Navigator.pushReplacementNamed(context, '/layout'),
+      );
+    }
+    
     return Form(
       key: _formKey,
       child: Column(
@@ -196,6 +229,37 @@ class _LoginFormState extends State<_LoginForm> {
               return null;
             },
           ),
+          // const SizedBox(height: 16),
+
+          // // Remember me & Forgot password
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Row(
+          //       children: [
+          //         Checkbox(
+          //           value: true,
+          //           onChanged: (value) {},
+          //           activeColor: AppColors.primary,
+          //         ),
+          //         Text(
+          //           loc.translate('auth.remember_me'),
+          //           style: AppTextStyles.bodyMedium,
+          //         ),
+          //       ],
+          //     ),
+          //     TextButton(
+          //       onPressed: () {},
+          //       child: Text(
+          //         loc.translate('auth.forgot_password'),
+          //         style: AppTextStyles.bodyMedium.copyWith(
+          //           color: AppColors.primary,
+          //           fontWeight: FontWeight.w600,
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
           const SizedBox(height: 32),
 
           // Login Button
