@@ -33,18 +33,12 @@ class _DashboardPageState extends State<DashboardPage> {
     final provider = Provider.of<DashboardProvider>(context);
 
     return Scaffold(
+      backgroundColor: AppColors.backgroundDark,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
             gradient: AppColors.primaryGradient,
-            // boxShadow: [
-            //   BoxShadow(
-            //     color: AppColors.primary.withOpacity(0.1),
-            //     blurRadius: 20,
-            //     offset: const Offset(0, 8),
-            //   ),
-            // ],
           ),
           child: AppBar(
             title: Text(
@@ -86,10 +80,10 @@ class _DashboardPageState extends State<DashboardPage> {
           // Welcome Section
           SliverToBoxAdapter(
             child: Container(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 26),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
               decoration: BoxDecoration(
                 gradient: AppColors.primaryGradient,
-                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(10)),
+                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.primary.withOpacity(0.1),
@@ -303,7 +297,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardLight,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
