@@ -24,14 +24,17 @@ class BottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomBarCreative(
       items: items,
-      backgroundColor: AppColors.surfaceLight,
+      backgroundColor: Colors.transparent,
       color: AppColors.textSecondary,
       colorSelected: AppColors.primary,
       indexSelected: selectedIndex,
       iconSize: 24,
       isFloating: true,
-      highlightStyle:
-          const HighlightStyle(sizeLarge: true, background: AppColors.primary, elevation: 2),
+      highlightStyle: const HighlightStyle(
+        sizeLarge: true,
+        background: AppColors.primary,
+        elevation: 4,
+      ),
       onTap: onTap,
     );
   }
