@@ -35,25 +35,23 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       backgroundColor: AppColors.primary.withOpacity(0.1),
-      appBar: DashboardAppBar(
+      appBar: WebshopAppBar(
         title: loc.translate('dashboard.title'),
         onRefresh: _fetchDashboardData,
       ),
       body: Consumer<DashboardProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return const Center(
-              child: SpinKitCircle(color: AppColors.primary),
-            );
+            return const Center(child: SpinKitCircle(color: AppColors.primary));
           }
-          
+
           if (provider.error != null) {
             return _buildErrorWidget(provider.error!);
           }
-          
+
           return _buildDashboardContent(context, provider, loc);
         },
       ),
@@ -66,11 +64,7 @@ class _DashboardPageState extends State<DashboardPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 48,
-            color: Colors.red.shade400,
-          ),
+          Icon(Icons.error_outline, size: 48, color: Colors.red.shade400),
           const SizedBox(height: 16),
           Text(
             error,
@@ -96,9 +90,7 @@ class _DashboardPageState extends State<DashboardPage> {
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           // Welcome Section
-          SliverToBoxAdapter(
-            child: _buildWelcomeSection(provider, loc),
-          ),
+          SliverToBoxAdapter(child: _buildWelcomeSection(provider, loc)),
 
           // Horizontal Stat Card Section
           SliverPadding(
@@ -114,7 +106,7 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
           ),
-          
+
           const SliverToBoxAdapter(child: SizedBox(height: 8)),
 
           // Stats Grid
@@ -145,9 +137,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
 
           // Quick Actions Section
-          SliverToBoxAdapter(
-            child: _buildQuickActionsSection(context, loc),
-          ),
+          SliverToBoxAdapter(child: _buildQuickActionsSection(context, loc)),
 
           // Bottom padding
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -156,7 +146,10 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildWelcomeSection(DashboardProvider provider, AppLocalizations loc) {
+  Widget _buildWelcomeSection(
+    DashboardProvider provider,
+    AppLocalizations loc,
+  ) {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
       decoration: BoxDecoration(
@@ -267,7 +260,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
