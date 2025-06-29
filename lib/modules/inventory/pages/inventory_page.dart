@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:webshop/core/localization/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/widgets/search_field.dart';
-import '../../../shared/widgets/empty_state.dart';
-import '../../models/product.dart';
 import '../providers/inventory_provider.dart';
 import 'product_modal.dart';
 
@@ -27,7 +25,7 @@ class _InventoryPageState extends State<InventoryPage> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final theme = AppTheme.of(context);
+    final theme = AppTheme.lightTheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -45,7 +43,8 @@ class _InventoryPageState extends State<InventoryPage> {
             padding: const EdgeInsets.all(16),
             child: SearchField(
               hintText: loc.searchProducts,
-              onChanged: (query) => context.read<InventoryProvider>().setSearchQuery(query),
+              onChanged: (query) =>
+                  context.read<InventoryProvider>().setSearchQuery(query),
             ),
           ),
           _buildCategoryChips(),
@@ -65,7 +64,7 @@ class _InventoryPageState extends State<InventoryPage> {
 
   Widget _buildCategoryChips() {
     final loc = AppLocalizations.of(context)!;
-    
+
     return Consumer<InventoryProvider>(
       builder: (context, provider, _) {
         return SingleChildScrollView(
@@ -86,7 +85,8 @@ class _InventoryPageState extends State<InventoryPage> {
                     child: FilterChip(
                       label: Text(category.name),
                       selected: provider.selectedCategory == category.name,
-                      onSelected: (_) => provider.setCategoryFilter(category.name),
+                      onSelected: (_) =>
+                          provider.setCategoryFilter(category.name),
                     ),
                   );
                 }).toList(),
@@ -100,7 +100,7 @@ class _InventoryPageState extends State<InventoryPage> {
 
   Widget _buildProductList() {
     final loc = AppLocalizations.of(context)!;
-    
+
     return Consumer<InventoryProvider>(
       builder: (context, provider, _) {
         if (provider.isLoading && provider.products.isEmpty) {
@@ -132,7 +132,7 @@ class _InventoryPageState extends State<InventoryPage> {
   Widget _buildProductCard(BuildContext context, Product product) {
     final theme = AppTheme.of(context);
     final loc = AppLocalizations.of(context)!;
-    
+
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 12),
@@ -193,8 +193,8 @@ class _InventoryPageState extends State<InventoryPage> {
                   Text(
                     '${product.stock} ${loc.inStock}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: product.stock > 0 
-                          ? theme.colorScheme.success 
+                      color: product.stock > 0
+                          ? theme.colorScheme.success
                           : theme.colorScheme.error,
                     ),
                   ),
@@ -224,7 +224,7 @@ class _InventoryPageState extends State<InventoryPage> {
                   .updateProduct(productData);
             }
           },
-          onDelete: product != null 
+          onDelete: product != null
               ? () async {
                   await Provider.of<InventoryProvider>(context, listen: false)
                       .deleteProduct(product.id);
@@ -239,7 +239,7 @@ class _InventoryPageState extends State<InventoryPage> {
   void _showFilterDialog(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final provider = Provider.of<InventoryProvider>(context, listen: false);
-    
+
     showDialog(
       context: context,
       builder: (context) {

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:webshop/core/localization/app_localizations.dart';
+import 'package:webshop/modules/inventory/models/product.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/widgets/modal_header.dart';
 import '../../../shared/widgets/gradient_button.dart';
-import '../../models/product.dart';
-import '../../models/category.dart';
 import '../providers/inventory_provider.dart';
 
 class ProductModal extends StatefulWidget {
@@ -39,10 +38,10 @@ class _ProductModalState extends State<ProductModal> {
     super.initState();
     _codeController = TextEditingController(text: widget.product?.code ?? '');
     _nameController = TextEditingController(text: widget.product?.name ?? '');
-    _priceController = TextEditingController(
-      text: widget.product?.price.toString() ?? '');
-    _stockController = TextEditingController(
-      text: widget.product?.stock.toString() ?? '');
+    _priceController =
+        TextEditingController(text: widget.product?.price.toString() ?? '');
+    _stockController =
+        TextEditingController(text: widget.product?.stock.toString() ?? '');
     _selectedCategory = widget.product?.category;
     _selectedTaxCategory = widget.product?.taxCategory ?? 1;
   }
@@ -58,7 +57,7 @@ class _ProductModalState extends State<ProductModal> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = AppTheme.of(context);
+    final theme = AppTheme.lightTheme;
     final loc = AppLocalizations.of(context)!;
     final provider = context.read<InventoryProvider>();
 
@@ -66,6 +65,7 @@ class _ProductModalState extends State<ProductModal> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
@@ -76,12 +76,13 @@ class _ProductModalState extends State<ProductModal> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ModalHeader(
-                title: widget.product == null ? loc.addProduct : loc.editProduct,
+                title:
+                    widget.product == null ? loc.addProduct : loc.editProduct,
                 onClose: () => Navigator.pop(context),
                 actions: widget.product != null
                     ? [
                         IconButton(
-                          icon: Icon(Icons.delete),
+                          icon: const Icon(Icons.delete),
                           color: theme.colorScheme.error,
                           onPressed: widget.onDelete,
                         ),
@@ -96,7 +97,7 @@ class _ProductModalState extends State<ProductModal> {
                       controller: _codeController,
                       decoration: InputDecoration(
                         labelText: loc.productCode,
-                        prefixIcon: Icon(Icons.code),
+                        prefixIcon: const Icon(Icons.code),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -110,7 +111,7 @@ class _ProductModalState extends State<ProductModal> {
                       controller: _nameController,
                       decoration: InputDecoration(
                         labelText: loc.productName,
-                        prefixIcon: Icon(Icons.shopping_bag),
+                        prefixIcon: const Icon(Icons.shopping_bag),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -124,7 +125,7 @@ class _ProductModalState extends State<ProductModal> {
                       value: _selectedCategory,
                       decoration: InputDecoration(
                         labelText: loc.category,
-                        prefixIcon: Icon(Icons.category),
+                        prefixIcon: const Icon(Icons.category),
                       ),
                       items: [
                         DropdownMenuItem(
@@ -155,11 +156,12 @@ class _ProductModalState extends State<ProductModal> {
                       controller: _priceController,
                       decoration: InputDecoration(
                         labelText: loc.price,
-                        prefixIcon: Icon(Icons.attach_money),
+                        prefixIcon: const Icon(Icons.attach_money),
                       ),
                       keyboardType: TextInputType.number,
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d+\.?\d{0,2}')),
                       ],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -176,7 +178,7 @@ class _ProductModalState extends State<ProductModal> {
                       value: _selectedTaxCategory,
                       decoration: InputDecoration(
                         labelText: loc.taxCategory,
-                        prefixIcon: Icon(Icons.receipt),
+                        prefixIcon: const Icon(Icons.receipt),
                       ),
                       items: [
                         DropdownMenuItem(
@@ -200,14 +202,15 @@ class _ProductModalState extends State<ProductModal> {
                           child: Text(loc.taxExempted),
                         ),
                       ],
-                      onChanged: (value) => setState(() => _selectedTaxCategory = value!),
+                      onChanged: (value) =>
+                          setState(() => _selectedTaxCategory = value!),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _stockController,
                       decoration: InputDecoration(
                         labelText: loc.stock,
-                        prefixIcon: Icon(Icons.inventory),
+                        prefixIcon: const Icon(Icons.inventory),
                       ),
                       keyboardType: TextInputType.number,
                       inputFormatters: [
@@ -233,7 +236,8 @@ class _ProductModalState extends State<ProductModal> {
                                   id: widget.product?.id,
                                   code: _codeController.text,
                                   name: _nameController.text,
-                                  category: _selectedCategory ?? 'Uncategorized',
+                                  category:
+                                      _selectedCategory ?? 'Uncategorized',
                                   price: double.parse(_priceController.text),
                                   taxCategory: _selectedTaxCategory,
                                   stock: int.parse(_stockController.text),
@@ -253,7 +257,8 @@ class _ProductModalState extends State<ProductModal> {
                             },
                       child: provider.isLoading
                           ? const CircularProgressIndicator(color: Colors.white)
-                          : Text(widget.product == null ? loc.save : loc.update),
+                          : Text(
+                              widget.product == null ? loc.save : loc.update),
                     ),
                     const SizedBox(height: 24),
                   ],

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class ReportsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -47,9 +49,12 @@ class ReportsPage extends StatelessWidget {
   Widget _buildSummaryCards(SalesReport report) {
     return Row(
       children: [
-        Expanded(child: SummaryCard(title: 'Total Sales', value: report.totalSales)),
-        Expanded(child: SummaryCard(title: 'Items Sold', value: report.itemsSold)),
-        Expanded(child: SummaryCard(title: 'Top Product', value: report.topProduct)),
+        Expanded(
+            child: SummaryCard(title: 'Total Sales', value: report.totalSales)),
+        Expanded(
+            child: SummaryCard(title: 'Items Sold', value: report.itemsSold)),
+        Expanded(
+            child: SummaryCard(title: 'Top Product', value: report.topProduct)),
       ],
     );
   }
