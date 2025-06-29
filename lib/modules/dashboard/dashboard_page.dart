@@ -109,14 +109,14 @@ class _DashboardPageState extends State<DashboardPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              loc.translate('dashboard_subtitle'),
+                              loc.translate('dashboard.monthly_sales'),
                               style: AppTextStyles.bodyMedium.copyWith(
                                 color: Colors.white.withOpacity(0.9),
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              loc.translate('dashboard_welcome'),
+                              FormatUtils.formatCurrency(provider.totalMonthAmount),
                               style: AppTextStyles.headlineSmall.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w800,
