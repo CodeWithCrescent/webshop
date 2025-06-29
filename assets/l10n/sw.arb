@@ -9,6 +9,8 @@
     "button": "Ingia",
     "remember_me": "Nikumbuke",
     "forgot_password": "Umesahau nenosiri?",
+    "show_password": "",
+    "hide_password": "",
     "sign_in_with": "Ingia kwa",
     "validation_required_field": "",
     "validation_password_length": "",
