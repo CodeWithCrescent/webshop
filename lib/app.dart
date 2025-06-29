@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:webshop/modules/dashboard/dashboard_page.dart';
-import 'package:webshop/modules/inventory/inventory_page.dart';
+import 'package:webshop/modules/inventory/pages/inventory_page.dart';
 import 'package:webshop/shared/layout_page.dart';
 import 'core/localization/app_localizations.dart';
 import 'core/theme/app_theme.dart';

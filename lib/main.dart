@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app.dart';
 import 'modules/dashboard/dashboard_provider.dart';
-import 'modules/inventory/inventory_provider.dart';
 import 'modules/inventory/models/product.dart';
 import 'modules/inventory/models/category.dart';
 import 'shared/providers/auth_provider.dart';
