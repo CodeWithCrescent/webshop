@@ -10,7 +10,7 @@
     "remember_me": "Remember me",
     "forgot_password": "Forgot Password?",
     "sign_in_with": "Sign in with",
-    "validation_required": "",
+    "validation_required_field": "This field is required.",
     "validation_password_length": "",
     "error": {
       "required": "This field is required",

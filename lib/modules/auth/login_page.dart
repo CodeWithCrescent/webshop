@@ -35,7 +35,7 @@ class LoginPage extends StatelessWidget {
                   // Logo
                   const AppLogo(size: 80),
                   const SizedBox(height: 32),
-                  
+
                   // Login form card
                   Container(
                     width: double.infinity,
@@ -54,7 +54,7 @@ class LoginPage extends StatelessWidget {
                     padding: const EdgeInsets.all(32),
                     child: const _LoginForm(),
                   ),
-                  
+
                   // Footer
                   const SizedBox(height: 32),
                   Text(
@@ -96,7 +96,7 @@ class _LoginFormState extends State<_LoginForm> {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final loc = AppLocalizations.of(context);
-           
+
     // Map raw error to localized message
     String getFriendlyError(String error) {
       final lowerError = error.toLowerCase();
@@ -110,23 +110,19 @@ class _LoginFormState extends State<_LoginForm> {
           lowerError.contains('connection') ||
           lowerError.contains('unable to connect')) {
         return loc!.translate('auth.error.network');
-
       } else if (lowerError.contains('dieexception') ||
-              lowerError.contains('auth') ||
-              lowerError.contains('unauthorized')) {
+          lowerError.contains('auth') ||
+          lowerError.contains('unauthorized')) {
         return loc!.translate('auth.error.login_failed');
-
       } else if (lowerError.contains('invalid credentials') ||
           lowerError.contains('invalid username') ||
           lowerError.contains('invalid password')) {
         return loc!.translate('auth.error.invalid_credentials');
-
       } else if (lowerError.contains('user not found') ||
-                 lowerError.contains('no user found')) {
+          lowerError.contains('no user found')) {
         return loc!.translate('auth.error.login_failed');
-
       } else if (lowerError.contains('server error') ||
-                 lowerError.contains('internal server error')) {
+          lowerError.contains('internal server error')) {
         return loc!.translate('auth.error.server');
       }
 
@@ -135,7 +131,9 @@ class _LoginFormState extends State<_LoginForm> {
     }
 
     if (authProvider.isAuthenticated) {
-      Future.microtask(() => Navigator.pushReplacementNamed(context, '/layout'));
+      Future.microtask(
+        () => Navigator.pushReplacementNamed(context, '/layout'),
+      );
     }
 
     return Form(
@@ -183,9 +181,8 @@ class _LoginFormState extends State<_LoginForm> {
               ),
             ),
 
-          if (authProvider.error != null)
-            const SizedBox(height: 16),
-          
+          if (authProvider.error != null) const SizedBox(height: 16),
+
           // Username field
           Text(
             loc.translate('auth.username'),
@@ -199,17 +196,20 @@ class _LoginFormState extends State<_LoginForm> {
             controller: _usernameController,
             decoration: InputDecoration(
               hintText: loc.translate('auth.username_hint'),
-              prefixIcon: const Icon(Icons.person_outline, color: AppColors.textSecondary,),
+              prefixIcon: const Icon(
+                Icons.person_outline,
+                color: AppColors.textSecondary,
+              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return loc.translate('auth.validation_required');
+                return loc.translate('auth.validation_required_field');
               }
               return null;
             },
           ),
           const SizedBox(height: 24),
-          
+
           // Password field
           Text(
             loc.translate('auth.password'),
@@ -224,20 +224,23 @@ class _LoginFormState extends State<_LoginForm> {
             obscureText: true,
             decoration: InputDecoration(
               hintText: loc.translate('auth.password_hint'),
-              prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary,),
+              prefixIcon: const Icon(
+                Icons.lock_outline,
+                color: AppColors.textSecondary,
+              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return loc.translate('auth.validation_required');
+                return loc.translate('auth.validation_required_field');
               }
-              if (value.length < 6) {
-                return loc.translate('auth.validation_password_length');
-              }
+              // if (value.length < 6) {
+              //   return loc.translate('auth.validation_password_length');
+              // }
               return null;
             },
           ),
           // const SizedBox(height: 16),
-          
+
           // // Remember me & Forgot password
           // Row(
           //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -268,7 +271,7 @@ class _LoginFormState extends State<_LoginForm> {
           //   ],
           // ),
           const SizedBox(height: 32),
-          
+
           // Login button
           GradientButton(
             width: double.infinity,

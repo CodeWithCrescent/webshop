@@ -10,7 +10,7 @@
     "remember_me": "Nikumbuke",
     "forgot_password": "Umesahau nenosiri?",
     "sign_in_with": "Ingia kwa",
-    "validation_required": "",
+    "validation_required_field": "",
     "validation_password_length": "",
     "error": {
       "required": "Sehemu hii inahitajika",
