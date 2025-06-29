@@ -95,45 +95,12 @@ class _LoginFormState extends State<_LoginForm> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    final loc = AppLocalizations.of(context);
-
-    // Map raw error to localized message
-    String getFriendlyError(String error) {
-      final lowerError = error.toLowerCase();
-
-      // Connection or network-related errors
-      if (lowerError.contains('socketexception') ||
-          lowerError.contains('handshakeexception') ||
-          lowerError.contains('failed host lookup') ||
-          lowerError.contains('timeout') ||
-          lowerError.contains('network') ||
-          lowerError.contains('connection') ||
-          lowerError.contains('unable to connect')) {
-        return loc!.translate('auth.error.network');
-      } else if (lowerError.contains('dieexception') ||
-          lowerError.contains('auth') ||
-          lowerError.contains('unauthorized')) {
-        return loc!.translate('auth.error.login_failed');
-      } else if (lowerError.contains('invalid credentials') ||
-          lowerError.contains('invalid username') ||
-          lowerError.contains('invalid password')) {
-        return loc!.translate('auth.error.invalid_credentials');
-      } else if (lowerError.contains('user not found') ||
-          lowerError.contains('no user found')) {
-        return loc!.translate('auth.error.login_failed');
-      } else if (lowerError.contains('server error') ||
-          lowerError.contains('internal server error')) {
-        return loc!.translate('auth.error.server');
-      }
-
-      // Fallback
-      return error;
-    }
+    final loc = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     if (authProvider.isAuthenticated) {
-      Future.microtask(
-        () => Navigator.pushReplacementNamed(context, '/layout'),
-      );
+      Future.microtask(() => Navigator.pushReplacementNamed(context, '/layout'));
     }
 
     return Form(
@@ -141,19 +108,18 @@ class _LoginFormState extends State<_LoginForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title
           Text(
-            loc!.translate('auth.title'),
-            style: AppTextStyles.headlineSmall.copyWith(
-              fontWeight: FontWeight.w700,
-              color: AppColors.primary,
+            loc.translate('auth.title'),
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.primary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             loc.translate('auth.subtitle'),
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.6),
             ),
           ),
           const SizedBox(height: 32),
@@ -162,18 +128,18 @@ class _LoginFormState extends State<_LoginForm> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.error.withOpacity(0.1),
+                color: colorScheme.error.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.error_outline, color: AppColors.error),
+                  Icon(Icons.error_outline, color: colorScheme.error),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       getFriendlyError(authProvider.error!),
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.error,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.error,
                       ),
                     ),
                   ),
@@ -183,12 +149,12 @@ class _LoginFormState extends State<_LoginForm> {
 
           if (authProvider.error != null) const SizedBox(height: 16),
 
-          // Username field
+          // Username
           Text(
             loc.translate('auth.username'),
-            style: AppTextStyles.labelLarge.copyWith(
+            style: theme.textTheme.labelLarge?.copyWith(
               fontWeight: FontWeight.w600,
-              color: AppColors.textSecondary,
+              color: colorScheme.onSurface.withOpacity(0.8),
             ),
           ),
           const SizedBox(height: 8),
@@ -196,10 +162,7 @@ class _LoginFormState extends State<_LoginForm> {
             controller: _usernameController,
             decoration: InputDecoration(
               hintText: loc.translate('auth.username_hint'),
-              prefixIcon: const Icon(
-                Icons.person_outline,
-                color: AppColors.textSecondary,
-              ),
+              prefixIcon: Icon(Icons.person_outline, color: colorScheme.onSurface),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -210,12 +173,12 @@ class _LoginFormState extends State<_LoginForm> {
           ),
           const SizedBox(height: 24),
 
-          // Password field
+          // Password
           Text(
             loc.translate('auth.password'),
-            style: AppTextStyles.labelLarge.copyWith(
+            style: theme.textTheme.labelLarge?.copyWith(
               fontWeight: FontWeight.w600,
-              color: AppColors.textSecondary,
+              color: colorScheme.onSurface.withOpacity(0.8),
             ),
           ),
           const SizedBox(height: 8),
@@ -224,55 +187,18 @@ class _LoginFormState extends State<_LoginForm> {
             obscureText: true,
             decoration: InputDecoration(
               hintText: loc.translate('auth.password_hint'),
-              prefixIcon: const Icon(
-                Icons.lock_outline,
-                color: AppColors.textSecondary,
-              ),
+              prefixIcon: Icon(Icons.lock_outline, color: colorScheme.onSurface),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return loc.translate('auth.validation_required_field');
               }
-              // if (value.length < 6) {
-              //   return loc.translate('auth.validation_password_length');
-              // }
               return null;
             },
           ),
-          // const SizedBox(height: 16),
-
-          // // Remember me & Forgot password
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     Row(
-          //       children: [
-          //         Checkbox(
-          //           value: true,
-          //           onChanged: (value) {},
-          //           activeColor: AppColors.primary,
-          //         ),
-          //         Text(
-          //           loc.translate('auth.remember_me'),
-          //           style: AppTextStyles.bodyMedium,
-          //         ),
-          //       ],
-          //     ),
-          //     TextButton(
-          //       onPressed: () {},
-          //       child: Text(
-          //         loc.translate('auth.forgot_password'),
-          //         style: AppTextStyles.bodyMedium.copyWith(
-          //           color: AppColors.primary,
-          //           fontWeight: FontWeight.w600,
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ),
           const SizedBox(height: 32),
 
-          // Login button
+          // Login Button
           GradientButton(
             width: double.infinity,
             onPressed: authProvider.isLoading
@@ -284,9 +210,7 @@ class _LoginFormState extends State<_LoginForm> {
                           _usernameController.text,
                           _passwordController.text,
                         );
-                      } catch (e) {
-                        // Error is already handled in provider
-                      }
+                      } catch (_) {}
                     }
                   },
             gradient: AppColors.primaryGradient,
