@@ -92,7 +92,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.primary.withOpacity(0.3),
-                    blurRadius: 20,
+                    blurRadius: 40,
                     offset: const Offset(0, 8),
                   ),
                 ],
