@@ -66,8 +66,8 @@ class _DashboardPageState extends State<DashboardPage> {
       body: provider.isLoading
           ? const Center(child: SpinKitCircle(color: AppColors.primary))
           : provider.error != null
-          ? Center(child: Text(provider.error!))
-          : _buildDashboardContent(context, provider, loc),
+              ? Center(child: Text(provider.error!))
+              : _buildDashboardContent(context, provider, loc),
       drawer: const AppLeftDrawer(),
     );
   }
@@ -117,7 +117,8 @@ class _DashboardPageState extends State<DashboardPage> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              FormatUtils.formatCurrency(provider.totalMonthAmount),
+                              FormatUtils.formatCurrency(
+                                  provider.totalMonthAmount),
                               style: AppTextStyles.headlineSmall.copyWith(
                                 color: AppColors.textLight,
                                 fontWeight: FontWeight.w800,
@@ -178,12 +179,13 @@ class _DashboardPageState extends State<DashboardPage> {
                                 loc.translate("dashboard.today_sales"),
                                 style: AppTextStyles.bodySmall.copyWith(
                                   color: AppColors.textSecondary,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w800,
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                FormatUtils.formatCurrency(provider.totalAmount),
+                                FormatUtils.formatCurrency(
+                                    provider.totalAmount),
                                 style: AppTextStyles.headlineSmall.copyWith(
                                   color: AppColors.textPrimary,
                                   fontWeight: FontWeight.bold,
@@ -200,6 +202,18 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           ),
 
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            sliver: SliverToBoxAdapter(
+              child: _buildHorizontalStatCard(
+                receiptsTitle: loc.translate('dashboard.today_receipts'),
+                receiptsValue: provider.totalReceipts.toString(),
+                dateTitle: loc.translate('dashboard.last_receipt_date'),
+                dateValue: provider.date ?? '-',
+              ),
+            ),
+          ),
+
           // Stats Grid
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -211,31 +225,19 @@ class _DashboardPageState extends State<DashboardPage> {
                 childAspectRatio: 1.4,
               ),
               delegate: SliverChildListDelegate([
-                _buildStatCard(
+                _buildGridStatCard(
                   title: loc.translate('dashboard.today_receipts'),
                   value: provider.totalReceipts.toString(),
                   icon: Icons.receipt_long,
                   color: AppColors.secondary,
                 ),
-                _buildStatCard(
+                _buildGridStatCard(
                   title: loc.translate('dashboard.last_receipt_date'),
                   value: provider.date ?? '-',
                   icon: Icons.calendar_month,
                   color: AppColors.primary,
                 ),
               ]),
-            ),
-          ),
-          
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            sliver: SliverToBoxAdapter(
-              child: _buildReceiptStatCard(
-                receiptsTitle: loc.translate('dashboard.today_receipts'),
-                receiptsValue: provider.totalReceipts.toString(),
-                dateTitle: loc.translate('dashboard.last_receipt_date'),
-                dateValue: provider.date ?? '-',
-              ),
             ),
           ),
 
@@ -249,7 +251,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   const SizedBox(height: 8),
                   Text(
                     loc.translate('dashboard.quick_actions'),
-                    style: AppTextStyles.titleLarge.copyWith(
+                    style: AppTextStyles.titleMedium.copyWith(
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -291,7 +293,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildReceiptStatCard({
+  Widget _buildHorizontalStatCard({
     required String receiptsTitle,
     required String receiptsValue,
     required String dateTitle,
@@ -320,7 +322,8 @@ class _DashboardPageState extends State<DashboardPage> {
               color: AppColors.secondary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(Icons.receipt_long, color: AppColors.secondary, size: 30),
+            child: const Icon(Icons.receipt_long,
+                color: AppColors.secondary, size: 30),
           ),
 
           const SizedBox(width: 16),
@@ -352,7 +355,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 // Last Receipt Date
                 Row(
                   children: [
-                    const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                    const Icon(Icons.calendar_today,
+                        size: 16, color: Colors.grey),
                     const SizedBox(width: 6),
                     Text(
                       '$dateTitle: $dateValue',
@@ -374,7 +378,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildStatCard({
+  Widget _buildGridStatCard({
     required String title,
     required String value,
     required IconData icon,
