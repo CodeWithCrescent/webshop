@@ -230,7 +230,7 @@ class _DashboardPageState extends State<DashboardPage> {
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             sliver: SliverToBoxAdapter(
-              child: buildReceiptStatCard(
+              child: _buildReceiptStatCard(
                 receiptsTitle: loc.translate('dashboard.today_receipts'),
                 receiptsValue: provider.totalReceipts.toString(),
                 dateTitle: loc.translate('dashboard.last_receipt_date'),
