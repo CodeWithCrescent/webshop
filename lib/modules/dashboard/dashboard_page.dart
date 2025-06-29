@@ -112,6 +112,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               loc.translate('dashboard.monthly_sales'),
                               style: AppTextStyles.bodyMedium.copyWith(
                                 color: Colors.white.withOpacity(0.9),
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -143,15 +144,31 @@ class _DashboardPageState extends State<DashboardPage> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(
-                      '${loc.translate('last_updated')}: ${provider.date ?? '-'}',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: 11,
-                      ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                          ),
+                          child: const Icon(
+                            Icons.attach_money_outlined,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Column(
+                          children: [
+                              Text(loc!.translate("dashboard.today_sales"))
+                              Text(FormatUtils.formatCurrency(provider.totalAmount))
+                            )
+                          ]
+                        )
+                      ]
                     ),
                   ),
                 ],
@@ -170,32 +187,17 @@ class _DashboardPageState extends State<DashboardPage> {
                 childAspectRatio: 1.4,
               ),
               delegate: SliverChildListDelegate([
-                _buildModernStatCard(
-                  title: loc.translate('today_receipts'),
+                _buildStatCard(
+                  title: loc.translate('dashboard.today_receipts'),
                   value: provider.totalReceipts.toString(),
                   icon: Icons.receipt_long,
                   color: AppColors.secondary,
                 ),
-                _buildModernStatCard(
-                  title: loc.translate('today_sales'),
-                  value: FormatUtils.formatCurrency(provider.totalAmount),
-                  icon: Icons.trending_up,
-                  color: AppColors.primary,
-                ),
-                _buildModernStatCard(
-                  title: loc.translate('monthly_revenue'),
-                  value: FormatUtils.formatCurrency(provider.totalMonthAmount),
+                _buildStatCard(
+                  title: loc.translate('dashboard.last_receipt_date'),
+                  value: provider.date ?? '-',
                   icon: Icons.calendar_month,
-                  color: AppColors.success,
-                ),
-                _buildModernStatCard(
-                  title: loc.translate('avg_sale'),
-                  value: FormatUtils.formatCurrencyRatio(
-                    provider.totalAmount,
-                    provider.totalReceipts,
-                  ),
-                  icon: Icons.analytics,
-                  color: AppColors.info,
+                  color: AppColors.primary,
                 ),
               ]),
             ),
@@ -210,7 +212,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 children: [
                   const SizedBox(height: 8),
                   Text(
-                    loc.translate('quick_actions'),
+                    loc.translate('dashboard.quick_actions'),
                     style: AppTextStyles.titleLarge.copyWith(
                       fontWeight: FontWeight.w800,
                     ),
@@ -220,7 +222,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     children: [
                       Expanded(
                         child: _buildActionButton(
-                          title: loc.translate('cash_sale'),
+                          title: loc.translate('menu.cash_sales'),
                           icon: Icons.add_shopping_cart,
                           color: AppColors.primary,
                           onTap: () {
@@ -231,8 +233,8 @@ class _DashboardPageState extends State<DashboardPage> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: _buildActionButton(
-                          title: loc.translate('view_reports'),
-                          icon: Icons.bar_chart,
+                          title: loc.translate('menu.receipts'),
+                          icon: Icons.receipt_long,
                           color: AppColors.secondary,
                           onTap: () {
                             // Navigate to reports
@@ -253,7 +255,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildModernStatCard({
+  Widget _buildStatCard({
     required String title,
     required String value,
     required IconData icon,
