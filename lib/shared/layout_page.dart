@@ -43,7 +43,7 @@ class _LayoutPageState extends State<LayoutPage> {
             children: <Widget>[
               ListTile(
                 title: Text(
-                  loc?.translate('cash_sales') ?? 'Cash Sales',
+                  loc?.translate('dashboard.cash_sales') ?? 'Cash Sales',
                   textAlign: TextAlign.center,
                 ),
                 onTap: () {
@@ -52,7 +52,7 @@ class _LayoutPageState extends State<LayoutPage> {
               ),
               ListTile(
                 title: Text(
-                  loc?.translate('register_customer') ?? 'Register Customer',
+                  loc?.translate('dashboard.register_customer') ?? 'Register Customer',
                   textAlign: TextAlign.center,
                 ),
                 onTap: () {
@@ -61,7 +61,7 @@ class _LayoutPageState extends State<LayoutPage> {
               ),
               ListTile(
                 title: Text(
-                  loc?.translate('create_invoice') ?? 'Create Invoice',
+                  loc?.translate('dashboard.create_invoice') ?? 'Create Invoice',
                   textAlign: TextAlign.center,
                 ),
                 onTap: () {
@@ -70,7 +70,7 @@ class _LayoutPageState extends State<LayoutPage> {
               ),
               ListTile(
                 title: Text(
-                  loc?.translate('cancel') ?? 'Cancel',
+                  loc?.translate('common.cancel') ?? 'Cancel',
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Colors.red),
                 ),
