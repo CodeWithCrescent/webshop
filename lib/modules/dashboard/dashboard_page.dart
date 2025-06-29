@@ -7,6 +7,10 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/localization/app_localizations.dart';
 import 'dashboard_provider.dart';
+import 'widgets/dashboard_app_bar.dart';
+import 'widgets/horizontal_stat_card.dart';
+import 'widgets/grid_stat_card.dart';
+import 'widgets/action_button.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -20,49 +24,63 @@ class _DashboardPageState extends State<DashboardPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<DashboardProvider>(
-        context,
-        listen: false,
-      ).fetchDashboardData();
+      _fetchDashboardData();
     });
+  }
+
+  void _fetchDashboardData() {
+    Provider.of<DashboardProvider>(context, listen: false).fetchDashboardData();
   }
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    final provider = Provider.of<DashboardProvider>(context);
-
+    final loc = AppLocalizations.of(context)!;
+    
     return Scaffold(
       backgroundColor: AppColors.primary.withOpacity(0.1),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: AppColors.primaryGradient,
-          ),
-          child: AppBar(
-            title: Text(
-              loc!.translate('dashboard.title'),
-              style: const TextStyle(color: AppColors.textLight),
-            ),
-            iconTheme: const IconThemeData(color: AppColors.textLight),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: provider.fetchDashboardData,
-              ),
-            ],
-          ),
-        ),
+      appBar: DashboardAppBar(
+        title: loc.translate('dashboard.title'),
+        onRefresh: _fetchDashboardData,
       ),
-      body: provider.isLoading
-          ? const Center(child: SpinKitCircle(color: AppColors.primary))
-          : provider.error != null
-              ? Center(child: Text(provider.error!))
-              : _buildDashboardContent(context, provider, loc),
+      body: Consumer<DashboardProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading) {
+            return const Center(
+              child: SpinKitCircle(color: AppColors.primary),
+            );
+          }
+          
+          if (provider.error != null) {
+            return _buildErrorWidget(provider.error!);
+          }
+          
+          return _buildDashboardContent(context, provider, loc);
+        },
+      ),
       drawer: const AppLeftDrawer(),
+    );
+  }
+
+  Widget _buildErrorWidget(String error) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 48,
+            color: Colors.red.shade400,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            error,
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: Colors.red.shade600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 
@@ -72,143 +90,32 @@ class _DashboardPageState extends State<DashboardPage> {
     AppLocalizations loc,
   ) {
     return RefreshIndicator(
-      onRefresh: () async => provider.fetchDashboardData(),
+      onRefresh: () async => _fetchDashboardData(),
       color: AppColors.primary,
       child: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           // Welcome Section
           SliverToBoxAdapter(
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withOpacity(0.1),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Welcome Text
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              loc.translate('dashboard.monthly_sales'),
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.textLight.withOpacity(0.9),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              FormatUtils.formatCurrency(
-                                  provider.totalMonthAmount),
-                              style: AppTextStyles.headlineSmall.copyWith(
-                                color: AppColors.textLight,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppColors.textLight.withOpacity(0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.dashboard,
-                          color: AppColors.textLight,
-                          size: 28,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.textLight.withOpacity(0.75),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.textLight.withOpacity(0.05),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.attach_money_outlined,
-                            color: AppColors.primary,
-                            size: 28,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                loc.translate("dashboard.today_sales"),
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textSecondary,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                FormatUtils.formatCurrency(
-                                    provider.totalAmount),
-                                style: AppTextStyles.titleLarge.copyWith(
-                                  color: AppColors.textPrimary,
-                                  letterSpacing: 0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
+            child: _buildWelcomeSection(provider, loc),
           ),
 
+          // Horizontal Stat Card Section
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             sliver: SliverToBoxAdapter(
-              child: _buildHorizontalStatCard(
-                receiptsTitle: loc.translate('dashboard.today_receipts'),
-                receiptsValue: provider.totalReceipts.toString(),
-                dateTitle: loc.translate('dashboard.last_receipt_date'),
-                dateValue: provider.date ?? '-',
+              child: HorizontalStatCard(
+                icon: Icons.receipt_long,
+                iconColor: AppColors.secondary,
+                title: loc.translate('dashboard.today_receipts'),
+                value: provider.totalReceipts.toString(),
+                subtitle: loc.translate('dashboard.last_receipt_date'),
+                subtitleValue: provider.date ?? '-',
               ),
             ),
           ),
-         const SizedBox(height: 8),
+          
+          const SliverToBoxAdapter(child: SizedBox(height: 8)),
 
           // Stats Grid
           SliverPadding(
@@ -221,13 +128,13 @@ class _DashboardPageState extends State<DashboardPage> {
                 childAspectRatio: 1.4,
               ),
               delegate: SliverChildListDelegate([
-                _buildGridStatCard(
+                GridStatCard(
                   title: loc.translate('dashboard.today_receipts'),
                   value: provider.totalReceipts.toString(),
                   icon: Icons.receipt_long,
                   color: AppColors.secondary,
                 ),
-                _buildGridStatCard(
+                GridStatCard(
                   title: loc.translate('dashboard.last_receipt_date'),
                   value: provider.date ?? '-',
                   icon: Icons.calendar_month,
@@ -239,47 +146,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
           // Quick Actions Section
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 8),
-                  Text(
-                    loc.translate('dashboard.quick_actions'),
-                    style: AppTextStyles.titleMedium.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildActionButton(
-                          title: loc.translate('menu.cash_sales'),
-                          icon: Icons.add_shopping_cart,
-                          color: AppColors.primary,
-                          onTap: () {
-                            // Navigate to new sale
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildActionButton(
-                          title: loc.translate('menu.receipts'),
-                          icon: Icons.receipt_long,
-                          color: AppColors.secondary,
-                          onTap: () {
-                            // Navigate to reports
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            child: _buildQuickActionsSection(context, loc),
           ),
 
           // Bottom padding
@@ -289,153 +156,155 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildHorizontalStatCard({
-    required String receiptsTitle,
-    required String receiptsValue,
-    required String dateTitle,
-    required String dateValue,
-  }) {
+  Widget _buildWelcomeSection(DashboardProvider provider, AppLocalizations loc) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
       decoration: BoxDecoration(
-        color: AppColors.cardLight,
-        borderRadius: BorderRadius.circular(16),
+        gradient: AppColors.primaryGradient,
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            color: AppColors.primary.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
-        border: Border.all(color: AppColors.borderLight.withOpacity(0.2)),
-      ),
-      child: Row(
-        children: [
-          // Left: Icon
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: AppColors.secondary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Icon(Icons.receipt_long,
-                color: AppColors.secondary, size: 30),
-          ),
-
-          const SizedBox(width: 16),
-
-          // Right: Content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Today’s Receipts
-                Text(
-                  receiptsTitle,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  receiptsValue,
-                  style: AppTextStyles.headlineSmall.copyWith(
-                    color: AppColors.secondary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                // Last Receipt Date
-                Row(
-                  children: [
-                    const Icon(Icons.calendar_today,
-                        size: 16, color: Colors.grey),
-                    const SizedBox(width: 6),
-                    Text(
-                      '$dateTitle: $dateValue',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: Colors.grey.shade700,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGridStatCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color color,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.textLight,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            spreadRadius: 1,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        border: Border.all(color: AppColors.borderLight.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          // Welcome Text
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text(
-                  title,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      loc.translate('dashboard.monthly_sales'),
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.textLight.withOpacity(0.9),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      FormatUtils.formatCurrency(provider.totalMonthAmount),
+                      style: AppTextStyles.headlineSmall.copyWith(
+                        color: AppColors.textLight,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.textLight.withOpacity(0.2),
+                  shape: BoxShape.circle,
                 ),
-                child: Icon(icon, color: color, size: 20),
+                child: const Icon(
+                  Icons.dashboard,
+                  color: AppColors.textLight,
+                  size: 28,
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: AppTextStyles.titleLarge.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: color,
-                  fontSize: 18,
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.textLight.withOpacity(0.75),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.textLight.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              ],
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.attach_money_outlined,
+                    color: AppColors.primary,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        loc.translate("dashboard.today_sales"),
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        FormatUtils.formatCurrency(provider.totalAmount),
+                        style: AppTextStyles.titleLarge.copyWith(
+                          color: AppColors.textPrimary,
+                          letterSpacing: 0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActionsSection(BuildContext context, AppLocalizations loc) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          Text(
+            loc.translate('dashboard.quick_actions'),
+            style: AppTextStyles.titleMedium.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: ActionButton(
+                  title: loc.translate('menu.cash_sales'),
+                  icon: Icons.add_shopping_cart,
+                  color: AppColors.primary,
+                  onTap: () => _navigateToCashSales(context),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ActionButton(
+                  title: loc.translate('menu.receipts'),
+                  icon: Icons.receipt_long,
+                  color: AppColors.secondary,
+                  onTap: () => _navigateToReceipts(context),
+                ),
               ),
             ],
           ),
@@ -444,37 +313,13 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildActionButton({
-    required String title,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.2)),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: AppTextStyles.labelMedium.copyWith(
-                color: color,
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
+  void _navigateToCashSales(BuildContext context) {
+    // TODO: Implement navigation to cash sales
+    debugPrint('Navigate to Cash Sales');
+  }
+
+  void _navigateToReceipts(BuildContext context) {
+    // TODO: Implement navigation to receipts
+    debugPrint('Navigate to Receipts');
   }
 }
