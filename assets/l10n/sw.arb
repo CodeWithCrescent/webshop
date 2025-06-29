@@ -31,6 +31,14 @@
     "z_reports": "Z-Reports",
     "receipts": "Risiti"
   },
+  "common": {
+    "app_name": "WebSHOP",
+    "cancel": "Ghairi",
+    "logout": "Toka",
+    "logout_success": "Umetoka kwenye mfumo kwa mafanikio.",
+    "company_profile": "Wasifu wa Kampuni",
+    "unexpected_error": ""
+  },
   "dashboard": {
     "title": "Dashibodi",
     "welcome": "Karibu kwenye Dashibodi",
@@ -55,12 +63,43 @@
     "register_customer": "Sajili Mteja",
     "create_invoice": "Tengeneza Ankara"
   },
-  "common": {
-    "app_name": "WebSHOP",
+  "invontory": {
+    "inventoryTitle": "Malipo",
+    "searchProducts": "Tafuta bidhaa...",
+    "allCategories": "Zote",
+    "emptyInventoryTitle": "Hakuna Bidhaa Zilizopatikana",
+    "emptyInventorySubtitle": "Ongeza bidhaa yako ya kwanza kuanza",
+    "addFirstProduct": "Ongeza Bidhaa",
+    "inStock": "kwenye hifadhi",
+    "sortOptions": "Chaguo za Kupanga",
+    "sortNameAsc": "Jina (A-Z)",
+    "sortNameDesc": "Jina (Z-A)",
+    "sortPriceAsc": "Bei (Chini hadi Juu)",
+    "sortPriceDesc": "Bei (Juu hadi Chini)",
+    "sortStockAsc": "Hifadhi (Chini hadi Juu)",
+    "sortStockDesc": "Hifadhi (Juu hadi Chini)",
+    "addProduct": "Ongeza Bidhaa",
+    "editProduct": "Hariri Bidhaa",
+    "productCode": "Msimbo wa Bidhaa",
+    "productName": "Jina la Bidhaa",
+    "category": "Kategoria",
+    "selectCategory": "Chagua kategoria",
+    "addNewCategory": "+ Ongeza kategoria mpya",
+    "price": "Bei",
+    "taxCategory": "Aina ya Kodi",
+    "taxStandard": "Kawaida",
+    "taxSpecialRate": "Kiwango maalum",
+    "taxZeroRated": "Bila kodi",
+    "taxSpecialRelief": "Upunguzo maalum",
+    "taxExempted": "Muafaka",
+    "stock": "Hifadhi",
+    "save": "Hifadhi",
+    "update": "Sasisha",
     "cancel": "Ghairi",
-    "logout": "Toka",
-    "logout_success": "Umetoka kwenye mfumo kwa mafanikio.",
-    "company_profile": "Wasifu wa Kampuni",
-    "unexpected_error": ""
+    "add": "Ongeza",
+    "categoryName": "Jina la Kategoria",
+    "validationRequired": "Sehemu hii inahitajika",
+    "validationInvalidPrice": "Tafadhali ingiza bei halali",
+    "validationInvalidStock": "Tafadhali ingiza idadi halali ya hifadhi"
   }
 }
