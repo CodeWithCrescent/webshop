@@ -31,6 +31,14 @@
     "z_reports": "Z-Reports",
     "receipts": "Receipts"
   },
+  "common": {
+    "app_name": "WebSHOP",
+    "cancel": "Cancel",
+    "logout": "Logout",
+    "logout_success": "You have successfully logged out.",
+    "company_profile": "Company Profile",
+    "unexpected_error": "Unexpected error occured."
+  },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome back!",
@@ -55,12 +63,43 @@
     "register_customer": "Register Customer",
     "create_invoice": "Create Invoice"
   },
-  "common": {
-    "app_name": "WebSHOP",
+  "inventory": {
+    "inventoryTitle": "Inventory",
+    "searchProducts": "Search products...",
+    "allCategories": "All",
+    "emptyInventoryTitle": "No Products Found",
+    "emptyInventorySubtitle": "Add your first product to get started",
+    "addFirstProduct": "Add Product",
+    "inStock": "in stock",
+    "sortOptions": "Sort Options",
+    "sortNameAsc": "Name (A-Z)",
+    "sortNameDesc": "Name (Z-A)",
+    "sortPriceAsc": "Price (Low to High)",
+    "sortPriceDesc": "Price (High to Low)",
+    "sortStockAsc": "Stock (Low to High)",
+    "sortStockDesc": "Stock (High to Low)",
+    "addProduct": "Add Product",
+    "editProduct": "Edit Product",
+    "productCode": "Item Code",
+    "productName": "Item Name",
+    "category": "Category",
+    "selectCategory": "Select category",
+    "addNewCategory": "+ Add new category",
+    "price": "Price",
+    "taxCategory": "Tax Category",
+    "taxStandard": "Standard",
+    "taxSpecialRate": "Special rate",
+    "taxZeroRated": "Zero Rated",
+    "taxSpecialRelief": "Special Relief",
+    "taxExempted": "Exempted",
+    "stock": "Stock",
+    "save": "Save",
+    "update": "Update",
     "cancel": "Cancel",
-    "logout": "Logout",
-    "logout_success": "You have successfully logged out.",
-    "company_profile": "Company Profile",
-    "unexpected_error": "Unexpected error occured."
+    "add": "Add",
+    "categoryName": "Category Name",
+    "validationRequired": "This field is required",
+    "validationInvalidPrice": "Please enter a valid price",
+    "validationInvalidStock": "Please enter a valid stock quantity"
   }
 }
