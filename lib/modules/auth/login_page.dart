@@ -95,7 +95,9 @@ class _LoginFormState extends State<_LoginForm> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    final loc = AppLocalizations.of(context);
+    final loc = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     // Map raw error to localized message
     String getFriendlyError(String error) {
@@ -135,7 +137,7 @@ class _LoginFormState extends State<_LoginForm> {
         () => Navigator.pushReplacementNamed(context, '/layout'),
       );
     }
-    
+
     return Form(
       key: _formKey,
       child: Column(
