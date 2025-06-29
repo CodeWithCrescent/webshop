@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:webshop/core/constants/app_colors.dart';
+
 class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback onRefresh;

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/network/http_client.dart';
-import '../../../core/network/api_endpoints.dart';
+import 'package:webshop/core/network/api_endpoints.dart';
+import 'package:webshop/core/network/http_client.dart';
 
 class DashboardProvider with ChangeNotifier {
   final SharedPreferences prefs;
