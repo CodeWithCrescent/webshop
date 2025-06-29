@@ -1,25 +1,25 @@
 import 'package:intl/intl.dart';
 
 class FormatUtils {
-  // Currency formatter for TZS with no decimal places
+  // Currency formatter for TZS with 2 decimal places
   static final NumberFormat currencyFormat = NumberFormat.currency(
+    locale: 'en_TZ',
     symbol: 'TZS ',
-    decimalDigits: 0,
+    decimalDigits: 2,
   );
+
+  // Formats a number into TZS currency format with 2 decimal places.
+  // If the amount is null or 0, returns "TZS 0.00".
+  static String formatCurrency(dynamic amount) {
+    final parsedAmount = num.tryParse(amount?.toString() ?? '0') ?? 0;
+    return currencyFormat.format(parsedAmount);
+  }
 
   // Date formatter - formal TZ style (e.g., 12 June 2025)
   static final DateFormat timeFormat = DateFormat("d MMMM y", "en_US");
 
-  /// Formats a number into TZS currency format.
-  /// If the amount is null or 0, returns "TZS0".
-  static String formatCurrency(dynamic amount) {
-    final parsedAmount = num.tryParse(amount?.toString() ?? '0') ?? 0;
-    final value = (parsedAmount == 0) ? 0 : parsedAmount;
-    return currencyFormat.format(value);
-  }
-
-  /// Formats a date string (e.g., "2025-06-12") to "12 June 2025".
-  /// Returns an empty string if the input is null or invalid.
+  // Formats a date string (e.g., "2025-06-12") to "12 June 2025".
+  // Returns an empty string if the input is null or invalid.
   static String formatDate(String? dateString) {
     if (dateString == null) return '';
     try {
