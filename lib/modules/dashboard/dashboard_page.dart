@@ -251,7 +251,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Text(
                         FormatUtils.formatCurrency(provider.totalAmount),
                         style: AppTextStyles.titleLarge.copyWith(
-                          color: AppColors.textPrimary,
+                          color: AppColors.textPrimary.withOpacity(0.75),
                           letterSpacing: 0,
                         ),
                       ),
