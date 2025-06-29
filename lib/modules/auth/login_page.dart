@@ -109,23 +109,25 @@ class _LoginFormState extends State<_LoginForm> {
           lowerError.contains('network') ||
           lowerError.contains('connection') ||
           lowerError.contains('unable to connect')) {
-        return loc!.translate('network_error');
-      }
+        return loc!.translate('auth.error.network');
 
-      else if (lowerError.contains('dieexception') ||
+      } else if (lowerError.contains('dieexception') ||
               lowerError.contains('auth') ||
               lowerError.contains('unauthorized')) {
-        return loc!.translate('login_error');
+        return loc!.translate('auth.error.login_failed');
+
       } else if (lowerError.contains('invalid credentials') ||
           lowerError.contains('invalid username') ||
           lowerError.contains('invalid password')) {
-        return loc!.translate('invalid_credentials');
+        return loc!.translate('auth.error.invalid_credentials');
+
       } else if (lowerError.contains('user not found') ||
                  lowerError.contains('no user found')) {
-        return loc!.translate('user_not_found');
+        return loc!.translate('auth.error.login_failed');
+
       } else if (lowerError.contains('server error') ||
                  lowerError.contains('internal server error')) {
-        return loc!.translate('server_error');
+        return loc!.translate('auth.error.server');
       }
 
       // Fallback
@@ -143,7 +145,7 @@ class _LoginFormState extends State<_LoginForm> {
         children: [
           // Title
           Text(
-            loc!.translate('login_title'),
+            loc!.translate('auth.title'),
             style: AppTextStyles.headlineSmall.copyWith(
               fontWeight: FontWeight.w700,
               color: AppColors.textPrimary,
@@ -151,7 +153,7 @@ class _LoginFormState extends State<_LoginForm> {
           ),
           const SizedBox(height: 8),
           Text(
-            loc.translate('login_subtitle'),
+            loc.translate('auth.subtitle'),
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textSecondary,
             ),
@@ -187,7 +189,7 @@ class _LoginFormState extends State<_LoginForm> {
           
           // Username field
           Text(
-            loc.translate('username'),
+            loc.translate('auth.username'),
             style: AppTextStyles.labelLarge.copyWith(
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -197,12 +199,12 @@ class _LoginFormState extends State<_LoginForm> {
           TextFormField(
             controller: _usernameController,
             decoration: InputDecoration(
-              hintText: loc.translate('username_hint'),
+              hintText: loc.translate('auth.username_hint'),
               prefixIcon: const Icon(Icons.person_outline),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return loc.translate('validation_required');
+                return loc.translate('auth.validation_required');
               }
               return null;
             },
@@ -211,7 +213,7 @@ class _LoginFormState extends State<_LoginForm> {
           
           // Password field
           Text(
-            loc.translate('password'),
+            loc.translate('auth.password'),
             style: AppTextStyles.labelLarge.copyWith(
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -222,15 +224,15 @@ class _LoginFormState extends State<_LoginForm> {
             controller: _passwordController,
             obscureText: true,
             decoration: InputDecoration(
-              hintText: loc.translate('password_hint'),
+              hintText: loc.translate('auth.password_hint'),
               prefixIcon: const Icon(Icons.lock_outline),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return loc.translate('validation_required');
+                return loc.translate('auth.validation_required');
               }
               if (value.length < 6) {
-                return loc.translate('validation_password_length');
+                return loc.translate('auth.validation_password_length');
               }
               return null;
             },
@@ -249,7 +251,7 @@ class _LoginFormState extends State<_LoginForm> {
           //           activeColor: AppColors.primary,
           //         ),
           //         Text(
-          //           loc.translate('remember_me'),
+          //           loc.translate('auth.remember_me'),
           //           style: AppTextStyles.bodyMedium,
           //         ),
           //       ],
@@ -257,7 +259,7 @@ class _LoginFormState extends State<_LoginForm> {
           //     TextButton(
           //       onPressed: () {},
           //       child: Text(
-          //         loc.translate('forgot_password'),
+          //         loc.translate('auth.forgot_password'),
           //         style: AppTextStyles.bodyMedium.copyWith(
           //           color: AppColors.primary,
           //           fontWeight: FontWeight.w600,
@@ -289,7 +291,7 @@ class _LoginFormState extends State<_LoginForm> {
             child: authProvider.isLoading
                 ? const SpinKitThreeBounce(color: Colors.white, size: 20)
                 : Text(
-                    loc.translate('login_button'),
+                    loc.translate('auth.button'),
                     style: AppTextStyles.buttonTextLarge.copyWith(
                       fontWeight: FontWeight.w700,
                     ),

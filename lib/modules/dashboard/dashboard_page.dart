@@ -48,7 +48,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           child: AppBar(
             title: Text(
-              loc!.translate('dashboard_title'),
+              loc!.translate('dashboard.title'),
               style: const TextStyle(color: Colors.white),
             ),
             iconTheme: const IconThemeData(color: Colors.white),
@@ -109,17 +109,17 @@ class _DashboardPageState extends State<DashboardPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              loc.translate('dashboard_welcome'),
-                              style: AppTextStyles.headlineSmall.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w800,
+                              loc.translate('dashboard_subtitle'),
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: Colors.white.withOpacity(0.9),
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              loc.translate('dashboard_subtitle'),
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: Colors.white.withOpacity(0.9),
+                              loc.translate('dashboard_welcome'),
+                              style: AppTextStyles.headlineSmall.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
                               ),
                             ),
                           ],
