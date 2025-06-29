@@ -20,6 +20,7 @@ class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
           gradient: AppColors.primaryGradient,
         ),
         child: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.light,
           title: Text(
             title,
             style: const TextStyle(color: AppColors.textLight),
