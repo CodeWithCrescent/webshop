@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:webshop/core/localization/app_localizations.dart';
+
 class InventoryLocalizations {
   final BuildContext context;
 

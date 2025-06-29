@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:webshop/core/localization/app_localizations.dart';
+import 'package:webshop/core/localization/inventory_localizations.dart';
+import 'package:webshop/modules/inventory/models/category.dart';
 import 'package:webshop/modules/inventory/models/product.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/widgets/modal_header.dart';
@@ -58,7 +59,7 @@ class _ProductModalState extends State<ProductModal> {
   @override
   Widget build(BuildContext context) {
     final theme = AppTheme.lightTheme;
-    final loc = InventoryLocalizations(context)!;
+    final loc = InventoryLocalizations(context);
     final provider = context.read<InventoryProvider>();
 
     return Container(
@@ -272,8 +273,8 @@ class _ProductModalState extends State<ProductModal> {
   }
 
   void _showAddCategoryDialog() {
-    final theme = AppTheme.of(context);
-    final loc = AppLocalizations.of(context)!;
+    final theme = AppTheme.lightTheme;
+    final loc = InventoryLocalizations(context);
     final provider = context.read<InventoryProvider>();
     final controller = TextEditingController();
 

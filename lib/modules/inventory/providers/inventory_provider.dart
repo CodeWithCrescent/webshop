@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import '../../models/product.dart';
-import '../../models/category.dart';
-import '../../data/local/product_local_datasource.dart';
+import 'package:webshop/modules/inventory/data/local/product_local_datasource.dart';
+import 'package:webshop/modules/inventory/models/category.dart';
+import 'package:webshop/modules/inventory/models/product.dart';
 
 enum ProductSortOption {
   nameAsc,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:webshop/core/localization/app_localizations.dart';
+import 'package:webshop/core/localization/inventory_localizations.dart';
+import 'package:webshop/modules/inventory/models/product.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../shared/widgets/search_field.dart';
 import '../providers/inventory_provider.dart';
@@ -24,16 +25,16 @@ class _InventoryPageState extends State<InventoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final loc = InventoryLocalizations(context)!;
+    final loc = InventoryLocalizations(context);
     final theme = AppTheme.lightTheme;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(loc.inventoryTitle),
+        title: Text(loc.title),
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
-            onPressed: _showFilterDialog,
+            onPressed: () => _showFilterDialog(context),
           ),
         ],
       ),
@@ -63,7 +64,7 @@ class _InventoryPageState extends State<InventoryPage> {
   }
 
   Widget _buildCategoryChips() {
-    final loc = AppLocalizations.of(context)!;
+    final loc = InventoryLocalizations(context);
 
     return Consumer<InventoryProvider>(
       builder: (context, provider, _) {
@@ -99,7 +100,7 @@ class _InventoryPageState extends State<InventoryPage> {
   }
 
   Widget _buildProductList() {
-    final loc = AppLocalizations.of(context)!;
+    final loc = InventoryLocalizations(context);
 
     return Consumer<InventoryProvider>(
       builder: (context, provider, _) {
@@ -108,12 +109,30 @@ class _InventoryPageState extends State<InventoryPage> {
         }
 
         if (provider.products.isEmpty) {
-          return EmptyState(
-            icon: Icons.inventory,
-            title: loc.emptyInventoryTitle,
-            subtitle: loc.emptyInventorySubtitle,
-            actionText: loc.addFirstProduct,
-            onAction: () => _showProductModal(context, null),
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.inventory, size: 64, color: Colors.grey),
+                const SizedBox(height: 16),
+                Text(
+                  loc.emptyInventoryTitle,
+                  style: Theme.of(context).textTheme.titleMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  loc.emptyInventorySubtitle,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => _showProductModal(context, null),
+                  child: Text(loc.addFirstProduct),
+                ),
+              ],
+            ),
           );
         }
 
@@ -130,8 +149,8 @@ class _InventoryPageState extends State<InventoryPage> {
   }
 
   Widget _buildProductCard(BuildContext context, Product product) {
-    final theme = AppTheme.of(context);
-    final loc = AppLocalizations.of(context)!;
+    final theme = AppTheme.lightTheme;
+    final loc = InventoryLocalizations(context);
 
     return Card(
       elevation: 2,
@@ -194,7 +213,7 @@ class _InventoryPageState extends State<InventoryPage> {
                     '${product.stock} ${loc.inStock}',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: product.stock > 0
-                          ? theme.colorScheme.success
+                          ? theme.colorScheme.secondary
                           : theme.colorScheme.error,
                     ),
                   ),
@@ -237,7 +256,7 @@ class _InventoryPageState extends State<InventoryPage> {
   }
 
   void _showFilterDialog(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
+    final loc = InventoryLocalizations(context);
     final provider = Provider.of<InventoryProvider>(context, listen: false);
 
     showDialog(
@@ -264,7 +283,7 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  String _getSortOptionText(ProductSortOption option, AppLocalizations loc) {
+  String _getSortOptionText(ProductSortOption option, InventoryLocalizations loc) {
     switch (option) {
       case ProductSortOption.nameAsc:
         return loc.sortNameAsc;

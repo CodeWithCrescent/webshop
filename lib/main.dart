@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webshop/modules/inventory/data/local/product_local_datasource.dart';
+import 'package:webshop/modules/inventory/providers/inventory_provider.dart';
 import 'app.dart';
 import 'modules/dashboard/dashboard_provider.dart';
 import 'modules/inventory/models/product.dart';
