@@ -49,9 +49,9 @@ class _DashboardPageState extends State<DashboardPage> {
           child: AppBar(
             title: Text(
               loc!.translate('dashboard.title'),
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: AppColors.textLight),
             ),
-            iconTheme: const IconThemeData(color: Colors.white),
+            iconTheme: const IconThemeData(color: AppColors.textLight),
             backgroundColor: Colors.transparent,
             elevation: 0,
             actions: [
@@ -111,7 +111,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             Text(
                               loc.translate('dashboard.monthly_sales'),
                               style: AppTextStyles.bodyMedium.copyWith(
-                                color: Colors.white.withOpacity(0.9),
+                                color: AppColors.textLight.withOpacity(0.9),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -119,7 +119,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             Text(
                               FormatUtils.formatCurrency(provider.totalMonthAmount),
                               style: AppTextStyles.headlineSmall.copyWith(
-                                color: Colors.white,
+                                color: AppColors.textLight,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
@@ -129,12 +129,12 @@ class _DashboardPageState extends State<DashboardPage> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: AppColors.textLight.withOpacity(0.2),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
                           Icons.dashboard,
-                          color: Colors.white,
+                          color: AppColors.textLight,
                           size: 28,
                         ),
                       ),
@@ -144,7 +144,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.textLight,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
@@ -177,7 +177,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               Text(
                                 loc.translate("dashboard.today_sales"),
                                 style: AppTextStyles.bodySmall.copyWith(
-                                  color: Colors.black54,
+                                  color: AppColors.textSecondary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -185,7 +185,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               Text(
                                 FormatUtils.formatCurrency(provider.totalAmount),
                                 style: AppTextStyles.headlineSmall.copyWith(
-                                  color: Colors.black87,
+                                  color: AppColors.textPrimary,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -288,7 +288,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.textLight,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
