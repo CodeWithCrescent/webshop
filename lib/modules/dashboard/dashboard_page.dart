@@ -38,13 +38,13 @@ class _DashboardPageState extends State<DashboardPage> {
         child: Container(
           decoration: BoxDecoration(
             gradient: AppColors.primaryGradient,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withOpacity(0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: AppColors.primary.withOpacity(0.1),
+            //     blurRadius: 20,
+            //     offset: const Offset(0, 8),
+            //   ),
+            // ],
           ),
           child: AppBar(
             title: Text(
@@ -91,8 +91,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 gradient: AppColors.primaryGradient,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.3),
-                    blurRadius: 40,
+                    color: AppColors.primary.withOpacity(0.1),
+                    blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
                 ],
