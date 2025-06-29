@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:webshop/modules/dashboard/dashboard_page.dart';
+import 'package:webshop/modules/inventory/inventory_page.dart';
 import 'package:webshop/shared/layout_page.dart';
 import 'core/localization/app_localizations.dart';
 import 'core/theme/app_theme.dart';
@@ -16,11 +17,6 @@ class WebShopApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
-        // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        //   statusBarIconBrightness: Brightness.light,
-        //   statusBarBrightness: Brightness.dark,
-        // ));
-
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'WebSHOP',
@@ -32,6 +28,7 @@ class WebShopApp extends StatelessWidget {
             '/': (context) => const LoginPage(),
             '/layout': (context) => const LayoutPage(),
             '/dashboard': (context) => const DashboardPage(),
+            '/inventory': (context) => const InventoryPage(),
           },
           localizationsDelegates: const [
             AppLocalizations.delegate,
