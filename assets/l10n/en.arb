@@ -21,6 +21,14 @@
       "server": "Server error. Please try again later."
     }
   },
+  "menu": {
+    "home": "Home",
+    "inventory": "Inventory",
+    "cash_sales": "Cash Sales",
+    "customers": "Customers",
+    "z_reports": "Z-Reports",
+    "receipts": "Receipts"
+  },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome back!",
@@ -28,6 +36,7 @@
     "today_sales": "Today Sales",
     "today_receipts": "Today's Receipts",
     "monthly_sales": "Total Monthly Sales",
+    "last_receipt_date": "Last Receipt Date",
     "sale_date": "Sale Date",
     "total_orders": "Total Orders",
     "avg_sale": "Avg. Sales",
@@ -45,6 +54,7 @@
     "create_invoice": "Create Invoice"
   },
   "common": {
+    "app_name": "WebSHOP",
     "cancel": "Cancel",
     "logout": "Logout",
     "logout_success": "You have successfully logged out.",

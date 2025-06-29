@@ -21,6 +21,14 @@
       "server": "Hitilafu ya seva. Tafadhali jaribu tena baadaye."
     }
   },
+  "menu": {
+    "home": "Nyumbani",
+    "inventory": "Duka",
+    "cash_sales": "Uza",
+    "customers": "Wateja",
+    "z_reports": "Z-Reports",
+    "receipts": "Risiti"
+  },
   "dashboard": {
     "title": "Dashibodi",
     "welcome": "Karibu kwenye Dashibodi",
@@ -28,6 +36,7 @@
     "today_sales": "Mauzo ya Leo",
     "today_receipts": "Risiti za Leo",
     "monthly_sales": "Mauzo ya Mwezi",
+    "last_receipt_date": "",
     "sale_date": "Tarehe ya Mauzo",
     "total_orders": "Oda Zote",
     "avg_sale": "Wastani wa Mauzo",
@@ -39,15 +48,17 @@
     "view_all": "Tazama Zote",
     "generate_z_report": "Tengeneza Ripoti ya Z",
     "last_updated": "Imesasishwa Mwisho",
-    "quick_actions": "Vitendo vya Haraka",
-    "cash_sales": "Mauzo ya Pesa Taslimu",
+    "quick_actions": "Menyu za Haraka",
+    "cash_sales": "Uza kwa Pesa Taslimu",
     "register_customer": "Sajili Mteja",
     "create_invoice": "Tengeneza Ankara"
   },
   "common": {
+    "app_name": "WebSHOP",
     "cancel": "Ghairi",
     "logout": "Toka",
     "logout_success": "Umetoka kwenye mfumo kwa mafanikio.",
-    "company_profile": "Wasifu wa Kampuni"
+    "company_profile": "Wasifu wa Kampuni",
+    "unexpected_error": ""
   }
 }
