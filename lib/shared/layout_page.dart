@@ -46,6 +46,7 @@ class _LayoutPageState extends State<LayoutPage> {
                 title: Text(
                   loc?.translate('dashboard.cash_sales') ?? 'Cash Sales',
                   textAlign: TextAlign.center,
+                  style: const TextStyle(color: AppColors.secondary),
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -55,6 +56,7 @@ class _LayoutPageState extends State<LayoutPage> {
                 title: Text(
                   loc?.translate('dashboard.register_customer') ?? 'Register Customer',
                   textAlign: TextAlign.center,
+                  style: const TextStyle(color: AppColors.secondary),
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -64,6 +66,7 @@ class _LayoutPageState extends State<LayoutPage> {
                 title: Text(
                   loc?.translate('dashboard.create_invoice') ?? 'Create Invoice',
                   textAlign: TextAlign.center,
+                  style: const TextStyle(color: AppColors.secondary),
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
