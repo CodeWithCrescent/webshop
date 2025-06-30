@@ -40,60 +40,78 @@ class _LayoutPageState extends State<LayoutPage> {
 
   void _onTabTapped(BuildContext context, int index, AppLocalizations? loc) {
     if (index == 2) {
-      showModalBottomSheet(
-        context: context,
-        useSafeArea: true,
-        builder: (BuildContext context) {
-          return Wrap(
-            children: <Widget>[
-              ListTile(
-                title: Text(
-                  loc?.translate('dashboard.cash_sales') ?? 'Cash Sales',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.secondary),
-                ),
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                title: Text(
-                  loc?.translate('dashboard.register_customer') ?? 'Register Customer',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.secondary),
-                ),
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                title: Text(
-                  loc?.translate('dashboard.create_invoice') ?? 'Create Invoice',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.secondary),
-                ),
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                title: Text(
-                  loc?.translate('common.cancel') ?? 'Cancel',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.red),
-                ),
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
+      _showActionSheet(context, loc);
     } else {
       setState(() {
         _currentIndex = index;
       });
     }
   }
+
+  void _showActionSheet(BuildContext context, AppLocalizations? loc) {
+    List<Widget> actions = [];
+
+    switch (_currentIndex) {
+      case 0: // Home
+      case 4: // Z-Report
+        actions = [
+          _buildActionTile(
+              loc?.translate('dashboard.cash_sales') ?? 'Cash Sales'),
+          _buildActionTile(
+              loc?.translate('dashboard.create_invoice') ?? 'Create Invoice'),
+          _buildDivider(),
+          _buildCancelTile(loc),
+        ];
+        break;
+      case 1: // Inventory
+        actions = [
+          _buildActionTile(
+              loc?.translate('inventory.add_product') ?? 'Add New Product'),
+          _buildActionTile(
+              loc?.translate('inventory.add_category') ?? 'Add New Category'),
+          _buildDivider(),
+          _buildCancelTile(loc),
+        ];
+        break;
+      case 3: // Customers
+        actions = [
+          _buildActionTile(
+              loc?.translate('customers.add_customer') ?? 'Add Customer'),
+          _buildDivider(),
+          _buildCancelTile(loc),
+        ];
+        break;
+      default:
+        actions = [_buildCancelTile(loc)];
+    }
+
+    showModalBottomSheet(
+        context: context,
+        useSafeArea: true,
+        isScrollControlled: true,
+        builder: (context) => Wrap(children: actions),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ));
+  }
+
+  Widget _buildActionTile(String title) => ListTile(
+        title: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: AppColors.secondary),
+        ),
+        onTap: () => Navigator.pop(context),
+      );
+
+  Widget _buildCancelTile(AppLocalizations? loc) => ListTile(
+        title: Text(
+          loc?.translate('common.cancel') ?? 'Cancel',
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Colors.red),
+        ),
+        onTap: () => Navigator.pop(context),
+      );
+
+  Widget _buildDivider() => const Divider(height: 1);
 }
