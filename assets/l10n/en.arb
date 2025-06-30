@@ -64,7 +64,7 @@
     "create_invoice": "Create Invoice"
   },
   "inventory": {
-    "inventoryTitle": "Inventory",
+    "title": "Inventory",
     "searchProducts": "Search products...",
     "allCategories": "All",
     "emptyInventoryTitle": "No Products Found",
@@ -87,7 +87,7 @@
     "addNewCategory": "+ Add new category",
     "price": "Price",
     "taxCategory": "Tax Category",
-    "taxStandard": "Standard",
+    "taxStandard": "Standard (18%)",
     "taxSpecialRate": "Special rate",
     "taxZeroRated": "Zero Rated",
     "taxSpecialRelief": "Special Relief",
@@ -98,8 +98,10 @@
     "cancel": "Cancel",
     "add": "Add",
     "categoryName": "Category Name",
-    "validationRequired": "This field is required",
-    "validationInvalidPrice": "Please enter a valid price",
-    "validationInvalidStock": "Please enter a valid stock quantity"
+    "validation": {
+      "required": "This field is required",
+      "invalidPrice": "Please enter a valid price",
+      "invalidStock": "Please enter a valid stock quantity"
+    }
   }
 }

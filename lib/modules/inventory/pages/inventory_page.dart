@@ -24,7 +24,7 @@ class _InventoryPageState extends State<InventoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
+    final loc = InventoryLocalizations(context)!;
     final theme = AppTheme.lightTheme;
 
     return Scaffold(

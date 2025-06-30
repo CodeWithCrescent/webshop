@@ -58,7 +58,7 @@ class _ProductModalState extends State<ProductModal> {
   @override
   Widget build(BuildContext context) {
     final theme = AppTheme.lightTheme;
-    final loc = AppLocalizations.of(context)!;
+    final loc = InventoryLocalizations(context)!;
     final provider = context.read<InventoryProvider>();
 
     return Container(

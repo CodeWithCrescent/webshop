@@ -63,8 +63,8 @@
     "register_customer": "Sajili Mteja",
     "create_invoice": "Tengeneza Ankara"
   },
-  "invontory": {
-    "inventoryTitle": "Malipo",
+  "inventory": {
+    "title": "Malipo",
     "searchProducts": "Tafuta bidhaa...",
     "allCategories": "Zote",
     "emptyInventoryTitle": "Hakuna Bidhaa Zilizopatikana",
@@ -87,7 +87,7 @@
     "addNewCategory": "+ Ongeza kategoria mpya",
     "price": "Bei",
     "taxCategory": "Aina ya Kodi",
-    "taxStandard": "Kawaida",
+    "taxStandard": "Kawaida (18%)",
     "taxSpecialRate": "Kiwango maalum",
     "taxZeroRated": "Bila kodi",
     "taxSpecialRelief": "Upunguzo maalum",
@@ -98,8 +98,10 @@
     "cancel": "Ghairi",
     "add": "Ongeza",
     "categoryName": "Jina la Kategoria",
-    "validationRequired": "Sehemu hii inahitajika",
-    "validationInvalidPrice": "Tafadhali ingiza bei halali",
-    "validationInvalidStock": "Tafadhali ingiza idadi halali ya hifadhi"
+    "validation": {
+      "required": "Sehemu hii inahitajika",
+      "invalidPrice": "Tafadhali ingiza bei halali",
+      "invalidStock": "Tafadhali ingiza idadi halali ya hifadhi"
+    }
   }
 }
