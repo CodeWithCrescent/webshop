@@ -84,4 +84,19 @@ class AuthProvider with ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  Future<void> logout() async {
+    _isLoading = true;
+    notifyListeners();
+
+    await _prefs.remove('access_token');
+    await _prefs.remove('token_expiry');
+    await _prefs.remove('name');
+    await _prefs.remove('email');
+
+    _isAuthenticated = false;
+    _isLoading = false;
+
+    notifyListeners();
+  }
 }
