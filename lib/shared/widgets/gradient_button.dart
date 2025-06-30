@@ -19,7 +19,7 @@ class GradientButton extends StatelessWidget {
     this.height = 56,
     this.borderRadius = const BorderRadius.all(Radius.circular(16)),
     this.gradient = const LinearGradient(
-      colors: [AppColors.primary, AppColors.secondary],
+      colors: [AppColors.primary, AppColors.primary],
     ),
     this.isDisabled = false,
     this.elevation = 4,
