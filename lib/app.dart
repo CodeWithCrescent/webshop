@@ -23,9 +23,9 @@ class WebShopApp extends StatelessWidget {
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: themeProvider.themeMode,
-          initialRoute: '/',
+          initialRoute: '/login',
           routes: {
-            '/': (context) => const LoginPage(),
+            '/login': (context) => const LoginPage(),
             '/layout': (context) => const LayoutPage(),
             '/dashboard': (context) => const DashboardPage(),
             '/inventory': (context) => const InventoryPage(),
