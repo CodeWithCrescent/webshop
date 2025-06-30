@@ -35,6 +35,10 @@ class ProductLocalDataSource {
     await categoryBox.put(category.id, category);
   }
 
+  Future<void> updateCategory(Category category) async {
+    await categoryBox.put(category.id, category);
+  }
+
   Future<void> deleteCategory(String categoryId) async {
     await categoryBox.delete(categoryId);
   }
