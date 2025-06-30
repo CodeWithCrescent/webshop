@@ -26,6 +26,10 @@ class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
             title,
             style: const TextStyle(color: AppColors.textLight),
           ),
+          titleTextStyle: const TextStyle(
+            color: AppColors.textLight,
+            fontSize: 22,
+          ),
           iconTheme: const IconThemeData(color: AppColors.textLight),
           backgroundColor: Colors.transparent,
           elevation: 0,
