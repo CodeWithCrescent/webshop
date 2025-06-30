@@ -12,7 +12,7 @@ import 'modules/inventory/models/category.dart';
 import 'shared/providers/auth_provider.dart';
 import 'core/localization/app_localizations.dart';
 import 'core/theme/theme_provider.dart';
-import 'core/network/http_client.dart';// Add if you have z-reports
+import 'core/network/http_client.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
