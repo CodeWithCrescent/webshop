@@ -146,7 +146,7 @@ class _ProductModalState extends State<ProductModal> {
                       ],
                       onChanged: (value) {
                         if (value == '__add_new__') {
-                          _showAddCategoryDialog();
+                          _showAddCategoryDialog(provider);
                         } else {
                           setState(() => _selectedCategory = value);
                         }
@@ -272,10 +272,9 @@ class _ProductModalState extends State<ProductModal> {
     );
   }
 
-  void _showAddCategoryDialog() {
+  void _showAddCategoryDialog(InventoryProvider provider) {
     final theme = AppTheme.lightTheme;
     final loc = InventoryLocalizations(context);
-    final provider = context.read<InventoryProvider>();
     final controller = TextEditingController();
 
     showDialog(
@@ -312,8 +311,12 @@ class _ProductModalState extends State<ProductModal> {
                 if (controller.text.isNotEmpty) {
                   try {
                     await provider.addCategory(Category(name: controller.text));
+                    // Refresh categories after adding
+                    await provider.loadCategories();
+                    if (mounted) {
+                      setState(() => _selectedCategory = controller.text);
+                    }
                     Navigator.pop(context);
-                    setState(() => _selectedCategory = controller.text);
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
