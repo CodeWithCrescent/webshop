@@ -5,11 +5,13 @@ import 'package:webshop/core/constants/app_colors.dart';
 class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback onRefresh;
+  final List<Widget>? actions;
 
   const WebshopAppBar({
     super.key,
     required this.title,
     required this.onRefresh,
+    this.actions,
   });
 
   @override
@@ -33,13 +35,15 @@ class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
           iconTheme: const IconThemeData(color: AppColors.textLight),
           backgroundColor: Colors.transparent,
           elevation: 0,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: onRefresh,
-              tooltip: 'Refresh',
-            ),
-          ],
+          actions: actions != null && actions!.isNotEmpty
+              ? actions
+              : [
+                  IconButton(
+                    icon: const Icon(Icons.refresh),
+                    onPressed: onRefresh,
+                    tooltip: 'Refresh',
+                  ),
+                ],
         ),
       ),
     );
