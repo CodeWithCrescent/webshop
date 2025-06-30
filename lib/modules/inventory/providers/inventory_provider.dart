@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:webshop/core/utils/debouncer.dart';
 import 'package:webshop/modules/inventory/data/local/product_local_datasource.dart';
 import 'package:webshop/modules/inventory/models/category.dart';
 import 'package:webshop/modules/inventory/models/product.dart';
@@ -22,6 +24,10 @@ class InventoryProvider with ChangeNotifier {
   String? _selectedCategory;
   ProductSortOption _sortOption = ProductSortOption.nameAsc;
   bool _isLoading = false;
+  String? _error;
+
+  Timer? _debounceTimer;
+  final Debouncer _searchDebouncer = Debouncer(delay: const Duration(milliseconds: 300));
 
   List<Product> get products => _filteredProducts;
   List<Category> get categories => _categories;
@@ -29,8 +35,16 @@ class InventoryProvider with ChangeNotifier {
   String? get selectedCategory => _selectedCategory;
   ProductSortOption get sortOption => _sortOption;
   bool get isLoading => _isLoading;
+  String? get error => _error;
 
   InventoryProvider({required this.localDataSource});
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    _searchDebouncer.dispose();
+    super.dispose();
+  }
 
   Future<void> init() async {
     await loadProducts();
@@ -44,8 +58,9 @@ class InventoryProvider with ChangeNotifier {
     try {
       _products = await localDataSource.getProducts();
       _applyFilters();
+      _error = null;
     } catch (e) {
-      debugPrint('Error loading products: $e');
+      _error = e.toString();
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -57,7 +72,7 @@ class InventoryProvider with ChangeNotifier {
       _categories = await localDataSource.getCategories();
       notifyListeners();
     } catch (e) {
-      debugPrint('Error loading categories: $e');
+      _error = e.toString();
     }
   }
 
@@ -119,9 +134,39 @@ class InventoryProvider with ChangeNotifier {
     }
   }
 
+  Future<void> updateCategory(Category category) async {
+    try {
+      await localDataSource.updateCategory(category);
+      await loadCategories();
+    } catch (e) {
+      debugPrint('Error updating category: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> deleteCategory(String categoryId) async {
+    try {
+      await localDataSource.deleteCategory(categoryId);
+      await loadCategories();
+      if (_selectedCategory != null) {
+        final category = _categories.firstWhere(
+          (c) => c.id == categoryId,
+          orElse: () => Category(name: ''),
+        );
+        if (category.name == _selectedCategory) {
+          _selectedCategory = null;
+        }
+      }
+      _applyFilters();
+    } catch (e) {
+      debugPrint('Error deleting category: $e');
+      rethrow;
+    }
+  }
+
   void setSearchQuery(String query) {
     _searchQuery = query;
-    _applyFilters();
+    _searchDebouncer.run(_applyFilters);
   }
 
   void setCategoryFilter(String? category) {
@@ -136,14 +181,16 @@ class InventoryProvider with ChangeNotifier {
 
   void _applyFilters() {
     _filteredProducts = _products.where((product) {
-      final matchesSearch = product.name.toLowerCase().contains(_searchQuery.toLowerCase()) || 
-                          product.code.toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesSearch = _searchQuery.isEmpty ||
+          product.name.toLowerCase().contains(_searchQuery.toLowerCase()) || 
+          product.code.toLowerCase().contains(_searchQuery.toLowerCase());
       final matchesCategory = _selectedCategory == null || 
                             product.category == _selectedCategory;
       return matchesSearch && matchesCategory;
     }).toList();
 
     _sortProducts();
+    notifyListeners();
   }
 
   void _sortProducts() {
