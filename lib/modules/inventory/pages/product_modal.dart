@@ -184,7 +184,7 @@ class _ProductModalState extends State<ProductModal> {
                       items: [
                         DropdownMenuItem(
                           value: 1,
-                          child: Text('${loc.taxStandard} (18%)'),
+                          child: Text(loc.taxStandard),
                         ),
                         DropdownMenuItem(
                           value: 2,
