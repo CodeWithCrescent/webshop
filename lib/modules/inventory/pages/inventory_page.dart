@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
-
 import 'package:webshop/core/constants/app_colors.dart';
 import 'package:webshop/core/localization/inventory_localizations.dart';
+import 'package:webshop/modules/inventory/models/category.dart';
 import 'package:webshop/modules/inventory/models/product.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/search_field.dart';
@@ -36,80 +36,184 @@ class _InventoryPageState extends State<InventoryPage> {
         title: loc.title,
         onRefresh: () => context.read<InventoryProvider>().init(),
       ),
-      body: Consumer<InventoryProvider>(
-        builder: (context, provider, _) {
-          if (provider.isLoading && provider.products.isEmpty) {
-            return const Center(child: SpinKitCircle(color: AppColors.primary));
-          }
+      body: RefreshIndicator(
+        onRefresh: () => context.read<InventoryProvider>().init(),
+        child: Consumer<InventoryProvider>(
+          builder: (context, provider, _) {
+            if (provider.isLoading && provider.products.isEmpty) {
+              return const Center(child: SpinKitCircle(color: AppColors.primary));
+            }
 
-          // if (provider.error != null) {
-          //   return Center(child: Text('Error: ${provider.error}'));
-          // }
+            if (provider.error != null) {
+              return Center(child: Text('Error: ${provider.error}'));
+            }
 
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: SearchField(
-                        hintText: loc.searchProducts,
-                        onChanged: provider.setSearchQuery,
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: SearchField(
+                          hintText: loc.searchProducts,
+                          onChanged: provider.setSearchQuery,
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.filter_list),
-                      onPressed: () => _showFilterDialog(context),
-                    ),
-                  ],
+                      IconButton(
+                        icon: const Icon(Icons.filter_list),
+                        onPressed: () => _showFilterDialog(context, provider),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              _buildCategoryChips(provider),
-              Expanded(child: _buildProductList(provider)),
-            ],
-          );
-        },
+                _buildCategoryChips(provider, loc),
+                Expanded(child: _buildProductList(provider, loc)),
+              ],
+            );
+          },
+        ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   backgroundColor: Theme.of(context).primaryColor,
-      //   foregroundColor: Colors.white,
-      //   child: const Icon(Icons.add),
-      //   onPressed: () => _showProductModal(context, null),
-      // ),
     );
   }
 
-  Widget _buildCategoryChips(InventoryProvider provider) {
-    final loc = InventoryLocalizations(context);
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Row(
-        children: [
-          FilterChip(
-            label: Text(loc.allCategories),
-            selected: provider.selectedCategory == null,
-            onSelected: (_) => provider.setCategoryFilter(null),
-          ),
-          const SizedBox(width: 4),
-          ...provider.categories.map((category) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: FilterChip(
-                  label: Text(category.name),
-                  selected: provider.selectedCategory == category.name,
-                  onSelected: (_) => provider.setCategoryFilter(category.name),
+  Widget _buildCategoryChips(InventoryProvider provider, InventoryLocalizations loc) {
+    return SizedBox(
+      height: 50,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        itemCount: provider.categories.length + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: ChoiceChip(
+                label: Text(loc.allCategories),
+                selected: provider.selectedCategory == null,
+                onSelected: (_) => provider.setCategoryFilter(null),
+                backgroundColor: AppColors.cardLight,
+                selectedColor: AppColors.primary.withOpacity(0.2),
+                labelStyle: TextStyle(
+                  color: provider.selectedCategory == null 
+                      ? AppColors.primary 
+                      : AppColors.textPrimary,
                 ),
-              )),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: provider.selectedCategory == null 
+                        ? AppColors.primary 
+                        : Colors.grey[300]!,
+                  ),
+                ),
+              ),
+            );
+          }
+          
+          final category = provider.categories[index - 1];
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: GestureDetector(
+              onLongPress: () => _showCategoryOptions(context, category, provider),
+              child: ChoiceChip(
+                label: Text(category.name),
+                selected: provider.selectedCategory == category.name,
+                onSelected: (_) => provider.setCategoryFilter(category.name),
+                backgroundColor: AppColors.cardLight,
+                selectedColor: AppColors.primary.withOpacity(0.2),
+                labelStyle: TextStyle(
+                  color: provider.selectedCategory == category.name 
+                      ? AppColors.primary 
+                      : AppColors.textPrimary,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: provider.selectedCategory == category.name 
+                        ? AppColors.primary 
+                        : Colors.grey[300]!,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showCategoryOptions(BuildContext context, Category category, InventoryProvider provider) {
+    final loc = InventoryLocalizations(context);
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(category.name),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(loc.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _showEditCategoryDialog(context, category, provider);
+            },
+            child: Text(loc.edit),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await provider.deleteCategory(category.id);
+            },
+            child: Text(loc.delete, style: const TextStyle(color: Colors.red)),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildProductList(InventoryProvider provider) {
+  void _showEditCategoryDialog(BuildContext context, Category category, InventoryProvider provider) {
     final loc = InventoryLocalizations(context);
+    final controller = TextEditingController(text: category.name);
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(loc.editCategory),
+        content: TextFormField(
+          controller: controller,
+          decoration: InputDecoration(
+            labelText: loc.categoryName,
+            border: const OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(loc.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (controller.text.isNotEmpty) {
+                final updated = Category(
+                  id: category.id,
+                  name: controller.text,
+                  createdAt: category.createdAt,
+                );
+                await provider.updateCategory(updated);
+                Navigator.pop(context);
+              }
+            },
+            child: Text(loc.save),
+          ),
+        ],
+      ),
+    );
+  }
 
+  Widget _buildProductList(InventoryProvider provider, InventoryLocalizations loc) {
     if (provider.products.isEmpty) {
       return Center(
         child: Column(
@@ -141,13 +245,12 @@ class _InventoryPageState extends State<InventoryPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: provider.products.length,
       itemBuilder: (context, index) {
-        return _buildProductCard(provider.products[index]);
+        return _buildProductCard(provider.products[index], loc);
       },
     );
   }
 
-  Widget _buildProductCard(Product product) {
-    final loc = InventoryLocalizations(context);
+  Widget _buildProductCard(Product product, InventoryLocalizations loc) {
     final theme = Theme.of(context);
 
     return Card(
@@ -239,9 +342,8 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  void _showFilterDialog(BuildContext context) {
+  void _showFilterDialog(BuildContext context, InventoryProvider provider) {
     final loc = InventoryLocalizations(context);
-    final provider = context.read<InventoryProvider>();
 
     showDialog(
       context: context,
