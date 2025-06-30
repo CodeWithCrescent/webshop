@@ -103,7 +103,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 iconColor: AppColors.secondary,
                 title: loc.translate('dashboard.today_receipts'),
                 value: provider.totalReceipts.toString(),
-                subtitle: loc.translate('dashboard.last_receipt_date'),
+                subtitle: loc.translate('dashboard.date'),
                 subtitleValue: provider.date ?? '-',
               ),
             ),
@@ -129,7 +129,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   color: AppColors.secondary,
                 ),
                 GridStatCard(
-                  title: loc.translate('dashboard.last_receipt_date'),
+                  title: loc.translate('dashboard.date'),
                   value: provider.date ?? '-',
                   icon: Icons.calendar_month,
                   color: AppColors.primary,
