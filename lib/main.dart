@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webshop/modules/inventory/data/local/product_local_datasource.dart';
 import 'package:webshop/modules/inventory/providers/inventory_provider.dart';
+import 'package:webshop/modules/settings/providers/company_profile_provider.dart';
 import 'app.dart';
 import 'modules/dashboard/dashboard_provider.dart';
 import 'modules/inventory/models/product.dart';
@@ -11,6 +12,7 @@ import 'modules/inventory/models/category.dart';
 import 'shared/providers/auth_provider.dart';
 import 'core/localization/app_localizations.dart';
 import 'core/theme/theme_provider.dart';
+import 'core/network/http_client.dart';// Add if you have z-reports
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +33,9 @@ Future<void> _init() async {
   final productBox = await Hive.openBox<Product>('products');
   final categoryBox = await Hive.openBox<Category>('categories');
 
+  // Create HTTP client
+  final httpClient = HttpClient(prefs: prefs);
+
   runApp(
     MultiProvider(
       providers: [
@@ -45,6 +50,12 @@ Future<void> _init() async {
             ),
           ),
         ),
+        ChangeNotifierProvider(
+          create: (_) => CompanyProfileProvider(httpClient: httpClient),
+        ),
+        // ChangeNotifierProvider(create: (_) => CustomerProvider(httpClient: httpClient)),
+        // ChangeNotifierProvider(create: (_) => ReceiptProvider(httpClient: httpClient)),
+        // ChangeNotifierProvider(create: (_) => ZReportProvider(httpClient: httpClient)),
       ],
       child: const WebShopApp(),
     ),
