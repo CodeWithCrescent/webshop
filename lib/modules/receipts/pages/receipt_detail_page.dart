@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/modules/receipts/models/receipt.dart';
 import 'package:webshop/modules/receipts/providers/receipt_provider.dart';
@@ -109,11 +110,10 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
       final receipt = await _receiptFuture;
       final pdfBytes = await ReceiptHtmlView.generatePdf(receipt);
       
-      // TODO: Implement share functionality using share_plus package
-      // await Share.shareXFiles(
-      //   [XFile.fromData(pdfBytes, mimeType: 'application/pdf', name: 'Receipt_${receipt.receipt_number}.pdf')],
-      //   text: 'Receipt ${receipt.receipt_number}',
-      // );
+      await Share.shareXFiles(
+        [XFile.fromData(pdfBytes, mimeType: 'application/pdf', name: 'Receipt_${receipt.receipt_number}.pdf')],
+        text: 'Receipt ${receipt.receipt_number}',
+      );
       
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Share functionality coming soon')),
