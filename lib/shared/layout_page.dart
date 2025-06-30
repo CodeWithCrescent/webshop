@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:webshop/core/constants/app_colors.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
+import 'package:webshop/modules/customers/customers_page.dart';
 import 'package:webshop/modules/dashboard/dashboard_page.dart';
 import 'package:webshop/modules/inventory/pages/inventory_page.dart';
+import 'package:webshop/modules/zreport/zreports_page.dart';
 import 'package:webshop/shared/widgets/bottom_bar.dart';
 
 class LayoutPage extends StatefulWidget {
@@ -18,8 +20,8 @@ class _LayoutPageState extends State<LayoutPage> {
     const DashboardPage(),
     const InventoryPage(),
     const Placeholder(),
-    // CustomersPage(),
-    // ZReportsPage(),
+    const CustomersPage(),
+    const ZReportsPage(),
   ];
 
   @override
