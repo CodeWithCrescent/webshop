@@ -34,6 +34,12 @@
   "common": {
     "app_name": "WebSHOP",
     "cancel": "Cancel",
+    "save": "Save",
+    "update": "Update",
+    "cancel": "Cancel",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
     "logout": "Logout",
     "logout_success": "You have successfully logged out.",
     "company_profile": "Company Profile",
@@ -85,6 +91,7 @@
     "category": "Category",
     "selectCategory": "Select category",
     "addNewCategory": "+ Add new category",
+    "editCategory": "Edit Category",
     "price": "Price",
     "taxCategory": "Tax Category",
     "taxStandard": "Standard (18%)",
@@ -93,15 +100,65 @@
     "taxSpecialRelief": "Special Relief",
     "taxExempted": "Exempted",
     "stock": "Stock",
-    "save": "Save",
-    "update": "Update",
-    "cancel": "Cancel",
-    "add": "Add",
     "categoryName": "Category Name",
     "validation": {
       "required": "This field is required",
       "invalidPrice": "Please enter a valid price",
       "invalidStock": "Please enter a valid stock quantity"
     }
+  },
+  "customers": {
+    "title": "Customers",
+    "add_customer": "Add Customer",
+    "edit_customer": "Edit Customer",
+    "full_name": "Full Name",
+    "phone": "Phone Number",
+    "email": "Email",
+    "tin": "TIN Number",
+    "vrn": "VRN",
+    "empty_title": "No customers yet",
+    "empty_subtitle": "Add your first customer",
+    "validation": {
+      "required": "This field is required",
+      "invalid_phone": "Invalid phone number"
+    }
+  },
+  "zreport": {
+    "title": "Z-Reports",
+    "filter_all": "All Reports",
+    "filter_today": "Today",
+    "filter_last_month": "Last Month",
+    "filter_date": "Specific Date",
+    "filter_date_range": "Date Range",
+    "sort_newest": "Newest First",
+    "sort_oldest": "Oldest First",
+    "sort_highest": "Highest Amount",
+    "sort_lowest": "Lowest Amount"
+  },
+  "receipts": {
+    "title": "Receipts",
+    "receipt_details": "Receipt Details",
+    "no_receipt_found": "No receipt found",
+    "print": "Print",
+    "share": "Share",
+    "items": "Items",
+    "filter_all": "All Receipts",
+    "filter_today": "Today",
+    "filter_this_week": "This Week",
+    "filter_last_month": "Last Month",
+    "filter_date": "Specific Date",
+    "filter_date_range": "Date Range"
+  },
+  "settings": {
+    "company_profile": "Company Profile",
+    "company_name": "Company Name",
+    "mobile": "Mobile",
+    "address_line1": "Address Line 1",
+    "address_line2": "Address Line 2",
+    "address_line3": "Address Line 3",
+    "tin": "TIN Number",
+    "vrn": "VRN",
+    "serial_number": "Serial Number",
+    "tax_office": "Tax Office"
   }
 }
