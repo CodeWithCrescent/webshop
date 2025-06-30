@@ -27,6 +27,7 @@ class InventoryLocalizations {
   String get category => _translate('inventory.category');
   String get selectCategory => _translate('inventory.selectCategory');
   String get addNewCategory => _translate('inventory.addNewCategory');
+  String get editCategory => _translate('inventory.editCategory');
   String get price => _translate('inventory.price');
   String get taxCategory => _translate('inventory.taxCategory');
   String get taxStandard => _translate('inventory.taxStandard');
@@ -35,10 +36,12 @@ class InventoryLocalizations {
   String get taxSpecialRelief => _translate('inventory.taxSpecialRelief');
   String get taxExempted => _translate('inventory.taxExempted');
   String get stock => _translate('inventory.stock');
-  String get save => _translate('inventory.save');
-  String get update => _translate('inventory.update');
-  String get cancel => _translate('inventory.cancel');
-  String get add => _translate('inventory.add');
+  String get save => _translate('common.save');
+  String get update => _translate('common.update');
+  String get cancel => _translate('common.cancel');
+  String get add => _translate('common.add');
+  String get delete => _translate('common.delete');
+  String get edit => _translate('common.add');
   String get categoryName => _translate('inventory.categoryName');
   String get validationRequired => _translate('inventory.validation.required');
   String get validationInvalidPrice => _translate('inventory.validation.invalidPrice');
