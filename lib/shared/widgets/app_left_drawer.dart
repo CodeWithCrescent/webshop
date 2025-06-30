@@ -1,45 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webshop/core/constants/app_colors.dart';
+import 'package:webshop/shared/providers/auth_provider.dart';
 
 class AppLeftDrawer extends StatelessWidget {
-  const AppLeftDrawer({
-    super.key,
-  });
+  const AppLeftDrawer({super.key});
+
+  Future<Map<String, String?>> _loadUserPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    return {
+      'name': prefs.getString('name') ?? 'Guest',
+      'email': prefs.getString('email') ?? 'guest@webshop.co.tz',
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     return Drawer(
-      child: ListView(
-        padding: const EdgeInsets.all(0),
-        children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-            ),
-            child: UserAccountsDrawerHeader(
-              accountName: Text(
-                "Zalongwa User",
-                style: TextStyle(fontSize: 16, color: Colors.white),
+      child: FutureBuilder<Map<String, String?>>(
+        future: _loadUserPrefs(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final name = snapshot.data!['name']!;
+          final email = snapshot.data!['email']!;
+
+          return Column(
+            children: [
+              UserAccountsDrawerHeader(
+                decoration: const BoxDecoration(color: AppColors.primary),
+                accountName: Text(
+                  name,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                accountEmail: Text(
+                  email,
+                  style: const TextStyle(fontSize: 14),
+                ),
+                currentAccountPicture: const CircleAvatar(
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.person, size: 40),
+                ),
               ),
-              accountEmail: Text("ztl@gmail.com",
-                style: TextStyle(fontSize: 14, color: Colors.white),),
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text(' Company Profile '),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Logout'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
+              ListTile(
+                leading: const Icon(Icons.business),
+                title: const Text('Company Profile'),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Navigate to profile screen if needed
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('Logout'),
+                onTap: () async {
+                  await authProvider.logout();
+                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }
