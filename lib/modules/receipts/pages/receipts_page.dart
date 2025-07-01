@@ -123,7 +123,7 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: InkWell(
-        onTap: () => _navigateToReceiptDetail(receipt.receipt_number),
+        onTap: () => _navigateToReceiptDetail(receipt.receiptNumber),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -133,7 +133,7 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Receipt #${receipt.receipt_number}',
+                    'Receipt #${receipt.receiptNumber}',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -150,11 +150,11 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    receipt.customer_name,
+                    receipt.customerName,
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                   Text(
-                    currencyFormat.format(receipt.total_incl_of_tax),
+                    currencyFormat.format(receipt.totalInclOfTax),
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.green,
@@ -171,7 +171,7 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                   Text(
-                    receipt.receipt_time,
+                    receipt.receiptTime,
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                 ],
