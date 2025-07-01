@@ -6,7 +6,6 @@ import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/modules/zreport/models/zreport.dart';
 import 'package:webshop/modules/zreport/providers/zreport_provider.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
-import 'package:webshop/shared/widgets/custom_date_range_picker.dart';
 import 'package:webshop/shared/widgets/search_field.dart';
 
 class ZReportsPage extends StatefulWidget {
@@ -48,8 +47,10 @@ class _ZReportsPageState extends State<ZReportsPage> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
     final provider = context.watch<ZReportProvider>();
+    final currencyFormat = NumberFormat.currency(locale: 'en_US', symbol: 'TZS');
 
     return Scaffold(
+      backgroundColor: AppColors.primary.withOpacity(0.1),
       appBar: WebshopAppBar(
         title: loc?.translate('zreport.title') ?? 'Z-Reports',
         onRefresh: () => provider.fetchZReports(refresh: true),
@@ -58,20 +59,10 @@ class _ZReportsPageState extends State<ZReportsPage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: SearchField(
-                    controller: _searchController,
-                    hintText: loc?.translate('common.search') ?? 'Search',
-                    onChanged: provider.setSearchQuery,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.filter_alt),
-                  onPressed: () => _showFilterDialog(context),
-                ),
-              ],
+            child: SearchField(
+              controller: _searchController,
+              hintText: loc?.translate('common.search') ?? 'Search Z-Reports',
+              onChanged: provider.setSearchQuery,
             ),
           ),
           Expanded(
@@ -91,7 +82,8 @@ class _ZReportsPageState extends State<ZReportsPage> {
                           : const SizedBox(),
                     );
                   }
-                  return _buildReportCard(provider.reports[index]);
+                  final report = provider.reports[index];
+                  return _buildReportCard(report, currencyFormat);
                 },
               ),
             ),
@@ -101,10 +93,9 @@ class _ZReportsPageState extends State<ZReportsPage> {
     );
   }
 
-  Widget _buildReportCard(ZReport report) {
-    final currencyFormat = NumberFormat.currency(locale: 'en_US', symbol: 'TZS');
-    
+  Widget _buildReportCard(ZReport report, NumberFormat currencyFormat) {
     return Card(
+      surfaceTintColor: AppColors.cardLight,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -115,7 +106,7 @@ class _ZReportsPageState extends State<ZReportsPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Report #${report.reportNumber}',
+                  'Z-Report #${report.reportNumber}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -123,9 +114,7 @@ class _ZReportsPageState extends State<ZReportsPage> {
                 ),
                 Text(
                   report.formattedDate,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -138,11 +127,10 @@ class _ZReportsPageState extends State<ZReportsPage> {
                   style: TextStyle(color: Colors.grey[600]),
                 ),
                 Text(
-                  currencyFormat.format(report.total),
+                  currencyFormat.format(report.totalGross),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: AppColors.primary,
+                    color: Colors.green,
                   ),
                 ),
               ],
@@ -152,11 +140,11 @@ class _ZReportsPageState extends State<ZReportsPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'VAT: ${currencyFormat.format(report.vat)}',
+                  'Subtotal: ${currencyFormat.format(report.subtotal)}',
                   style: TextStyle(color: Colors.grey[600]),
                 ),
                 Text(
-                  'Gross: ${currencyFormat.format(report.totalGross)}',
+                  'VAT: ${currencyFormat.format(report.vat)}',
                   style: TextStyle(color: Colors.grey[600]),
                 ),
               ],
@@ -164,161 +152,6 @@ class _ZReportsPageState extends State<ZReportsPage> {
           ],
         ),
       ),
-    );
-  }
-
-  void _showFilterDialog(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    final provider = context.read<ZReportProvider>();
-    DateTimeRange? tempDateRange;
-    DateTime? tempDate;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text(loc?.translate('common.filter') ?? 'Filter'),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildFilterOption(
-                      context,
-                      provider.currentFilter == ZReportFilter.all,
-                      loc?.translate('zreport.filter_all') ?? 'All Reports',
-                      () => setState(() => tempDateRange = tempDate = null),
-                    ),
-                    _buildFilterOption(
-                      context,
-                      provider.currentFilter == ZReportFilter.today,
-                      loc?.translate('zreport.filter_today') ?? 'Today',
-                      () => setState(() => tempDateRange = tempDate = null),
-                    ),
-                    _buildFilterOption(
-                      context,
-                      provider.currentFilter == ZReportFilter.lastMonth,
-                      loc?.translate('zreport.filter_last_month') ?? 'Last Month',
-                      () => setState(() => tempDateRange = tempDate = null),
-                    ),
-                    _buildFilterOption(
-                      context,
-                      provider.currentFilter == ZReportFilter.date,
-                      loc?.translate('zreport.filter_date') ?? 'Specific Date',
-                      () async {
-                        final date = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2020),
-                          lastDate: DateTime.now(),
-                        );
-                        if (date != null) {
-                          setState(() => tempDate = date);
-                        }
-                      },
-                      trailing: tempDate != null
-                          ? Text(DateFormat('dd MMM yyyy').format(tempDate!))
-                          : null,
-                    ),
-                    _buildFilterOption(
-                      context,
-                      provider.currentFilter == ZReportFilter.dateRange,
-                      loc?.translate('zreport.filter_date_range') ?? 'Date Range',
-                      () async {
-                        final range = await showCustomDateRangePicker(
-                          context: context,
-                          firstDate: DateTime(2020),
-                          lastDate: DateTime.now(),
-                          initialDateRange: DateTimeRange(
-                            start: DateTime.now().subtract(const Duration(days: 7)),
-                            end: DateTime.now(),
-                          ),
-                        );
-                        if (range != null) {
-                          setState(() => tempDateRange = range);
-                        }
-                      },
-                      trailing: tempDateRange != null
-                          ? Text(
-                              '${DateFormat('dd MMM').format(tempDateRange!.start)} - ${DateFormat('dd MMM yyyy').format(tempDateRange!.end)}')
-                          : null,
-                    ),
-                    const Divider(),
-                    Text(loc?.translate('common.sort_by') ?? 'Sort By'),
-                    RadioListTile<ZReportSort>(
-                      title: Text(loc?.translate('zreport.sort_newest') ?? 'Newest First'),
-                      value: ZReportSort.newestFirst,
-                      groupValue: provider.currentSort,
-                      onChanged: (value) => setState(() {}),
-                    ),
-                    RadioListTile<ZReportSort>(
-                      title: Text(loc?.translate('zreport.sort_oldest') ?? 'Oldest First'),
-                      value: ZReportSort.oldestFirst,
-                      groupValue: provider.currentSort,
-                      onChanged: (value) => setState(() {}),
-                    ),
-                    RadioListTile<ZReportSort>(
-                      title: Text(loc?.translate('zreport.sort_highest') ?? 'Highest Amount'),
-                      value: ZReportSort.highestAmount,
-                      groupValue: provider.currentSort,
-                      onChanged: (value) => setState(() {}),
-                    ),
-                    RadioListTile<ZReportSort>(
-                      title: Text(loc?.translate('zreport.sort_lowest') ?? 'Lowest Amount'),
-                      value: ZReportSort.lowestAmount,
-                      groupValue: provider.currentSort,
-                      onChanged: (value) => setState(() {}),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(loc?.translate('common.cancel') ?? 'Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    ZReportFilter selectedFilter = provider.currentFilter;
-                    if (tempDate != null) {
-                      selectedFilter = ZReportFilter.date;
-                    } else if (tempDateRange != null) {
-                      selectedFilter = ZReportFilter.dateRange;
-                    }
-                    provider.setFilter(
-                      selectedFilter,
-                      date: tempDate,
-                      range: tempDateRange,
-                    );
-                    Navigator.pop(context);
-                  },
-                  child: Text(loc?.translate('common.apply') ?? 'Apply'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildFilterOption(
-    BuildContext context,
-    bool isSelected,
-    String title,
-    VoidCallback onTap, {
-    Widget? trailing,
-  }) {
-    return ListTile(
-      title: Text(title),
-      trailing: trailing,
-      leading: Radio<bool>(
-        value: isSelected,
-        groupValue: true,
-        onChanged: (value) => onTap(),
-      ),
-      onTap: onTap,
     );
   }
 }
