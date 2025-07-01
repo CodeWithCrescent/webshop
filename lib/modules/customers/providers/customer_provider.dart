@@ -15,8 +15,10 @@ class CustomerProvider with ChangeNotifier {
 
   List<Customer> get customers => _filteredCustomers;
   bool get isLoading => _isLoading;
+  String? _error;
 
   CustomerProvider({required this.localDataSource, required HttpClient httpClient});
+  String? get error => _error;
 
   @override
   void dispose() {
@@ -40,14 +42,14 @@ class CustomerProvider with ChangeNotifier {
   }
 
   Future<void> addCustomer(Customer customer) async {
-    _isLoading = true;
-    notifyListeners();
-    
     try {
+      _isLoading = true;
+      notifyListeners();
+      
       await localDataSource.addCustomer(customer);
-      await fetchCustomers();
+      _error = null;
     } catch (e) {
-      debugPrint('Error adding customer: $e');
+      _error = e.toString();
       rethrow;
     } finally {
       _isLoading = false;
@@ -56,14 +58,14 @@ class CustomerProvider with ChangeNotifier {
   }
 
   Future<void> updateCustomer(Customer customer) async {
-    _isLoading = true;
-    notifyListeners();
-    
     try {
+      _isLoading = true;
+      notifyListeners();
+      
       await localDataSource.updateCustomer(customer);
-      await fetchCustomers();
+      _error = null;
     } catch (e) {
-      debugPrint('Error updating customer: $e');
+      _error = e.toString();
       rethrow;
     } finally {
       _isLoading = false;
@@ -72,14 +74,31 @@ class CustomerProvider with ChangeNotifier {
   }
 
   Future<void> deleteCustomer(String customerId) async {
-    _isLoading = true;
-    notifyListeners();
-    
     try {
+      _isLoading = true;
+      notifyListeners();
+      
       await localDataSource.deleteCustomer(customerId);
-      await fetchCustomers();
+      _error = null;
     } catch (e) {
-      debugPrint('Error deleting customer: $e');
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<List<Customer>> getCustomers() async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      
+      final customers = await localDataSource.getCustomers();
+      _error = null;
+      return customers;
+    } catch (e) {
+      _error = e.toString();
       rethrow;
     } finally {
       _isLoading = false;
