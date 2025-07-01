@@ -197,13 +197,14 @@ class _InventoryPageState extends State<InventoryPage> {
           ElevatedButton(
             onPressed: () async {
               if (controller.text.isNotEmpty) {
+                final navigator = Navigator.of(context);
                 final updated = Category(
                   id: category.id,
                   name: controller.text,
                   createdAt: category.createdAt,
                 );
                 await provider.updateCategory(updated);
-                Navigator.pop(context);
+                navigator.pop();
               }
             },
             child: Text(loc.save),
