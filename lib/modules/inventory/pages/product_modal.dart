@@ -233,6 +233,8 @@ class _ProductModalState extends State<ProductModal> {
                           ? null
                           : () async {
                               if (_formKey.currentState!.validate()) {
+                                final messenger = ScaffoldMessenger.of(context);
+                                final navigator = Navigator.of(context);
                                 final product = Product(
                                   id: widget.product?.id,
                                   code: _codeController.text,
@@ -245,9 +247,9 @@ class _ProductModalState extends State<ProductModal> {
                                 );
                                 try {
                                   await widget.onSave(product);
-                                  Navigator.pop(context);
+                                  navigator.pop();
                                 } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
+                                  messenger.showSnackBar(
                                     SnackBar(
                                       content: Text(e.toString()),
                                       backgroundColor: theme.colorScheme.error,
@@ -309,6 +311,8 @@ class _ProductModalState extends State<ProductModal> {
               ),
               onPressed: () async {
                 if (controller.text.isNotEmpty) {
+                  final messenger = ScaffoldMessenger.of(context);
+                  final navigator = Navigator.of(context);
                   try {
                     await provider.addCategory(Category(name: controller.text));
                     // Refresh categories after adding
@@ -316,9 +320,9 @@ class _ProductModalState extends State<ProductModal> {
                     if (mounted) {
                       setState(() => _selectedCategory = controller.text);
                     }
-                    Navigator.pop(context);
+                    navigator.pop();
                   } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    messenger.showSnackBar(
                       SnackBar(
                         content: Text(e.toString()),
                         backgroundColor: theme.colorScheme.error,
