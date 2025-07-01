@@ -8,6 +8,7 @@ import 'package:webshop/modules/customers/providers/customer_provider.dart';
 import 'package:webshop/modules/inventory/data/local/product_local_datasource.dart';
 import 'package:webshop/modules/inventory/providers/inventory_provider.dart';
 import 'package:webshop/modules/settings/providers/company_profile_provider.dart';
+import 'package:webshop/modules/zreport/providers/zreport_provider.dart';
 import 'app.dart';
 import 'modules/dashboard/dashboard_provider.dart';
 import 'modules/inventory/models/product.dart';
@@ -65,7 +66,9 @@ Future<void> _init() async {
           ),
         ),
         // ChangeNotifierProvider(create: (_) => ReceiptProvider(httpClient: httpClient)),
-        // ChangeNotifierProvider(create: (_) => ZReportProvider(httpClient: httpClient)),
+        ChangeNotifierProvider(
+          create: (_) => ZReportProvider(httpClient: httpClient),
+        ),
       ],
       child: const WebShopApp(),
     ),
