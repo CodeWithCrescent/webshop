@@ -23,8 +23,9 @@ class CustomerLocalDataSource {
   }
 
   Future<void> syncWithApi(List<Customer> customers) async {
-    // This will be implemented when API is available
     await customerBox.clear();
-    await customerBox.addAll(customers);
+    for (final customer in customers) {
+      await customerBox.put(customer.id, customer);
+    }
   }
 }
