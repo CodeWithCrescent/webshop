@@ -42,7 +42,10 @@
     "logout": "Logout",
     "logout_success": "You have successfully logged out.",
     "company_profile": "Company Profile",
-    "unexpected_error": "Unexpected error occured."
+    "unexpected_error": "Unexpected error occured.",
+    "addSuccess": "Successfully Added",
+    "updateSuccess": "Successfully Updated",
+    "deletedSuccess": "Successfully Deleted"
   },
   "dashboard": {
     "title": "Dashboard",
