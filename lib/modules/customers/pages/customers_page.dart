@@ -31,6 +31,7 @@ class _CustomersPageState extends State<CustomersPage> {
     final provider = context.watch<CustomerProvider>();
 
     return Scaffold(
+      backgroundColor: AppColors.primary.withOpacity(0.1),
       appBar: WebshopAppBar(
         title: loc?.translate('customers.title') ?? 'Customers',
         onRefresh: () => provider.fetchCustomers(),
@@ -51,12 +52,6 @@ class _CustomersPageState extends State<CustomersPage> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        child: const Icon(Icons.add),
-        onPressed: () => _showCustomerModal(context, null),
       ),
     );
   }
@@ -98,6 +93,7 @@ class _CustomersPageState extends State<CustomersPage> {
 
   Widget _buildCustomerCard(Customer customer, AppLocalizations? loc) {
     return Card(
+      surfaceTintColor: AppColors.cardLight,
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
@@ -125,7 +121,7 @@ class _CustomersPageState extends State<CustomersPage> {
                         onPressed: () => _makePhoneCall(customer.phoneNumber),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.message, color: Colors.green),
+                        icon: const Icon(Icons.chat, color: Colors.green),
                         onPressed: () => _openWhatsApp(customer.phoneNumber),
                       ),
                     ],

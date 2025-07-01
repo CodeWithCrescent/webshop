@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:webshop/core/constants/app_colors.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
-import 'package:webshop/modules/customers/customers_page.dart';
+import 'package:webshop/modules/customers/pages/customer_modal.dart';
+import 'package:webshop/modules/customers/pages/customers_page.dart';
+import 'package:webshop/modules/customers/providers/customer_provider.dart';
 import 'package:webshop/modules/dashboard/dashboard_page.dart';
 import 'package:webshop/modules/inventory/pages/inventory_page.dart';
 import 'package:webshop/modules/zreport/zreports_page.dart';
@@ -75,8 +78,13 @@ class _LayoutPageState extends State<LayoutPage> {
         break;
       case 3: // Customers
         actions = [
-          _buildActionTile(
-              loc?.translate('customers.add_customer') ?? 'Add Customer'),
+            _buildActionTile(
+            loc?.translate('customers.add_customer') ?? 'Add Customer',
+            onTap: () {
+              Navigator.pop(context);
+              _showAddCustomerModal(context);
+            },
+            ),
           _buildDivider(),
           _buildCancelTile(loc),
         ];
@@ -95,13 +103,30 @@ class _LayoutPageState extends State<LayoutPage> {
         ));
   }
 
-  Widget _buildActionTile(String title) => ListTile(
+  void _showAddCustomerModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return CustomerModal(
+          onSave: (customerData) async {
+            final provider = context.read<CustomerProvider>();
+              await provider.addCustomer(customerData);
+            if (context.mounted) Navigator.pop(context);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildActionTile(String title, {Function()? onTap}) => ListTile(
         title: Text(
           title,
           textAlign: TextAlign.center,
           style: const TextStyle(color: AppColors.secondary),
         ),
-        onTap: () => Navigator.pop(context),
+        onTap: onTap ?? () {},
       );
 
   Widget _buildCancelTile(AppLocalizations? loc) => ListTile(

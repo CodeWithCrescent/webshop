@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webshop/modules/customers/data/local/customer_local_datasource.dart';
+import 'package:webshop/modules/customers/models/customer.dart';
+import 'package:webshop/modules/customers/providers/customer_provider.dart';
 import 'package:webshop/modules/inventory/data/local/product_local_datasource.dart';
 import 'package:webshop/modules/inventory/providers/inventory_provider.dart';
 import 'package:webshop/modules/settings/providers/company_profile_provider.dart';
@@ -22,16 +25,18 @@ Future<void> main() async {
 Future<void> _init() async {
   await AppLocalizations.init();
   final prefs = await SharedPreferences.getInstance();
-  
+
   await Hive.initFlutter();
-  
+
   // Register Hive adapters
   Hive.registerAdapter(ProductAdapter());
   Hive.registerAdapter(CategoryAdapter());
-  
+  Hive.registerAdapter(CustomerAdapter());
+
   // Open Hive boxes
   final productBox = await Hive.openBox<Product>('products');
   final categoryBox = await Hive.openBox<Category>('categories');
+  final customerBox = await Hive.openBox<Customer>('customers');
 
   // Create HTTP client
   final httpClient = HttpClient(prefs: prefs);
@@ -53,7 +58,12 @@ Future<void> _init() async {
         ChangeNotifierProvider(
           create: (_) => CompanyProfileProvider(httpClient: httpClient),
         ),
-        // ChangeNotifierProvider(create: (_) => CustomerProvider(httpClient: httpClient)),
+        ChangeNotifierProvider(
+          create: (_) => CustomerProvider(
+            httpClient: httpClient,
+            localDataSource: CustomerLocalDataSource(customerBox: customerBox),
+          ),
+        ),
         // ChangeNotifierProvider(create: (_) => ReceiptProvider(httpClient: httpClient)),
         // ChangeNotifierProvider(create: (_) => ZReportProvider(httpClient: httpClient)),
       ],

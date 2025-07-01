@@ -268,7 +268,7 @@ class _InventoryPageState extends State<InventoryPage> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: theme.primaryColor.withOpacity(0.1),
+                  color: theme.cardColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(Icons.shopping_bag, color: theme.primaryColor),
