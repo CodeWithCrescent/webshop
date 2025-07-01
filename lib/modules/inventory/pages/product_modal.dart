@@ -11,13 +11,13 @@ import '../providers/inventory_provider.dart';
 
 class ProductModal extends StatefulWidget {
   final Product? product;
-  final Function(Product) onSave;
+  final Function()? onSuccess;
   final VoidCallback? onDelete;
 
   const ProductModal({
     super.key,
     this.product,
-    required this.onSave,
+    this.onSuccess,
     this.onDelete,
   });
 
@@ -33,16 +33,19 @@ class _ProductModalState extends State<ProductModal> {
   late String? _selectedCategory;
   late int _selectedTaxCategory;
   final _formKey = GlobalKey<FormState>();
+  bool _isSaving = false;
 
   @override
   void initState() {
     super.initState();
     _codeController = TextEditingController(text: widget.product?.code ?? '');
     _nameController = TextEditingController(text: widget.product?.name ?? '');
-    _priceController =
-        TextEditingController(text: widget.product?.price.toString() ?? '');
-    _stockController =
-        TextEditingController(text: widget.product?.stock.toString() ?? '');
+    _priceController = TextEditingController(
+      text: widget.product?.price.toString() ?? '',
+    );
+    _stockController = TextEditingController(
+      text: widget.product?.stock.toString() ?? '',
+    );
     _selectedCategory = widget.product?.category;
     _selectedTaxCategory = widget.product?.taxCategory ?? 1;
   }
@@ -56,11 +59,60 @@ class _ProductModalState extends State<ProductModal> {
     super.dispose();
   }
 
+  Future<void> _handleSave() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isSaving = true);
+
+    try {
+      final provider = context.read<InventoryProvider>();
+      final product = Product(
+        id: widget.product?.id,
+        code: _codeController.text,
+        name: _nameController.text,
+        category: _selectedCategory ?? 'Uncategorized',
+        price: double.parse(_priceController.text),
+        taxCategory: _selectedTaxCategory,
+        stock: int.parse(_stockController.text),
+      );
+
+      if (widget.product == null) {
+        await provider.addProduct(product);
+      } else {
+        await provider.updateProduct(product);
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(widget.product == null
+                ? InventoryLocalizations(context).addSuccess
+                : InventoryLocalizations(context).updateSuccess),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        Navigator.pop(context);
+        widget.onSuccess?.call();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
+        setState(() => _isSaving = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = AppTheme.lightTheme;
     final loc = InventoryLocalizations(context);
-    final provider = context.read<InventoryProvider>();
+    final provider = context.watch<InventoryProvider>();
 
     return Container(
       decoration: BoxDecoration(
@@ -229,36 +281,8 @@ class _ProductModalState extends State<ProductModal> {
                     ),
                     const SizedBox(height: 32),
                     GradientButton(
-                      onPressed: provider.isLoading
-                          ? null
-                          : () async {
-                              if (_formKey.currentState!.validate()) {
-                                final messenger = ScaffoldMessenger.of(context);
-                                final navigator = Navigator.of(context);
-                                final product = Product(
-                                  id: widget.product?.id,
-                                  code: _codeController.text,
-                                  name: _nameController.text,
-                                  category:
-                                      _selectedCategory ?? 'Uncategorized',
-                                  price: double.parse(_priceController.text),
-                                  taxCategory: _selectedTaxCategory,
-                                  stock: int.parse(_stockController.text),
-                                );
-                                try {
-                                  await widget.onSave(product);
-                                  navigator.pop();
-                                } catch (e) {
-                                  messenger.showSnackBar(
-                                    SnackBar(
-                                      content: Text(e.toString()),
-                                      backgroundColor: theme.colorScheme.error,
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                      child: provider.isLoading
+                      onPressed: _isSaving ? null : _handleSave,
+                      child: _isSaving
                           ? const CircularProgressIndicator(color: Colors.white)
                           : Text(
                               widget.product == null ? loc.save : loc.update),
@@ -278,62 +302,75 @@ class _ProductModalState extends State<ProductModal> {
     final theme = AppTheme.lightTheme;
     final loc = InventoryLocalizations(context);
     final controller = TextEditingController();
+    bool isAdding = false;
 
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text(loc.addNewCategory),
-          content: TextFormField(
-            controller: controller,
-            decoration: InputDecoration(
-              labelText: loc.categoryName,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return loc.validationRequired;
-              }
-              return null;
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(loc.cancel),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.primaryColor,
-                foregroundColor: Colors.white,
-              ),
-              onPressed: () async {
-                if (controller.text.isNotEmpty) {
-                  final messenger = ScaffoldMessenger.of(context);
-                  final navigator = Navigator.of(context);
-                  try {
-                    await provider.addCategory(Category(name: controller.text));
-                    // Refresh categories after adding
-                    await provider.loadCategories();
-                    if (mounted) {
-                      setState(() => _selectedCategory = controller.text);
-                    }
-                    navigator.pop();
-                  } catch (e) {
-                    messenger.showSnackBar(
-                      SnackBar(
-                        content: Text(e.toString()),
-                        backgroundColor: theme.colorScheme.error,
-                      ),
-                    );
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(loc.addNewCategory),
+              content: TextFormField(
+                controller: controller,
+                decoration: InputDecoration(
+                  labelText: loc.categoryName,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return loc.validationRequired;
                   }
-                }
-              },
-              child: Text(loc.add),
-            ),
-          ],
+                  return null;
+                },
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isAdding ? null : () => Navigator.pop(context),
+                  child: Text(loc.cancel),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.primaryColor,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: isAdding
+                      ? null
+                      : () async {
+                          if (controller.text.isNotEmpty) {
+                            setState(() => isAdding = true);
+                            final messenger = ScaffoldMessenger.of(context);
+                            try {
+                              await provider
+                                  .addCategory(Category(name: controller.text));
+                              if (mounted) {
+                                setState(
+                                    () => _selectedCategory = controller.text);
+                                Navigator.pop(context);
+                              }
+                            } catch (e) {
+                              messenger.showSnackBar(
+                                SnackBar(
+                                  content: Text(e.toString()),
+                                  backgroundColor: theme.colorScheme.error,
+                                ),
+                              );
+                            } finally {
+                              if (mounted) {
+                                setState(() => isAdding = false);
+                              }
+                            }
+                          }
+                        },
+                  child: isAdding
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : Text(loc.add),
+                ),
+              ],
+            );
+          },
         );
       },
     );

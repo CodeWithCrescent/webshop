@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:webshop/core/constants/app_colors.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
+import 'package:webshop/core/localization/inventory_localizations.dart';
 import 'package:webshop/modules/customers/pages/customer_modal.dart';
 import 'package:webshop/modules/customers/pages/customers_page.dart';
 import 'package:webshop/modules/customers/providers/customer_provider.dart';
@@ -30,20 +31,21 @@ class _LayoutPageState extends State<LayoutPage> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
+    final locInventory = InventoryLocalizations(context);
 
     return Scaffold(
       extendBody: true,
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomBar(
         selectedIndex: _currentIndex,
-        onTap: (index) => _onTabTapped(context, index, loc),
+        onTap: (index) => _onTabTapped(context, index, loc, locInventory),
       ),
     );
   }
 
-  void _onTabTapped(BuildContext context, int index, AppLocalizations? loc) {
+  void _onTabTapped(BuildContext context, int index, AppLocalizations? loc, InventoryLocalizations locInventory) {
     if (index == 2) {
-      _showActionSheet(context, loc);
+      _showActionSheet(context, loc, locInventory);
     } else {
       setState(() {
         _currentIndex = index;
@@ -51,7 +53,7 @@ class _LayoutPageState extends State<LayoutPage> {
     }
   }
 
-  void _showActionSheet(BuildContext context, AppLocalizations? loc) {
+  void _showActionSheet(BuildContext context, AppLocalizations? loc, InventoryLocalizations locInventory) {
     List<Widget> actions = [];
 
     switch (_currentIndex) {
@@ -68,10 +70,8 @@ class _LayoutPageState extends State<LayoutPage> {
         break;
       case 1: // Inventory
         actions = [
-          _buildActionTile(
-              loc?.translate('inventory.add_product') ?? 'Add New Product'),
-          _buildActionTile(
-              loc?.translate('inventory.add_category') ?? 'Add New Category'),
+          _buildActionTile(locInventory.addProduct),
+          _buildActionTile(locInventory.addNewCategory),
           _buildDivider(),
           _buildCancelTile(loc),
         ];
@@ -103,20 +103,33 @@ class _LayoutPageState extends State<LayoutPage> {
         ));
   }
 
+  // void _showAddCustomerModal(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     backgroundColor: Colors.transparent,
+  //     builder: (context) {
+  //       return CustomerModal(
+  //         onSave: (customerData) async {
+  //           final provider = context.read<CustomerProvider>();
+  //             await provider.addCustomer(customerData);
+  //           if (context.mounted) Navigator.pop(context);
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
+
   void _showAddCustomerModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return CustomerModal(
-          onSave: (customerData) async {
-            final provider = context.read<CustomerProvider>();
-              await provider.addCustomer(customerData);
-            if (context.mounted) Navigator.pop(context);
-          },
-        );
-      },
+      builder: (context) => CustomerModal(
+        onSuccess: () {
+          // Refresh your customer list here
+          context.read<CustomerProvider>().getCustomers();
+        },
+      ),
     );
   }
 

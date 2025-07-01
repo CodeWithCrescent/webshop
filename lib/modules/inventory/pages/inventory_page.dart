@@ -41,7 +41,8 @@ class _InventoryPageState extends State<InventoryPage> {
         child: Consumer<InventoryProvider>(
           builder: (context, provider, _) {
             if (provider.isLoading && provider.products.isEmpty) {
-              return const Center(child: SpinKitCircle(color: AppColors.primary));
+              return const Center(
+                  child: SpinKitCircle(color: AppColors.primary));
             }
 
             if (provider.error != null) {
@@ -77,7 +78,8 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  Widget _buildCategoryChips(InventoryProvider provider, InventoryLocalizations loc) {
+  Widget _buildCategoryChips(
+      InventoryProvider provider, InventoryLocalizations loc) {
     return SizedBox(
       height: 50,
       child: ListView.builder(
@@ -95,27 +97,28 @@ class _InventoryPageState extends State<InventoryPage> {
                 backgroundColor: AppColors.cardLight,
                 selectedColor: AppColors.primary.withOpacity(0.2),
                 labelStyle: TextStyle(
-                  color: provider.selectedCategory == null 
-                      ? AppColors.primary 
+                  color: provider.selectedCategory == null
+                      ? AppColors.primary
                       : AppColors.textPrimary,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                   side: BorderSide(
-                    color: provider.selectedCategory == null 
-                        ? AppColors.primary 
+                    color: provider.selectedCategory == null
+                        ? AppColors.primary
                         : Colors.grey[300]!,
                   ),
                 ),
               ),
             );
           }
-          
+
           final category = provider.categories[index - 1];
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: GestureDetector(
-              onLongPress: () => _showCategoryOptions(context, category, provider),
+              onLongPress: () =>
+                  _showCategoryOptions(context, category, provider),
               child: ChoiceChip(
                 label: Text(category.name),
                 selected: provider.selectedCategory == category.name,
@@ -123,15 +126,15 @@ class _InventoryPageState extends State<InventoryPage> {
                 backgroundColor: AppColors.cardLight,
                 selectedColor: AppColors.primary.withOpacity(0.2),
                 labelStyle: TextStyle(
-                  color: provider.selectedCategory == category.name 
-                      ? AppColors.primary 
+                  color: provider.selectedCategory == category.name
+                      ? AppColors.primary
                       : AppColors.textPrimary,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                   side: BorderSide(
-                    color: provider.selectedCategory == category.name 
-                        ? AppColors.primary 
+                    color: provider.selectedCategory == category.name
+                        ? AppColors.primary
                         : Colors.grey[300]!,
                   ),
                 ),
@@ -143,9 +146,10 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  void _showCategoryOptions(BuildContext context, Category category, InventoryProvider provider) {
+  void _showCategoryOptions(
+      BuildContext context, Category category, InventoryProvider provider) {
     final loc = InventoryLocalizations(context);
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -174,10 +178,11 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  void _showEditCategoryDialog(BuildContext context, Category category, InventoryProvider provider) {
+  void _showEditCategoryDialog(
+      BuildContext context, Category category, InventoryProvider provider) {
     final loc = InventoryLocalizations(context);
     final controller = TextEditingController(text: category.name);
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -214,7 +219,8 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  Widget _buildProductList(InventoryProvider provider, InventoryLocalizations loc) {
+  Widget _buildProductList(
+      InventoryProvider provider, InventoryLocalizations loc) {
     if (provider.products.isEmpty) {
       return Center(
         child: Column(
@@ -234,7 +240,7 @@ class _InventoryPageState extends State<InventoryPage> {
                 textAlign: TextAlign.center),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () => _showProductModal(context, null),
+              onPressed: () => _showProductModal(context),
               child: Text(loc.addFirstProduct),
             ),
           ],
@@ -260,7 +266,7 @@ class _InventoryPageState extends State<InventoryPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => _showProductModal(context, product),
+        onTap: () => _showProductModal(context, product: product),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
@@ -280,12 +286,13 @@ class _InventoryPageState extends State<InventoryPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(product.name,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600)),
+                        style: theme.textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w600)),
                     const SizedBox(height: 4),
                     Text(product.code,
                         style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6))),
+                            color:
+                                theme.colorScheme.onSurface.withOpacity(0.6))),
                   ],
                 ),
               ),
@@ -315,33 +322,74 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  void _showProductModal(BuildContext context, Product? product) {
+  void _showProductModal(BuildContext context, {Product? product}) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return ProductModal(
-          product: product,
-          onSave: (productData) async {
-            final provider = context.read<InventoryProvider>();
-            if (product == null) {
-              await provider.addProduct(productData);
-            } else {
-              await provider.updateProduct(productData);
-            }
-            if (context.mounted) Navigator.pop(context);
-          },
-          onDelete: product != null
-              ? () async {
-                  await context.read<InventoryProvider>().deleteProduct(product.id);
-                  if (context.mounted) Navigator.pop(context);
+      builder: (context) => ProductModal(
+        product: product,
+        onSuccess: () {
+          // Refresh product list
+          context.read<InventoryProvider>().loadProducts();
+        },
+        onDelete: product != null
+            ? () async {
+                final messenger = ScaffoldMessenger.of(context);
+                try {
+                  await context
+                      .read<InventoryProvider>()
+                      .deleteProduct(product.id);
+                  if (mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            InventoryLocalizations(context).deletedSuccess),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  messenger.showSnackBar(
+                    SnackBar(
+                      content: Text(e.toString()),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
                 }
-              : null,
-        );
-      },
+              }
+            : null,
+      ),
     );
   }
+
+  // void _showProductModal(BuildContext context, Product? product) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     backgroundColor: Colors.transparent,
+  //     builder: (context) {
+  //       return ProductModal(
+  //         product: product,
+  //         onSave: (productData) async {
+  //           final provider = context.read<InventoryProvider>();
+  //           if (product == null) {
+  //             await provider.addProduct(productData);
+  //           } else {
+  //             await provider.updateProduct(productData);
+  //           }
+  //           if (context.mounted) Navigator.pop(context);
+  //         },
+  //         onDelete: product != null
+  //             ? () async {
+  //                 await context.read<InventoryProvider>().deleteProduct(product.id);
+  //                 if (context.mounted) Navigator.pop(context);
+  //               }
+  //             : null,
+  //       );
+  //     },
+  //   );
+  // }
 
   void _showFilterDialog(BuildContext context, InventoryProvider provider) {
     final loc = InventoryLocalizations(context);
@@ -370,7 +418,8 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  String _getSortOptionText(ProductSortOption option, InventoryLocalizations loc) {
+  String _getSortOptionText(
+      ProductSortOption option, InventoryLocalizations loc) {
     switch (option) {
       case ProductSortOption.nameAsc:
         return loc.sortNameAsc;
