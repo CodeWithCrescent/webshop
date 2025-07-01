@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 part 'zreport.g.dart';
 
-@HiveType(typeId: 2)
+@HiveType(typeId: 7)
 class ZReport {
   @HiveField(0)
   final String reportNumber;
@@ -35,6 +35,19 @@ class ZReport {
 
   String get formattedDate => DateFormat('dd MMM yyyy').format(reportDate);
 
+  factory ZReport.fromMap(Map<String, dynamic> map) {
+    return ZReport(
+      reportNumber: map['report_number'],
+      reportDate: DateTime.parse(map['report_date']),
+      reportTime: map['report_time'],
+      subtotal: double.parse(map['subtotal'].toString()),
+      discount: double.parse(map['discount'].toString()),
+      total: double.parse(map['total'].toString()),
+      vat: double.parse(map['vat'].toString()),
+      totalGross: double.parse(map['total_gross'].toString()),
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'report_number': reportNumber,
@@ -46,18 +59,5 @@ class ZReport {
       'vat': vat,
       'total_gross': totalGross,
     };
-  }
-
-  factory ZReport.fromMap(Map<String, dynamic> map) {
-    return ZReport(
-      reportNumber: map['report_number'],
-      reportDate: DateTime.parse(map['report_date']),
-      reportTime: map['report_time'],
-      subtotal: map['subtotal']?.toDouble() ?? 0.0,
-      discount: map['discount']?.toDouble() ?? 0.0,
-      total: map['total']?.toDouble() ?? 0.0,
-      vat: map['vat']?.toDouble() ?? 0.0,
-      totalGross: map['total_gross']?.toDouble() ?? 0.0,
-    );
   }
 }
