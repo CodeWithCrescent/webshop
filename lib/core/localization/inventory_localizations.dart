@@ -10,7 +10,8 @@ class InventoryLocalizations {
   String get searchProducts => _translate('inventory.searchProducts');
   String get allCategories => _translate('inventory.allCategories');
   String get emptyInventoryTitle => _translate('inventory.emptyInventoryTitle');
-  String get emptyInventorySubtitle => _translate('inventory.emptyInventorySubtitle');
+  String get emptyInventorySubtitle =>
+      _translate('inventory.emptyInventorySubtitle');
   String get addFirstProduct => _translate('inventory.addFirstProduct');
   String get inStock => _translate('inventory.inStock');
   String get sortOptions => _translate('inventory.sortOptions');
@@ -42,10 +43,15 @@ class InventoryLocalizations {
   String get add => _translate('common.add');
   String get delete => _translate('common.delete');
   String get edit => _translate('common.add');
+  String get addSuccess => _translate('common.addSuccess');
+  String get updateSuccess => _translate('common.updateSuccess');
+  String get deletedSuccess => _translate('common.deletedSuccess');
   String get categoryName => _translate('inventory.categoryName');
   String get validationRequired => _translate('inventory.validation.required');
-  String get validationInvalidPrice => _translate('inventory.validation.invalidPrice');
-  String get validationInvalidStock => _translate('inventory.validation.invalidStock');
+  String get validationInvalidPrice =>
+      _translate('inventory.validation.invalidPrice');
+  String get validationInvalidStock =>
+      _translate('inventory.validation.invalidStock');
 
   String _translate(String key) {
     return AppLocalizations.of(context)!.translate(key);
