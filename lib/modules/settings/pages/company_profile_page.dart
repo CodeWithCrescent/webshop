@@ -13,214 +13,280 @@ class CompanyProfilePage extends StatefulWidget {
 }
 
 class _CompanyProfilePageState extends State<CompanyProfilePage> {
-  final _formKey = GlobalKey<FormState>();
-  late TextEditingController _nameController;
-  late TextEditingController _mobileController;
-  late TextEditingController _address1Controller;
-  late TextEditingController _address2Controller;
-  late TextEditingController _address3Controller;
-  late TextEditingController _tinController;
-  late TextEditingController _vrnController;
-  late TextEditingController _serialController;
-  late TextEditingController _taxOfficeController;
-
   @override
   void initState() {
     super.initState();
-    _initializeControllers();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CompanyProfileProvider>().fetchCompanyProfile();
     });
   }
 
   @override
-  void dispose() {
-    _nameController.dispose();
-    _mobileController.dispose();
-    _address1Controller.dispose();
-    _address2Controller.dispose();
-    _address3Controller.dispose();
-    _tinController.dispose();
-    _vrnController.dispose();
-    _serialController.dispose();
-    _taxOfficeController.dispose();
-    super.dispose();
-  }
-
-  void _initializeControllers() {
-    final profile = context.read<CompanyProfileProvider>().companyProfile;
-    _nameController = TextEditingController(text: profile?.name ?? '');
-    _mobileController = TextEditingController(text: profile?.mobile ?? '');
-    _address1Controller = TextEditingController(text: profile?.address1 ?? '');
-    _address2Controller = TextEditingController(text: profile?.address2 ?? '');
-    _address3Controller = TextEditingController(text: profile?.address3 ?? '');
-    _tinController = TextEditingController(text: profile?.tin ?? '');
-    _vrnController = TextEditingController(text: profile?.vrn ?? '');
-    _serialController = TextEditingController(text: profile?.serial ?? '');
-    _taxOfficeController = TextEditingController(text: profile?.taxoffice ?? '');
-  }
-
-  @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
     final provider = context.watch<CompanyProfileProvider>();
-
-    if (provider.isLoading && provider.companyProfile == null) {
-      return Scaffold(
-        appBar: WebshopAppBar(
-          title: loc?.translate('settings.company_profile') ?? 'Company Profile', onRefresh: () {  },
-        ),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (provider.error != null) {
-      return Scaffold(
-        appBar: WebshopAppBar(
-          title: loc?.translate('settings.company_profile') ?? 'Company Profile', onRefresh: () {  },
-        ),
-        body: Center(child: Text('Error: ${provider.error}')),
-      );
-    }
+    final profile = provider.companyProfile;
 
     return Scaffold(
       appBar: WebshopAppBar(
-        title: loc?.translate('settings.company_profile') ?? 'Company Profile', onRefresh: () { },
+        title: loc?.translate('settings.company_profile') ?? 'Company Profile',
+        onRefresh: () => provider.fetchCompanyProfile(),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: loc?.translate('settings.company_name') ?? 'Company Name',
-                  prefixIcon: const Icon(Icons.business),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return loc?.translate('validation.required') ?? 'Required';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _mobileController,
-                decoration: InputDecoration(
-                  labelText: loc?.translate('settings.mobile') ?? 'Mobile',
-                  prefixIcon: const Icon(Icons.phone),
-                ),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return loc?.translate('validation.required') ?? 'Required';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _address1Controller,
-                decoration: InputDecoration(
-                  labelText: loc?.translate('settings.address_line1') ?? 'Address Line 1',
-                  prefixIcon: const Icon(Icons.location_on),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _address2Controller,
-                decoration: InputDecoration(
-                  labelText: loc?.translate('settings.address_line2') ?? 'Address Line 2',
-                  prefixIcon: const Icon(Icons.location_on),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _address3Controller,
-                decoration: InputDecoration(
-                  labelText: loc?.translate('settings.address_line3') ?? 'Address Line 3',
-                  prefixIcon: const Icon(Icons.location_on),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _tinController,
-                decoration: InputDecoration(
-                  labelText: loc?.translate('settings.tin') ?? 'TIN Number',
-                  prefixIcon: const Icon(Icons.numbers),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return loc?.translate('validation.required') ?? 'Required';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _vrnController,
-                decoration: InputDecoration(
-                  labelText: loc?.translate('settings.vrn') ?? 'VRN',
-                  prefixIcon: const Icon(Icons.numbers),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _serialController,
-                decoration: InputDecoration(
-                  labelText: loc?.translate('settings.serial_number') ?? 'Serial Number',
-                  prefixIcon: const Icon(Icons.confirmation_number),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _taxOfficeController,
-                decoration: InputDecoration(
-                  labelText: loc?.translate('settings.tax_office') ?? 'Tax Office',
-                  prefixIcon: const Icon(Icons.account_balance),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Center(
-                child: ElevatedButton(
-                onPressed: provider.isLoading
-                    ? null
-                    : () async {
-                        if (_formKey.currentState!.validate()) {
-                          final profile = CompanyProfile(
-                            name: _nameController.text,
-                            allowedInstances: provider.companyProfile?.allowedInstances ?? '1',
-                            installedInstances: provider.companyProfile?.installedInstances ?? '1',
-                            mobile: _mobileController.text,
-                            address1: _address1Controller.text,
-                            address2: _address2Controller.text,
-                            address3: _address3Controller.text,
-                            vin: provider.companyProfile?.vin ?? '',
-                            tin: _tinController.text,
-                            vrn: _vrnController.text,
-                            serial: _serialController.text,
-                            taxoffice: _taxOfficeController.text,
-                          );
-                          await provider.updateCompanyProfile(profile);
-                          
-                          // Show success message
-                          if (context.mounted && provider.error == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Company profile updated successfully')),
-                            );
-                          }
-                        }
-                      },
-                  child: Text(loc?.translate('common.save') ?? 'Save'),
-                ),
-              ),
-            ],
-          ),
+      body: _buildContent(context, provider, profile, loc),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    CompanyProfileProvider provider,
+    CompanyProfile? profile,
+    AppLocalizations? loc,
+  ) {
+    if (provider.isLoading && profile == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (provider.error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Error: ${provider.error}'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => provider.fetchCompanyProfile(),
+              child: Text(loc?.translate('common.retry') ?? 'Retry'),
+            ),
+          ],
         ),
+      );
+    }
+
+    if (profile == null) {
+      return Center(
+        child: Text(loc?.translate('settings.no_company_profile') ?? 'No company profile found'),
+      );
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          // Company Card
+          Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  const Icon(Icons.business, size: 48, color: Colors.blue),
+                  const SizedBox(height: 16),
+                  Text(
+                    profile.name,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    profile.taxoffice,
+                    style: Theme.of(context).textTheme.titleMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Information Section
+          _buildInfoSection(context, profile, loc),
+
+          const SizedBox(height: 24),
+
+          // Update Notice
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.orange[50],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.orange),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.info_outline, color: Colors.orange),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    loc?.translate('settings.update_at_tra') ?? 
+                    'To change this information, please visit your domicile TRA office',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.orange[800],
+                        ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoSection(
+    BuildContext context,
+    CompanyProfile profile,
+    AppLocalizations? loc,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Contact Information
+        _buildSectionHeader(
+          context,
+          loc?.translate('settings.contact_info') ?? 'Contact Information',
+          Icons.contact_mail,
+        ),
+        _buildInfoItem(
+          context,
+          loc?.translate('settings.mobile') ?? 'Mobile',
+          profile.mobile,
+          Icons.phone,
+        ),
+        
+        // Address
+        _buildSectionHeader(
+          context,
+          loc?.translate('settings.address') ?? 'Address',
+          Icons.location_on,
+        ),
+        if (profile.address1.isNotEmpty)
+          _buildInfoItem(
+            context,
+            loc?.translate('settings.address_line1') ?? 'Address Line 1',
+            profile.address1,
+            Icons.location_city,
+          ),
+        if (profile.address2.isNotEmpty)
+          _buildInfoItem(
+            context,
+            loc?.translate('settings.address_line2') ?? 'Address Line 2',
+            profile.address2,
+            Icons.location_city,
+          ),
+        if (profile.address3.isNotEmpty)
+          _buildInfoItem(
+            context,
+            loc?.translate('settings.address_line3') ?? 'Address Line 3',
+            profile.address3,
+            Icons.location_city,
+          ),
+
+        // Tax Information
+        _buildSectionHeader(
+          context,
+          loc?.translate('settings.tax_info') ?? 'Tax Information',
+          Icons.receipt,
+        ),
+        _buildInfoItem(
+          context,
+          loc?.translate('settings.tin') ?? 'TIN',
+          profile.tin,
+          Icons.numbers,
+        ),
+        _buildInfoItem(
+          context,
+          loc?.translate('settings.vrn') ?? 'VRN',
+          profile.vrn,
+          Icons.confirmation_number,
+        ),
+        _buildInfoItem(
+          context,
+          loc?.translate('settings.serial_number') ?? 'Serial Number',
+          profile.serial,
+          Icons.confirmation_number,
+        ),
+
+        // System Information
+        _buildSectionHeader(
+          context,
+          loc?.translate('settings.system_info') ?? 'System Information',
+          Icons.computer,
+        ),
+        _buildInfoItem(
+          context,
+          loc?.translate('settings.allowed_instances') ?? 'Allowed Instances',
+          profile.allowedInstances,
+          Icons.lock_outline,
+        ),
+        _buildInfoItem(
+          context,
+          loc?.translate('settings.installed_instances') ?? 'Installed Instances',
+          profile.installedInstances,
+          Icons.install_desktop,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader(BuildContext context, String title, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, bottom: 8),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: Theme.of(context).primaryColor),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoItem(
+    BuildContext context,
+    String label,
+    String value,
+    IconData icon,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: Colors.grey[600]),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value.isNotEmpty ? value : '-',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 8),
+                const Divider(height: 1),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
