@@ -74,8 +74,12 @@ class _CustomersPageState extends State<CustomersPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              loc?.translate('customers.empty_subtitle') ?? 'Add your first customer',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              loc?.translate('customers.empty_subtitle') ??
+                  'Add your first customer',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: Colors.grey),
             ),
           ],
         ),
@@ -98,7 +102,7 @@ class _CustomersPageState extends State<CustomersPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => _showCustomerModal(context, customer),
+        onTap: () => _showCustomerModal(context, customer: customer),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -185,31 +189,73 @@ class _CustomersPageState extends State<CustomersPage> {
     }
   }
 
-  void _showCustomerModal(BuildContext context, Customer? customer) {
+  void _showCustomerModal(BuildContext context, {Customer? customer}) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return CustomerModal(
-          customer: customer,
-          onSave: (customerData) async {
-            final provider = context.read<CustomerProvider>();
-            if (customer == null) {
-              await provider.addCustomer(customerData);
-            } else {
-              await provider.updateCustomer(customerData);
-            }
-            if (context.mounted) Navigator.pop(context);
-          },
-          onDelete: customer != null
-              ? () async {
-                  await context.read<CustomerProvider>().deleteCustomer(customer.id);
-                  if (context.mounted) Navigator.pop(context);
+      builder: (context) => CustomerModal(
+        customer: customer,
+        onSuccess: () {
+          // Refresh your customer list here
+          context.read<CustomerProvider>().getCustomers();
+        },
+        onDelete: customer != null
+            ? () async {
+                final messenger = ScaffoldMessenger.of(context);
+                try {
+                  await context
+                      .read<CustomerProvider>()
+                      .deleteCustomer(customer.id);
+                  if (mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)
+                                ?.translate('customers.deleted_success') ??
+                            'Customer deleted successfully'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  messenger.showSnackBar(
+                    SnackBar(
+                      content: Text(e.toString()),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
                 }
-              : null,
-        );
-      },
+              }
+            : null,
+      ),
     );
   }
+
+  // void _showCustomerModal(BuildContext context, Customer? customer) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     backgroundColor: Colors.transparent,
+  //     builder: (context) {
+  //       return CustomerModal(
+  //         customer: customer,
+  //         onSave: (customerData) async {
+  //           final provider = context.read<CustomerProvider>();
+  //           if (customer == null) {
+  //             await provider.addCustomer(customerData);
+  //           } else {
+  //             await provider.updateCustomer(customerData);
+  //           }
+  //           if (context.mounted) Navigator.pop(context);
+  //         },
+  //         onDelete: customer != null
+  //             ? () async {
+  //                 await context.read<CustomerProvider>().deleteCustomer(customer.id);
+  //                 if (context.mounted) Navigator.pop(context);
+  //               }
+  //             : null,
+  //       );
+  //     },
+  //   );
+  // }
 }
