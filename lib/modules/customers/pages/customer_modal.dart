@@ -10,13 +10,13 @@ import '../providers/customer_provider.dart';
 
 class CustomerModal extends StatefulWidget {
   final Customer? customer;
-  final Function(Customer) onSave;
+  final Function()? onSuccess;
   final VoidCallback? onDelete;
 
   const CustomerModal({
     super.key,
     this.customer,
-    required this.onSave,
+    this.onSuccess,
     this.onDelete,
   });
 
@@ -31,6 +31,7 @@ class _CustomerModalState extends State<CustomerModal> {
   late final TextEditingController _tinController;
   late final TextEditingController _vrnController;
   final _formKey = GlobalKey<FormState>();
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -52,11 +53,61 @@ class _CustomerModalState extends State<CustomerModal> {
     super.dispose();
   }
 
+  Future<void> _handleSave() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isSaving = true);
+    
+    try {
+      final provider = context.read<CustomerProvider>();
+      final customer = Customer(
+        id: widget.customer?.id,
+        fullName: _nameController.text,
+        phoneNumber: _phoneController.text,
+        email: _emailController.text.isNotEmpty ? _emailController.text : null,
+        tinNumber: _tinController.text.isNotEmpty ? _tinController.text : null,
+        vrn: _vrnController.text.isNotEmpty ? _vrnController.text : null,
+      );
+
+      if (widget.customer == null) {
+        await provider.addCustomer(customer);
+      } else {
+        await provider.updateCustomer(customer);
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(widget.customer == null
+                ? AppLocalizations.of(context)?.translate('customers.added_success') ?? 'Customer added successfully'
+                : AppLocalizations.of(context)?.translate('customers.updated_success') ?? 'Customer updated successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        
+        Navigator.pop(context);
+        widget.onSuccess?.call();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = AppTheme.lightTheme;
     final loc = AppLocalizations.of(context);
-    final provider = context.read<CustomerProvider>();
 
     return Container(
       decoration: BoxDecoration(
@@ -152,40 +203,8 @@ class _CustomerModalState extends State<CustomerModal> {
                     ),
                     const SizedBox(height: 32),
                     GradientButton(
-                      onPressed: provider.isLoading
-                          ? null
-                          : () async {
-                              if (_formKey.currentState!.validate()) {
-                                final messenger = ScaffoldMessenger.of(context);
-                                final navigator = Navigator.of(context);
-                                final customer = Customer(
-                                  id: widget.customer?.id,
-                                  fullName: _nameController.text,
-                                  phoneNumber: _phoneController.text,
-                                  email: _emailController.text.isNotEmpty 
-                                      ? _emailController.text 
-                                      : null,
-                                  tinNumber: _tinController.text.isNotEmpty 
-                                      ? _tinController.text 
-                                      : null,
-                                  vrn: _vrnController.text.isNotEmpty 
-                                      ? _vrnController.text 
-                                      : null,
-                                );
-                                try {
-                                  await widget.onSave(customer);
-                                  navigator.pop();
-                                } catch (e) {
-                                  messenger.showSnackBar(
-                                    SnackBar(
-                                      content: Text(e.toString()),
-                                      backgroundColor: theme.colorScheme.error,
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                      child: provider.isLoading
+                      onPressed: _isSaving ? null : _handleSave,
+                      child: _isSaving
                           ? const CircularProgressIndicator(color: Colors.white)
                           : Text(widget.customer == null 
                               ? loc?.translate('common.save') ?? 'Save'
