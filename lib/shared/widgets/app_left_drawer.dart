@@ -64,9 +64,10 @@ class AppLeftDrawer extends StatelessWidget {
                 leading: const Icon(Icons.logout),
                 title: const Text('Logout'),
                 onTap: () async {
+                  final navigator = Navigator.of(context);
                   await authProvider.logout();
-                  Navigator.pop(context);
-                  Navigator.pushReplacementNamed(context, '/login');
+                  navigator.pop();
+                  navigator.pushReplacementNamed('/login');
                 },
               ),
             ],
