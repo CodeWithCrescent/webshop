@@ -315,9 +315,9 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   void _navigateToReceipts(BuildContext context) {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => const ReceiptsPage()),
-    // );
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ReceiptsPage()),
+    );
   }
 }
