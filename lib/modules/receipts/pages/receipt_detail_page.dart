@@ -93,33 +93,35 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
   }
 
   Future<void> _printReceipt() async {
+    final messenger = ScaffoldMessenger.of(context);
     try {
       final receipt = await _receiptFuture;
       await Printing.layoutPdf(
         onLayout: (format) => ReceiptHtmlView.generatePdf(receipt),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(content: Text('Printing failed: $e')),
       );
     }
   }
 
   Future<void> _shareReceipt() async {
+    final messenger = ScaffoldMessenger.of(context);
     try {
       final receipt = await _receiptFuture;
       final pdfBytes = await ReceiptHtmlView.generatePdf(receipt);
       
       await Share.shareXFiles(
-        [XFile.fromData(pdfBytes, mimeType: 'application/pdf', name: 'Receipt_${receipt.receipt_number}.pdf')],
-        text: 'Receipt ${receipt.receipt_number}',
+        [XFile.fromData(pdfBytes, mimeType: 'application/pdf', name: 'Receipt_${receipt.receiptNumber}.pdf')],
+        text: 'Receipt ${receipt.receiptNumber}',
       );
       
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         const SnackBar(content: Text('Share functionality coming soon')),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(content: Text('Sharing failed: $e')),
       );
     }
