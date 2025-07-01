@@ -210,7 +210,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
                           // Show success message
                           if (context.mounted && provider.error == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Company profile updated successfully')),
+                              const SnackBar(content: Text('Company profile updated successfully')),
                             );
                           }
                         }
