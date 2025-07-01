@@ -156,6 +156,8 @@ class _CustomerModalState extends State<CustomerModal> {
                           ? null
                           : () async {
                               if (_formKey.currentState!.validate()) {
+                                final messenger = ScaffoldMessenger.of(context);
+                                final navigator = Navigator.of(context);
                                 final customer = Customer(
                                   id: widget.customer?.id,
                                   fullName: _nameController.text,
@@ -172,9 +174,9 @@ class _CustomerModalState extends State<CustomerModal> {
                                 );
                                 try {
                                   await widget.onSave(customer);
-                                  Navigator.pop(context);
+                                  navigator.pop();
                                 } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
+                                  messenger.showSnackBar(
                                     SnackBar(
                                       content: Text(e.toString()),
                                       backgroundColor: theme.colorScheme.error,
