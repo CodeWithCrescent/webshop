@@ -1,5 +1,3 @@
-Got it! Here's a more professional, polished README example that highlights tools, technologies, and environment details clearly:
-
 ---
 
 # Webshop
@@ -30,7 +28,6 @@ A Flutter-based webshop application.
    ```
 
 ---
-
 
 ```bash
 
