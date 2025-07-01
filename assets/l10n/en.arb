@@ -13,7 +13,7 @@
     "hide_password": "Hide password",
     "sign_in_with": "Sign in with",
     "validation_required_field": "This field is required.",
-    "validation_password_length": "",
+    "validation_password_length": "Password must be at least 6 characters",
     "error": {
       "required": "This field is required",
       "password_length": "Password must be at least 6 characters",
@@ -42,7 +42,7 @@
     "logout": "Logout",
     "logout_success": "You have successfully logged out.",
     "company_profile": "Company Profile",
-    "unexpected_error": "Unexpected error occured.",
+    "unexpected_error": "Unexpected error occurred.",
     "addSuccess": "Successfully Added",
     "updateSuccess": "Successfully Updated",
     "deletedSuccess": "Successfully Deleted"
