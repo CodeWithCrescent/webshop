@@ -6,6 +6,7 @@ import 'package:webshop/core/constants/app_text_styles.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/core/utils/format_utils.dart';
 import 'package:webshop/modules/dashboard/dashboard_provider.dart';
+import 'package:webshop/modules/receipts/pages/receipts_page.dart';
 import 'package:webshop/shared/widgets/action_button.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/app_left_drawer.dart';
@@ -314,7 +315,9 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   void _navigateToReceipts(BuildContext context) {
-    // TODO: Implement navigation to receipts
-    debugPrint('Navigate to Receipts');
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => const ReceiptsPage()),
+    // );
   }
 }
