@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,24 +21,7 @@ import 'core/network/http_client.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  registerReceiptHtmlView();
   await _init();
-}
-
-void registerReceiptHtmlView() {
-  const platform = MethodChannel('receipt_html');
-  platform.setMethodCallHandler((call) async {
-    if (call.method == 'create') {
-      return _createReceiptView(call.arguments as int);
-    }
-    return null;
-  });
-}
-
-int _createReceiptView(int id) {
-  // This is to be implemented in platform-specific code
-  // (Android/iOS) to create a WebView for the receipt
-  return id;
 }
 
 Future<void> _init() async {

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
+import 'package:webshop/core/utils/format_utils.dart';
 import 'package:webshop/modules/receipts/models/receipt.dart';
-import 'package:webshop/modules/receipts/pages/receipt_detail_page.dart';
+import 'package:webshop/modules/receipts/pages/receipt_html_view.dart';
 import 'package:webshop/modules/receipts/providers/receipt_provider.dart';
+import 'package:webshop/modules/settings/providers/company_profile_provider.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/search_field.dart';
 
@@ -25,6 +27,7 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
     _scrollController.addListener(_scrollListener);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ReceiptProvider>().fetchReceipts();
+      context.read<CompanyProfileProvider>().fetchCompanyProfile();
     });
   }
 
@@ -62,7 +65,8 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                 Expanded(
                   child: SearchField(
                     controller: _searchController,
-                    hintText: loc?.translate('common.search') ?? 'Search receipts',
+                    hintText:
+                        loc?.translate('common.search') ?? 'Search receipts',
                     onChanged: provider.setSearchQuery,
                   ),
                 ),
@@ -95,7 +99,8 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
               onRefresh: () => provider.fetchReceipts(refresh: true),
               child: ListView.builder(
                 controller: _scrollController,
-                itemCount: provider.receipts.length + (provider.hasMore ? 1 : 0),
+                itemCount:
+                    provider.receipts.length + (provider.hasMore ? 1 : 0),
                 itemBuilder: (context, index) {
                   if (index == provider.receipts.length) {
                     return Center(
@@ -118,8 +123,6 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
   }
 
   Widget _buildReceiptCard(Receipt receipt, AppLocalizations? loc) {
-    final currencyFormat = NumberFormat.currency(locale: 'en_US', symbol: 'TZS');
-    
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: InkWell(
@@ -140,7 +143,7 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                     ),
                   ),
                   Text(
-                    receipt.formattedDate,
+                    FormatUtils.formatDate(receipt.receiptDate),
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                 ],
@@ -154,11 +157,8 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                   Text(
-                    currencyFormat.format(receipt.totalInclOfTax),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                    ),
+                    receipt.receiptTime,
+                    style: TextStyle(color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -167,12 +167,15 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${loc?.translate('receipts.items') ?? 'Items'}: ${receipt.items.length}',
+                    '${loc?.translate('receipts.created_by') ?? 'Created By'}: ${receipt.createdBy}',
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                   Text(
-                    receipt.receiptTime,
-                    style: TextStyle(color: Colors.grey[600]),
+                    FormatUtils.formatCurrency(receipt.total),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
                   ),
                 ],
               ),
@@ -204,6 +207,7 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
   void _showFilterDialog(BuildContext context) {
     final loc = AppLocalizations.of(context);
     final provider = context.read<ReceiptProvider>();
+    final selectedFilter = provider.currentFilter;
     DateTimeRange? tempDateRange;
     DateTime? tempDate;
 
@@ -220,31 +224,62 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                   children: [
                     _buildFilterOption(
                       context,
-                      provider.currentFilter == ReceiptFilter.all,
+                      selectedFilter,
+                      ReceiptFilter.all,
                       loc?.translate('receipts.filter_all') ?? 'All Receipts',
-                      () => setState(() => tempDateRange = tempDate = null),
+                      () {
+                        setState(() {
+                          provider.setFilter(ReceiptFilter.all);
+                          tempDate = null;
+                          tempDateRange = null;
+                        });
+                      },
                     ),
                     _buildFilterOption(
                       context,
-                      provider.currentFilter == ReceiptFilter.today,
+                      selectedFilter,
+                      ReceiptFilter.today,
                       loc?.translate('receipts.filter_today') ?? 'Today',
-                      () => setState(() => tempDateRange = tempDate = null),
+                      () {
+                        setState(() {
+                          provider.setFilter(ReceiptFilter.today);
+                          tempDate = null;
+                          tempDateRange = null;
+                        });
+                      },
                     ),
                     _buildFilterOption(
                       context,
-                      provider.currentFilter == ReceiptFilter.thisWeek,
-                      loc?.translate('receipts.filter_this_week') ?? 'This Week',
-                      () => setState(() => tempDateRange = tempDate = null),
+                      selectedFilter,
+                      ReceiptFilter.thisWeek,
+                      loc?.translate('receipts.filter_this_week') ??
+                          'This Week',
+                      () {
+                        setState(() {
+                          provider.setFilter(ReceiptFilter.thisWeek);
+                          tempDate = null;
+                          tempDateRange = null;
+                        });
+                      },
                     ),
                     _buildFilterOption(
                       context,
-                      provider.currentFilter == ReceiptFilter.lastMonth,
-                      loc?.translate('receipts.filter_last_month') ?? 'Last Month',
-                      () => setState(() => tempDateRange = tempDate = null),
+                      selectedFilter,
+                      ReceiptFilter.lastMonth,
+                      loc?.translate('receipts.filter_last_month') ??
+                          'Last Month',
+                      () {
+                        setState(() {
+                          provider.setFilter(ReceiptFilter.lastMonth);
+                          tempDate = null;
+                          tempDateRange = null;
+                        });
+                      },
                     ),
                     _buildFilterOption(
                       context,
-                      provider.currentFilter == ReceiptFilter.date,
+                      selectedFilter,
+                      ReceiptFilter.date,
                       loc?.translate('receipts.filter_date') ?? 'Specific Date',
                       () async {
                         final date = await showDatePicker(
@@ -254,7 +289,11 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                           lastDate: DateTime.now(),
                         );
                         if (date != null) {
-                          setState(() => tempDate = date);
+                          setState(() {
+                            provider.setFilter(ReceiptFilter.date);
+                            tempDate = date;
+                            tempDateRange = null;
+                          });
                         }
                       },
                       trailing: tempDate != null
@@ -263,20 +302,27 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                     ),
                     _buildFilterOption(
                       context,
-                      provider.currentFilter == ReceiptFilter.dateRange,
-                      loc?.translate('receipts.filter_date_range') ?? 'Date Range',
+                      selectedFilter,
+                      ReceiptFilter.dateRange,
+                      loc?.translate('receipts.filter_date_range') ??
+                          'Date Range',
                       () async {
                         final range = await showDateRangePicker(
                           context: context,
                           firstDate: DateTime(2020),
                           lastDate: DateTime.now(),
                           initialDateRange: DateTimeRange(
-                            start: DateTime.now().subtract(const Duration(days: 7)),
+                            start: DateTime.now()
+                                .subtract(const Duration(days: 7)),
                             end: DateTime.now(),
                           ),
                         );
                         if (range != null) {
-                          setState(() => tempDateRange = range);
+                          setState(() {
+                            provider.setFilter(ReceiptFilter.dateRange);
+                            tempDate = null;
+                            tempDateRange = range;
+                          });
                         }
                       },
                       trailing: tempDateRange != null
@@ -319,7 +365,8 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
 
   Widget _buildFilterOption(
     BuildContext context,
-    bool isSelected,
+    ReceiptFilter selectedFilter,
+    ReceiptFilter value,
     String title,
     VoidCallback onTap, {
     Widget? trailing,
@@ -327,21 +374,37 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
     return ListTile(
       title: Text(title),
       trailing: trailing,
-      leading: Radio<bool>(
-        value: isSelected,
-        groupValue: true,
-        onChanged: (value) => onTap(),
+      leading: Radio<ReceiptFilter>(
+        value: value,
+        groupValue: selectedFilter,
+        onChanged: (_) => onTap(),
       ),
       onTap: onTap,
     );
   }
 
-  void _navigateToReceiptDetail(String receiptNumber) {
-    Navigator.push(
-      context,
+  Future<void> _navigateToReceiptDetail(String receiptNumber) async {
+    final navigator = Navigator.of(context);
+    final provider = Provider.of<ReceiptProvider>(context, listen: false);
+    final company = Provider.of<CompanyProfileProvider>(context, listen: false).companyProfile;
+
+    if (company == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Business profile is not available')),
+      );
+      return;
+    }
+
+    final receipt = await provider.fetchReceiptDetails(receiptNumber);
+
+    navigator.push(
       MaterialPageRoute(
-        builder: (context) => ReceiptDetailPage(receiptNumber: receiptNumber),
+        builder: (context) => ReceiptHtmlView(
+          receipt: receipt,
+          company: company,
+        ),
       ),
     );
   }
+
 }

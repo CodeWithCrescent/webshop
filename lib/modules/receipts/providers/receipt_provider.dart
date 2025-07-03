@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:webshop/core/network/api_endpoints.dart';
 import 'package:webshop/core/network/http_client.dart';
 import 'package:webshop/modules/receipts/models/receipt.dart';
+import 'package:webshop/modules/receipts/models/receipt_data.dart';
 
 enum ReceiptFilter {
   all,
@@ -46,13 +47,15 @@ class ReceiptProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final url = '${ApiEndpoints.getReceipts}?page=$_page&search=$_searchQuery';
+      final url =
+          '${ApiEndpoints.getReceipts}?page=$_page&search=$_searchQuery';
       final response = await httpClient.get(url);
       final data = json.decode(response.body);
 
       if (response.statusCode == 200) {
         final List<dynamic> receiptsData = data['receipts'] ?? [];
-        final newReceipts = receiptsData.map((r) => Receipt.fromMap(r)).toList();
+        final List<Receipt> newReceipts =
+            receiptsData.map((r) => Receipt.fromJson(r)).toList();
 
         _hasMore = newReceipts.isNotEmpty;
         if (refresh) {
@@ -72,14 +75,14 @@ class ReceiptProvider with ChangeNotifier {
     }
   }
 
-  Future<Receipt> fetchReceiptDetails(String receiptNumber) async {
+  Future<ReceiptData> fetchReceiptDetails(String receiptNumber) async {
     try {
-      final url = '${ApiEndpoints.getReceipts}/receiptno/$receiptNumber';
+      final url = '${ApiEndpoints.getReceiptData}/$receiptNumber';
       final response = await httpClient.get(url);
       final data = json.decode(response.body);
 
       if (response.statusCode == 200) {
-        return Receipt.fromMap(data['receiptData']);
+        return ReceiptData.fromMap(data['receiptData']);
       } else {
         throw Exception('Failed to load receipt details');
       }

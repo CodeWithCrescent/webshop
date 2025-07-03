@@ -39,30 +39,4 @@ class CompanyProfileProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-
-  Future<void> updateCompanyProfile(CompanyProfile profile) async {
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      final response = await _httpClient.post(
-        ApiEndpoints.companyProfile,
-        profile.toMap(),
-      );
-      
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        _companyProfile = CompanyProfile.fromMap(data);
-        _error = null;
-      } else {
-        throw Exception('Failed to update company profile: ${response.statusCode}');
-      }
-    } catch (e) {
-      _error = e.toString();
-      debugPrint('Error updating company profile: $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
 }
