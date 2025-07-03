@@ -1,12 +1,14 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_html_to_pdf_updated/flutter_html_to_pdf.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:share_whatsapp/share_whatsapp.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
@@ -32,22 +34,111 @@ class ReceiptHtmlView extends StatefulWidget {
 class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
   String? _pdfPath;
 
-  Future<void> _generatePdf() async {
-    final htmlContent = _buildHtml(widget.receipt, widget.company);
+  @override
+  void initState() {
+    super.initState();
+    _generatePdfFile();
+  }
 
-    final directory = Platform.isAndroid
-        ? await getExternalStorageDirectory()
-        : await getApplicationDocumentsDirectory();
+  Future<void> _generatePdfFile() async {
+    final bytes = await _buildPdf(widget.receipt, widget.company);
+    final dir = await getTemporaryDirectory();
+    final file = File('${dir.path}/receipt_${widget.receipt.receiptNumber}.pdf');
+    await file.writeAsBytes(bytes);
+    setState(() => _pdfPath = file.path);
+  }
 
-    final targetFile = await FlutterHtmlToPdf.convertFromHtmlContent(
-      htmlContent,
-      directory!.path,
-      'receipt_${widget.receipt.receiptNumber}',
+  Future<Uint8List> _buildPdf(ReceiptData receipt, CompanyProfile company) async {
+    final pdf = pw.Document();
+    final font = await PdfGoogleFonts.courierPrimeBold();
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.roll80,
+        build: (context) {
+          return pw.Container(
+            padding: const pw.EdgeInsets.all(5),
+            child: pw.DefaultTextStyle(
+              style: pw.TextStyle(font: font, fontSize: 10),
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Center(child: pw.Text('*** START OF LEGAL RECEIPT ***', style: const pw.TextStyle(fontSize: 10))),
+                  pw.SizedBox(height: 5),
+                  pw.Center(
+                    child: pw.Column(children: [
+                      pw.Text(company.name, style: const pw.TextStyle(fontSize: 12)),
+                      pw.Text(company.address1),
+                      pw.Text('MOBILE: ${company.mobile}'),
+                      pw.Text('TIN: ${company.tin}'),
+                      pw.Text('VRN: ${company.vrn}'),
+                      pw.Text('SERIAL NO: ${company.serial}'),
+                      pw.Text('TAX OFFICE: ${company.taxoffice}'),
+                    ]),
+                  ),
+                  pw.Divider(),
+                  pw.Text('CUSTOMER NAME: ${receipt.customerName}'),
+                  _row('CUSTOMER ID TYPE:', receipt.customerIdType),
+                  _row('CUSTOMER ID:', receipt.customerIdNumber),
+                  _row('CUSTOMER MOBILE:', receipt.customerMobile),
+                  pw.Divider(),
+                  _row('RECEIPT NUMBER:', receipt.receiptNumber),
+                  _row('Z NUMBER:', receipt.zNumber),
+                  _row('RECEIPT DATE:', receipt.receiptDate),
+                  _row('RECEIPT TIME:', receipt.receiptTime),
+                  pw.Divider(),
+                  pw.Center(child: pw.Text('PURCHASED ITEMS')),
+                  pw.SizedBox(height: 4),
+                  pw.Column(
+                    children: receipt.items.map((item) {
+                      return pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(item.itemDescription),
+                          _row('Qty: ${item.itemQuantity}', FormatUtils.formatCurrency(item.amount)),
+                          pw.SizedBox(height: 2),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                  pw.Divider(),
+                  _row('TOTAL EXCL OF TAX:', FormatUtils.formatCurrency(receipt.totalExclOfTax)),
+                  _row('DISCOUNT:', FormatUtils.formatCurrency(receipt.discount)),
+                  _row('TOTAL TAX:', FormatUtils.formatCurrency(receipt.totalTax)),
+                  _row('TOTAL INCL OF TAX:', FormatUtils.formatCurrency(receipt.totalInclOfTax)),
+                  pw.Divider(),
+                  pw.Center(child: pw.Text('RECEIPT VERIFICATION CODE:')),
+                  pw.Center(child: pw.Text(receipt.verificationCode, style: const pw.TextStyle(fontSize: 8))),
+                  pw.SizedBox(height: 8),
+                  pw.Center(
+                    child: pw.BarcodeWidget(
+                      barcode: pw.Barcode.qrCode(),
+                      data: receipt.verificationLink,
+                      width: 100,
+                      height: 100,
+                    ),
+                  ),
+                  pw.SizedBox(height: 5),
+                  pw.Center(child: pw.Text('*** END OF LEGAL RECEIPT ***')),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
 
-    setState(() {
-      _pdfPath = targetFile.path;
-    });
+    return pdf.save();
+  }
+
+  pw.Widget _row(String left, String right) {
+    return pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+      children: [
+        pw.Text(left),
+        pw.Text(right),
+      ],
+    );
   }
 
   Future<void> _shareToWhatsApp(WhatsApp type) async {
@@ -131,101 +222,43 @@ class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _generatePdf();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final htmlContent = _buildHtml(widget.receipt, widget.company);
     final loc = AppLocalizations.of(context);
 
     return Scaffold(
-        appBar: WebshopAppBar(
-          title: loc?.translate('receipts.preview_title') ?? 'Receipt Preview',
-          onRefresh: () {},
-          actions: [
-            if (_pdfPath != null)
-              IconButton(
-                icon: const Icon(Icons.share),
-                onPressed: _showShareOptions,
-              ),
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SizedBox(
-            child: SingleChildScrollView(
-              child: Container(
-                  padding: const EdgeInsets.all(32),
-                  decoration: BoxDecoration(color: Theme.of(context).cardColor),
-                  child: HtmlWidget(htmlContent)),
+      appBar: WebshopAppBar(
+        title: loc?.translate('receipts.preview_title') ?? 'Receipt Preview',
+        onRefresh: () {},
+        actions: [
+          if (_pdfPath != null)
+            IconButton(
+              icon: const Icon(Icons.share),
+              onPressed: _showShareOptions,
             ),
-          ),
-        ));
-  }
-
-  /// HTML BUILDER (injects receipt + company data)
-  String _buildHtml(ReceiptData receipt, CompanyProfile company) {
-    final qrCode = QrImageView(data: receipt.verificationLink, size: 280,);
-    return '''
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-</head>
-<body style="">
-<div style="max-width: 400px; background: white; padding: 5px; font-family: 'Courier New', monospace; margin: 0; font-size: 18px; font-weight: bold;">
-  <div style="text-align: center; font-weight: 900;">*** START OF LEGAL RECEIPT ***</div><br>
-  <div style="text-align: center;">
-    <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/110913075/462230041-ffa64edf-0a27-4da5-b30a-b296d8e1d366.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250703%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250703T222544Z&X-Amz-Expires=300&X-Amz-Signature=300837ab09042d76cdf20498473e38efcedb00c90c50a59204ee515432b44a7b&X-Amz-SignedHeaders=host" alt="TRA logo" style="max-width:65px;" />
-    <div style="font-weight: 900;">${company.name}</div>
-    <div>${company.address1}</div>
-    <div><span style="font-weight: 900;">MOBILE:</span> ${company.mobile}</div>
-    <div><span style="font-weight: 900;">TIN:</span> ${company.tin}</div>
-    <div><span style="font-weight: 900;">VRN:</span> ${company.vrn}</div>
-    <div><span style="font-weight: 900;">SERIAL NO:</span> ${company.serial}</div>
-    <div><span style="font-weight: 900;">TAX OFFICE:</span> ${company.taxoffice}</div>
-  </div>
-  <div style="border-top: 1px dotted #000; margin: 10px 0;"></div>
-  <div style="text-align: left; font-weight: 900;">CUSTOMER NAME: ${receipt.customerName}</div>
-  <div style="display: table; width: 100%;"><div style="display: table-cell; width: 60%; text-align: left; font-weight: 900;">CUSTOMER ID TYPE:</div><div style="display: table-cell; width: 40%; text-align: right;">${receipt.customerIdType}</div></div>
-  <div style="display: table; width: 100%;"><div style="display: table-cell; width: 60%; text-align: left; font-weight: 900;">CUSTOMER ID:</div><div style="display: table-cell; width: 40%; text-align: right;">${receipt.customerIdNumber}</div></div>
-  <div style="display: table; width: 100%;"><div style="display: table-cell; width: 60%; text-align: left; font-weight: 900;">CUSTOMER MOBILE:</div><div style="display: table-cell; width: 40%; text-align: right;">${receipt.customerMobile}</div></div>
-  <div style="border-top: 1px dotted #000; margin: 10px 0;"></div>
-  <div style="display: table; width: 100%;"><div style="display: table-cell; width: 60%; text-align: left; font-weight: 900;">RECEIPT NUMBER:</div><div style="display: table-cell; width: 40%; text-align: right;">${receipt.receiptNumber}</div></div>
-  <div style="display: table; width: 100%;"><div style="display: table-cell; width: 60%; text-align: left; font-weight: 900;">Z NUMBER:</div><div style="display: table-cell; width: 40%; text-align: right;">${receipt.zNumber}</div></div>
-  <div style="display: table; width: 100%;"><div style="display: table-cell; width: 60%; text-align: left; font-weight: 900;">RECEIPT DATE:</div><div style="display: table-cell; width: 40%; text-align: right;">${receipt.receiptDate}</div></div>
-  <div style="display: table; width: 100%;"><div style="display: table-cell; width: 60%; text-align: left; font-weight: 900;">RECEIPT TIME:</div><div style="display: table-cell; width: 40%; text-align: right;">${receipt.receiptTime}</div></div>
-  <div style="border-top: 1px dotted #000; margin: 10px 0;"></div>
-  <div style="text-align: center; font-weight: 900; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 5px;">PURCHASED ITEMS</div>
-  ${receipt.items.map((item) => '''
-    <div style="margin: 3px 0; overflow: hidden;">
-      <div>${item.itemDescription}</div>
-      <div style="display: table; width: 100%;">
-        <div style="display: table-cell; width: 60%; text-align: left;">Qty: ${item.itemQuantity}</div>
-        <div style="display: table-cell; width: 40%; text-align: right;">${FormatUtils.formatCurrency(item.amount)}</div>
-      </div>
-    </div>
-  ''').join()}
-  <div style="border-top: 1px dotted #000; margin: 10px 0;"></div>
-  <div style="display: table; width: 100%; font-weight: 900;"><div style="display: table-cell; width: 60%; text-align: left;">TOTAL EXCL OF TAX:</div><div style="display: table-cell; width: 40%; text-align: right;">${FormatUtils.formatCurrency(receipt.totalExclOfTax)}</div></div>
-  <div style="display: table; width: 100%;"><div style="display: table-cell; width: 60%; text-align: left; font-weight: 900;">DISCOUNT:</div><div style="display: table-cell; width: 40%; text-align: right;">${FormatUtils.formatCurrency(receipt.discount)}</div></div>
-  <div style="display: table; width: 100%; font-weight: 900;"><div style="display: table-cell; width: 60%; text-align: left;">TOTAL TAX:</div><div style="display: table-cell; width: 40%; text-align: right;">${FormatUtils.formatCurrency(receipt.totalTax)}</div></div>
-  <div style="display: table; width: 100%; font-weight: 900;"><div style="display: table-cell; width: 60%; text-align: left;">TOTAL INCL OF TAX:</div><div style="display: table-cell; width: 40%; text-align: right;">${FormatUtils.formatCurrency(receipt.totalInclOfTax)}</div></div>
-  <div style="border-top: 1px dotted #000; margin: 10px 0;"></div>
-  <div style="text-align: center;">
-    <div style="font-weight: 900;">RECEIPT VERIFICATION CODE:</div>
-    <div style="margin: 10px 0; word-break: break-word; font-size: 14px;">
-      ${receipt.verificationCode}
-    </div>
-    <div style="border: 1px solid #000; padding: 20px; margin: 10px 0;">$qrCode</div>
-    <div style="font-weight: 900;">*** END OF LEGAL RECEIPT ***</div>
-  </div>
-</div>
-</body>
-</html>
-''';
+        ],
+      ),
+      body: Center(
+        child: ElevatedButton.icon(
+          icon: const Icon(Icons.print),
+          label: const Text("Print or Preview Receipt"),
+          onPressed: () async {
+            final pdfBytes = await _buildPdf(widget.receipt, widget.company);
+            await Printing.layoutPdf(
+              onLayout: (format) async => pdfBytes,
+            );
+          },
+        ),
+      ),
+    );
   }
 }
+
+
+
+
+
+
+
+
+
+
