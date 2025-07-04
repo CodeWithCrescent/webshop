@@ -6,7 +6,7 @@ import 'package:webshop/core/network/http_client.dart';
 
 class DashboardProvider with ChangeNotifier {
   final SharedPreferences prefs;
-  late final HttpClient httpClient;
+  final HttpClient httpClient;
 
   bool _isLoading = false;
   String? _error;
@@ -22,9 +22,7 @@ class DashboardProvider with ChangeNotifier {
   String? get totalAmount => _totalAmount;
   String? get date => _date;
 
-  DashboardProvider(this.prefs) {
-    httpClient = HttpClient(prefs: prefs);
-  }
+  DashboardProvider(this.prefs, this.httpClient);
 
   Future<void> fetchDashboardData() async {
     try {

@@ -13,6 +13,8 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final routeArgs = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -52,7 +54,7 @@ class LoginPage extends StatelessWidget {
                       ],
                     ),
                     padding: const EdgeInsets.all(32),
-                    child: const _LoginForm(),
+                    child: _LoginForm(initialError: routeArgs?['error']),
                   ),
 
                   // Footer
@@ -74,7 +76,8 @@ class LoginPage extends StatelessWidget {
 }
 
 class _LoginForm extends StatefulWidget {
-  const _LoginForm();
+  final String? initialError;
+  const _LoginForm({this.initialError});
 
   @override
   State<_LoginForm> createState() => _LoginFormState();
@@ -86,6 +89,15 @@ class _LoginFormState extends State<_LoginForm> {
   final _passwordController = TextEditingController();
   bool _obscureText = true;
 
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialError != null) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      authProvider.setError(widget.initialError!);
+    }
+  }
+  
   @override
   void dispose() {
     _usernameController.dispose();

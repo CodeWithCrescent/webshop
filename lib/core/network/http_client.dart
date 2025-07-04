@@ -1,11 +1,14 @@
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HttpClient {
   final SharedPreferences prefs;
+  final GlobalKey<NavigatorState> navigatorKey;
 
-  HttpClient({required this.prefs});
+  HttpClient({required this.prefs, required this.navigatorKey});
 
   Future<Map<String, String>> _getHeaders() async {
     final token = prefs.getString('access_token');
@@ -14,10 +17,17 @@ class HttpClient {
     final currentTime = DateTime.now().millisecondsSinceEpoch;
 
     if (token == null || expiry == null || currentTime >= expiry) {
-      // Token is missing or expired, clear session
+      // Token expired or missing
       await prefs.remove('access_token');
       await prefs.remove('token_expiry');
-      throw Exception('Session expired. Please log in again.');
+
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        '/login',
+        (route) => false,
+        arguments: {'error': 'Session expired. Please log in again.'},
+      );
+
+      throw Exception('Session expired. Redirecting to login.');
     }
 
     return {
@@ -27,22 +37,12 @@ class HttpClient {
   }
 
   Future<http.Response> get(String url) async {
-    try {
-      final headers = await _getHeaders();
-      return await http.get(Uri.parse(url), headers: headers);
-    } catch (e) {
-      // handle logout or redirection here
-      rethrow;
-    }
+    final headers = await _getHeaders();
+    return await http.get(Uri.parse(url), headers: headers);
   }
 
   Future<http.Response> post(String url, Map<String, dynamic> data) async {
-    try {
-      final headers = await _getHeaders();
-      return await http.post(Uri.parse(url), headers: headers, body: jsonEncode(data));
-    } catch (e) {
-      // handle logout or redirection here
-      rethrow;
-    }
+    final headers = await _getHeaders();
+    return await http.post(Uri.parse(url), headers: headers, body: jsonEncode(data));
   }
 }

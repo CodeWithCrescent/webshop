@@ -27,6 +27,7 @@ Future<void> main() async {
 Future<void> _init() async {
   await AppLocalizations.init();
   final prefs = await SharedPreferences.getInstance();
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   await Hive.initFlutter();
 
@@ -41,14 +42,14 @@ Future<void> _init() async {
   final customerBox = await Hive.openBox<Customer>('customers');
 
   // Create HTTP client
-  final httpClient = HttpClient(prefs: prefs);
+  final httpClient = HttpClient(prefs: prefs, navigatorKey: navigatorKey);
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider(prefs)),
-        ChangeNotifierProvider(create: (_) => DashboardProvider(prefs)),
+        ChangeNotifierProvider(create: (_) => DashboardProvider(prefs, httpClient)),
         ChangeNotifierProvider(
           create: (_) => InventoryProvider(
             localDataSource: ProductLocalDataSource(
@@ -71,7 +72,7 @@ Future<void> _init() async {
           create: (_) => ZReportProvider(httpClient: httpClient),
         ),
       ],
-      child: const WebShopApp(),
+      child: WebShopApp(),
     ),
   );
 }

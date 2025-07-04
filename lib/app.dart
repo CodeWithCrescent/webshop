@@ -14,14 +14,16 @@ import 'modules/receipts/pages/receipts_page.dart';
 import 'modules/zreport/zreports_page.dart';
 
 class WebShopApp extends StatelessWidget {
-  const WebShopApp({super.key});
+  WebShopApp({super.key});
 
+  final navigatorKey = GlobalKey<NavigatorState>();
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
+          navigatorKey: navigatorKey,
           title: 'WebSHOP',
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
