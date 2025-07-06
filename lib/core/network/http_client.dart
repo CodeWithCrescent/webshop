@@ -37,8 +37,14 @@ class HttpClient {
   }
 
   Future<http.Response> get(String url) async {
-    final headers = await _getHeaders();
-    return await http.get(Uri.parse(url), headers: headers);
+    // try {
+      final headers = await _getHeaders();
+      return await http.get(Uri.parse(url), headers: headers);
+    // } catch (e) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('Business profile is not available')),
+    //   );
+    // }
   }
 
   Future<http.Response> post(String url, Map<String, dynamic> data) async {
