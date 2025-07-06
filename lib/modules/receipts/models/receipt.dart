@@ -11,9 +11,9 @@ class Receipt {
   final String ackCode;
   final String ackMsg;
   final String rctvNum;
-  final String customerId;
-  final String customerName; // <- Only the name now
-  final String createdBy;
+  final String? customerId;
+  final String? customerName;
+  final String? createdBy;
 
   Receipt({
     required this.receiptNumber,
@@ -26,9 +26,9 @@ class Receipt {
     required this.ackCode,
     required this.ackMsg,
     required this.rctvNum,
-    required this.customerId,
-    required this.customerName,
-    required this.createdBy,
+    this.customerId,
+    this.customerName,
+    this.createdBy,
   });
 
   factory Receipt.fromJson(Map<String, dynamic> json) {
