@@ -38,4 +38,22 @@ class FormatUtils {
     return formatCurrency(ratio);
   }
 
+  /// Normalize a phone number for WhatsApp usage:
+  /// - If it starts with '+', remove the '+'
+  /// - If it starts with '0', assume Tanzania (replace with '255')
+  /// - If it already starts with a country code (e.g., 1, 44, 91, 255), keep it
+  static String normalizePhoneNumber(String phoneNumber) {
+    String cleaned = phoneNumber.replaceAll(RegExp(r'[^0-9+]'), '');
+
+    if (cleaned.startsWith('+')) {
+      cleaned = cleaned.substring(1);
+    }
+
+    if (cleaned.startsWith('0')) {
+      // Assume local Tanzanian number
+      cleaned = '255${cleaned.substring(1)}';
+    }
+
+    return cleaned;
+  }
 }
