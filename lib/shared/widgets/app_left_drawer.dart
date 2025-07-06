@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:webshop/core/constants/app_colors.dart';
 import 'package:webshop/modules/settings/pages/company_profile_page.dart';
 import 'package:webshop/shared/providers/auth_provider.dart';
 
@@ -34,23 +33,23 @@ class AppLeftDrawer extends StatelessWidget {
           return Column(
             children: [
               UserAccountsDrawerHeader(
-                decoration: const BoxDecoration(color: AppColors.primary),
+                decoration: BoxDecoration(color: Theme.of(context).primaryColor),
                 accountName: Text(
                   name,
-                  style: const TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.surface),
                 ),
                 accountEmail: Text(
                   email,
-                  style: const TextStyle(fontSize: 14),
+                  style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.surface),
                 ),
-                currentAccountPicture: const CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, size: 40),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Theme.of(context).colorScheme.surface,
+                  child: Icon(Icons.person, size: 40, color: Theme.of(context).primaryColor,),
                 ),
               ),
               ListTile(
                 leading: const Icon(Icons.business),
-                title: const Text('Company Profile'),
+                title: const Text('Business Profile'),
                 onTap: () {
                     Navigator.pop(context);
                     Navigator.push(

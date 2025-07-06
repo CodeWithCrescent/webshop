@@ -11,6 +11,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:share_whatsapp/share_whatsapp.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/core/utils/format_utils.dart';
+import 'package:webshop/core/utils/helpers.dart';
 import 'package:webshop/modules/receipts/models/receipt_data.dart';
 import 'package:webshop/modules/settings/models/company_profile.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
@@ -168,7 +169,7 @@ class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
 
   /// HTML BUILDER (injects receipt + company data)
   String _buildHtml(ReceiptData receipt, CompanyProfile company) {
-    final qrCode = QrImageView(data: receipt.verificationLink, size: 280,);
+    final qrCode = QrImageView(data: parseString(receipt.verificationLink), size: 280,);
     return '''
 <!DOCTYPE html>
 <html>
@@ -179,7 +180,7 @@ class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
 <div style="max-width: 400px; background: white; padding: 5px; font-family: 'Courier New', monospace; margin: 0; font-size: 18px; font-weight: bold;">
   <div style="text-align: center; font-weight: 900;">*** START OF LEGAL RECEIPT ***</div><br>
   <div style="text-align: center;">
-    <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/110913075/462230041-ffa64edf-0a27-4da5-b30a-b296d8e1d366.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250703%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250703T222544Z&X-Amz-Expires=300&X-Amz-Signature=300837ab09042d76cdf20498473e38efcedb00c90c50a59204ee515432b44a7b&X-Amz-SignedHeaders=host" alt="TRA logo" style="max-width:65px;" />
+    <img src="assets/images/tra.png" alt="TRA logo" style="max-width:65px;" />
     <div style="font-weight: 900;">${company.name}</div>
     <div>${company.address1}</div>
     <div><span style="font-weight: 900;">MOBILE:</span> ${company.mobile}</div>

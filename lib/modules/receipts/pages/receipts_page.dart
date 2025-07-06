@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/core/utils/format_utils.dart';
 import 'package:webshop/modules/receipts/models/receipt.dart';
-import 'package:webshop/modules/receipts/pages/receipt_html_view.dart';
+import 'package:webshop/modules/receipts/pages/receipt_print_view.dart';
 import 'package:webshop/modules/receipts/providers/receipt_provider.dart';
 import 'package:webshop/modules/settings/providers/company_profile_provider.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
@@ -153,7 +153,7 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    receipt.customerName,
+                  receipt.customerName ?? "",
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                   Text(
