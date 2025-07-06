@@ -136,30 +136,54 @@ class InventoryProvider with ChangeNotifier {
 
   Future<void> updateCategory(Category category) async {
     try {
+      final oldCategory = _categories.firstWhere((c) => c.id == category.id);
+
+      if (oldCategory.name != category.name) {
+        // Update products that use the old name
+        await localDataSource.updateCategoryName(oldCategory.name, category.name);
+      }
+
       await localDataSource.updateCategory(category);
       await loadCategories();
+      await loadProducts();
+
+      if (_selectedCategory == oldCategory.name) {
+        _selectedCategory = category.name;
+      }
+
+      _applyFilters();
     } catch (e) {
       debugPrint('Error updating category: $e');
       rethrow;
     }
   }
 
+  /// Deletes category and all its products!!
   Future<void> deleteCategory(String categoryId) async {
     try {
+      final categoryToDelete = _categories.firstWhere(
+        (c) => c.id == categoryId,
+        orElse: () => Category(name: ''),
+      );
+      final categoryName = categoryToDelete.name;
+
+      // Delete products of that category
+      await localDataSource.deleteProductsByCategory(categoryName);
+
+      // Delete category
       await localDataSource.deleteCategory(categoryId);
+
+      // Reload state
       await loadCategories();
-      if (_selectedCategory != null) {
-        final category = _categories.firstWhere(
-          (c) => c.id == categoryId,
-          orElse: () => Category(name: ''),
-        );
-        if (category.name == _selectedCategory) {
-          _selectedCategory = null;
-        }
+      await loadProducts();
+
+      if (_selectedCategory == categoryName) {
+        _selectedCategory = null;
       }
+
       _applyFilters();
     } catch (e) {
-      debugPrint('Error deleting category: $e');
+      debugPrint('Error deleting category and its products: $e');
       rethrow;
     }
   }
