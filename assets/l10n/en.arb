@@ -33,6 +33,8 @@
   },
   "common": {
     "app_name": "WebSHOP",
+    "total": "Total",
+    "retry": "Retry",
     "search": "Search...",
     "cancel": "Cancel",
     "save": "Save",
@@ -144,6 +146,7 @@
   },
   "receipts": {
     "title": "Receipts",
+    "preview_title": "Receipt Preview",
     "receipt_details": "Receipt Details",
     "no_receipt_found": "No receipt found",
     "print": "Print",
@@ -154,11 +157,12 @@
     "filter_this_week": "This Week",
     "filter_last_month": "Last Month",
     "filter_date": "Specific Date",
-    "filter_date_range": "Date Range"
+    "filter_date_range": "Date Range",
+    "created_by": "Created By"
   },
   "settings": {
-    "company_profile": "Company Profile",
-    "company_name": "Company Name",
+    "company_profile": "Business Profile",
+    "company_name": "Business Name",
     "mobile": "Mobile",
     "address_line1": "Address Line 1",
     "address_line2": "Address Line 2",
