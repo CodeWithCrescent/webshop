@@ -82,7 +82,7 @@ class AuthProvider with ChangeNotifier {
         _isAuthenticated = false;
       }
     } catch (e) {
-      _error = 'Unexpected error occurred.';
+      _error = '$e';
       _isAuthenticated = false;
     }
 

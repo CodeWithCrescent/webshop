@@ -70,7 +70,7 @@ class _ProductModalState extends State<ProductModal> {
         id: widget.product?.id,
         code: _codeController.text,
         name: _nameController.text,
-        category: _selectedCategory ?? 'Uncategorized',
+        category: _selectedCategory,
         price: double.parse(_priceController.text),
         taxCategory: _selectedTaxCategory,
         stock: int.parse(_stockController.text),

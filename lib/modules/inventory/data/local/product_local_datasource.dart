@@ -39,7 +39,28 @@ class ProductLocalDataSource {
     await categoryBox.put(category.id, category);
   }
 
+  Future<void> updateCategoryName(String oldName, String newName) async {
+    final productsToUpdate = productBox.values
+        .where((product) => product.category == oldName)
+        .toList();
+
+    for (final product in productsToUpdate) {
+      final updatedProduct = product.copyWith(category: newName);
+      await productBox.put(updatedProduct.id, updatedProduct);
+    }
+  }
+
   Future<void> deleteCategory(String categoryId) async {
     await categoryBox.delete(categoryId);
+  }
+
+  Future<void> deleteProductsByCategory(String categoryName) async {
+    final productsToDelete = productBox.values
+        .where((product) => product.category == categoryName)
+        .toList();
+
+    for (final product in productsToDelete) {
+      await productBox.delete(product.id);
+    }
   }
 }

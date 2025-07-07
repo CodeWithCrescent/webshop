@@ -42,7 +42,7 @@ class InventoryLocalizations {
   String get cancel => _translate('common.cancel');
   String get add => _translate('common.add');
   String get delete => _translate('common.delete');
-  String get edit => _translate('common.add');
+  String get edit => _translate('common.edit');
   String get addSuccess => _translate('common.addSuccess');
   String get updateSuccess => _translate('common.updateSuccess');
   String get deletedSuccess => _translate('common.deletedSuccess');

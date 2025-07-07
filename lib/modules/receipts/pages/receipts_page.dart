@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:webshop/core/constants/app_colors.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/core/utils/format_utils.dart';
 import 'package:webshop/modules/receipts/models/receipt.dart';
-import 'package:webshop/modules/receipts/pages/receipt_html_view.dart';
+import 'package:webshop/modules/receipts/pages/receipt_print_view.dart';
 import 'package:webshop/modules/receipts/providers/receipt_provider.dart';
 import 'package:webshop/modules/settings/providers/company_profile_provider.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
@@ -56,75 +57,82 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
         title: loc?.translate('receipts.title') ?? 'Receipts',
         onRefresh: () => provider.fetchReceipts(refresh: true),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: SearchField(
-                    controller: _searchController,
-                    hintText:
-                        loc?.translate('common.search') ?? 'Search receipts',
-                    onChanged: provider.setSearchQuery,
+      body: Container(
+        decoration: BoxDecoration(
+          color: AppColors.primary.withOpacity(0.1),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SearchField(
+                      controller: _searchController,
+                      hintText:
+                          loc?.translate('common.search') ?? 'Search receipts',
+                      onChanged: provider.setSearchQuery,
+                    ),
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.filter_alt),
-                  onPressed: () => _showFilterDialog(context),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${loc?.translate('common.total') ?? 'Total'}: ${provider.receiptCount}',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  _getFilterText(provider.currentFilter, loc),
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () => provider.fetchReceipts(refresh: true),
-              child: ListView.builder(
-                controller: _scrollController,
-                itemCount:
-                    provider.receipts.length + (provider.hasMore ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == provider.receipts.length) {
-                    return Center(
-                      child: provider.isLoading
-                          ? const Padding(
-                              padding: EdgeInsets.all(16),
-                              child: CircularProgressIndicator(),
-                            )
-                          : const SizedBox(),
-                    );
-                  }
-                  return _buildReceiptCard(provider.receipts[index], loc);
-                },
+                  IconButton(
+                    icon: const Icon(Icons.filter_alt),
+                    onPressed: () => _showFilterDialog(context),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${loc?.translate('common.total') ?? 'Total'}: ${provider.receiptCount}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    _getFilterText(provider.currentFilter, loc),
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () => provider.fetchReceipts(refresh: true),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount:
+                      provider.receipts.length + (provider.hasMore ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == provider.receipts.length) {
+                      return Center(
+                        child: provider.isLoading
+                            ? const Padding(
+                                padding: EdgeInsets.all(16),
+                                child: CircularProgressIndicator(),
+                              )
+                            : const SizedBox(),
+                      );
+                    }
+                    return _buildReceiptCard(provider.receipts[index], loc);
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildReceiptCard(Receipt receipt, AppLocalizations? loc) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 0.5,
+      color: AppColors.cardLight,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: InkWell(
         onTap: () => _navigateToReceiptDetail(receipt.receiptNumber),
         child: Padding(
@@ -153,7 +161,7 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    receipt.customerName,
+                    receipt.customerName ?? "",
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                   Text(
@@ -386,7 +394,8 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
   Future<void> _navigateToReceiptDetail(String receiptNumber) async {
     final navigator = Navigator.of(context);
     final provider = Provider.of<ReceiptProvider>(context, listen: false);
-    final company = Provider.of<CompanyProfileProvider>(context, listen: false).companyProfile;
+    final company = Provider.of<CompanyProfileProvider>(context, listen: false)
+        .companyProfile;
 
     if (company == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -406,5 +415,4 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
       ),
     );
   }
-
 }

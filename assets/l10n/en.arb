@@ -33,6 +33,8 @@
   },
   "common": {
     "app_name": "WebSHOP",
+    "total": "Total",
+    "retry": "Retry",
     "search": "Search...",
     "cancel": "Cancel",
     "save": "Save",
@@ -118,6 +120,9 @@
     "title": "Customers",
     "add_customer": "Add Customer",
     "edit_customer": "Edit Customer",
+    "added_success": "Customer added successfully",
+    "updated_success": "Customer updated successfully",
+    "deleted_success": "Customer deleted successfully",
     "full_name": "Full Name",
     "phone": "Phone Number",
     "email": "Email",
@@ -144,6 +149,7 @@
   },
   "receipts": {
     "title": "Receipts",
+    "preview_title": "Receipt Preview",
     "receipt_details": "Receipt Details",
     "no_receipt_found": "No receipt found",
     "print": "Print",
@@ -154,11 +160,12 @@
     "filter_this_week": "This Week",
     "filter_last_month": "Last Month",
     "filter_date": "Specific Date",
-    "filter_date_range": "Date Range"
+    "filter_date_range": "Date Range",
+    "created_by": "Created By"
   },
   "settings": {
-    "company_profile": "Company Profile",
-    "company_name": "Company Name",
+    "company_profile": "Business Profile",
+    "company_name": "Business Name",
     "mobile": "Mobile",
     "address_line1": "Address Line 1",
     "address_line2": "Address Line 2",
@@ -166,6 +173,13 @@
     "tin": "TIN Number",
     "vrn": "VRN",
     "serial_number": "Serial Number",
-    "tax_office": "Tax Office"
+    "tax_office": "Tax Office",
+    "contact_info": "Contact Information",
+    "address": "Address",
+    "tax_info": "Tax Information",
+    "system_info": "Systtem Information",
+    "allowed_instances": "Allowed Instances",
+    "installed_instances": "Installed Instances",
+    "update_at_tra": "To change this infortmation, please visit your domicile TRA office."
   }
 }

@@ -13,7 +13,8 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final routeArgs = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final routeArgs =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     return Scaffold(
       body: Container(
@@ -97,7 +98,7 @@ class _LoginFormState extends State<_LoginForm> {
       authProvider.setError(widget.initialError!);
     }
   }
-  
+
   @override
   void dispose() {
     _usernameController.dispose();
@@ -115,6 +116,8 @@ class _LoginFormState extends State<_LoginForm> {
     // Map raw error to localized message
     String getFriendlyError(String error) {
       final lowerError = error.toLowerCase();
+
+      print(lowerError);
 
       // Connection or network-related errors
       if (lowerError.contains('socketexception') ||
@@ -246,7 +249,9 @@ class _LoginFormState extends State<_LoginForm> {
               ),
               suffixIcon: IconButton(
                 icon: Icon(
-                  _obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                  _obscureText
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
                   color: colorScheme.onSurface.withOpacity(0.7),
                   size: 20,
                 ),

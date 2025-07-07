@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webshop/core/constants/app_colors.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
+import 'package:webshop/core/utils/format_utils.dart';
 import 'package:webshop/modules/customers/models/customer.dart';
 import 'package:webshop/modules/customers/pages/customer_modal.dart';
 import 'package:webshop/modules/customers/providers/customer_provider.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
+import 'package:webshop/shared/widgets/info_tag.dart';
 import 'package:webshop/shared/widgets/search_field.dart';
 
 class CustomersPage extends StatefulWidget {
@@ -97,6 +100,7 @@ class _CustomersPageState extends State<CustomersPage> {
 
   Widget _buildCustomerCard(Customer customer, AppLocalizations? loc) {
     return Card(
+      elevation: 0.5,
       surfaceTintColor: AppColors.cardLight,
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -125,7 +129,7 @@ class _CustomersPageState extends State<CustomersPage> {
                         onPressed: () => _makePhoneCall(customer.phoneNumber),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.chat, color: Colors.green),
+                        icon: SvgPicture.asset('assets/images/whatsapp-icon.svg', width: 32),
                         onPressed: () => _openWhatsApp(customer.phoneNumber),
                       ),
                     ],
@@ -148,18 +152,19 @@ class _CustomersPageState extends State<CustomersPage> {
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
+                  runSpacing: 8,
                   children: [
                     if (customer.tinNumber != null)
-                      Chip(
-                        label: Text('TIN: ${customer.tinNumber}'),
-                        backgroundColor: AppColors.primary.withOpacity(0.1),
-                        labelStyle: const TextStyle(color: AppColors.primary),
+                      InfoTag(
+                        label: 'TIN: ${customer.tinNumber}',
+                        color: AppColors.primary,
+                        isSelected: true,
                       ),
                     if (customer.vrn != null)
-                      Chip(
-                        label: Text('VRN: ${customer.vrn}'),
-                        backgroundColor: AppColors.secondary.withOpacity(0.1),
-                        labelStyle: const TextStyle(color: AppColors.secondary),
+                      InfoTag(
+                        label: 'VRN: ${customer.vrn}',
+                        color: AppColors.secondary,
+                        isSelected: true,
                       ),
                   ],
                 ),
@@ -181,7 +186,9 @@ class _CustomersPageState extends State<CustomersPage> {
   }
 
   Future<void> _openWhatsApp(String phoneNumber) async {
-    final url = Uri.parse('https://wa.me/$phoneNumber');
+    final normalizedNumber = FormatUtils.normalizePhoneNumber(phoneNumber);
+    final url = Uri.parse('https://wa.me/$normalizedNumber');
+
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
     } else {
@@ -230,32 +237,4 @@ class _CustomersPageState extends State<CustomersPage> {
       ),
     );
   }
-
-  // void _showCustomerModal(BuildContext context, Customer? customer) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     backgroundColor: Colors.transparent,
-  //     builder: (context) {
-  //       return CustomerModal(
-  //         customer: customer,
-  //         onSave: (customerData) async {
-  //           final provider = context.read<CustomerProvider>();
-  //           if (customer == null) {
-  //             await provider.addCustomer(customerData);
-  //           } else {
-  //             await provider.updateCustomer(customerData);
-  //           }
-  //           if (context.mounted) Navigator.pop(context);
-  //         },
-  //         onDelete: customer != null
-  //             ? () async {
-  //                 await context.read<CustomerProvider>().deleteCustomer(customer.id);
-  //                 if (context.mounted) Navigator.pop(context);
-  //               }
-  //             : null,
-  //       );
-  //     },
-  //   );
-  // }
 }

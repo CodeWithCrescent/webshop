@@ -7,8 +7,11 @@ import 'package:webshop/modules/customers/pages/customer_modal.dart';
 import 'package:webshop/modules/customers/pages/customers_page.dart';
 import 'package:webshop/modules/customers/providers/customer_provider.dart';
 import 'package:webshop/modules/dashboard/dashboard_page.dart';
+import 'package:webshop/modules/inventory/models/product.dart';
 import 'package:webshop/modules/inventory/pages/inventory_page.dart';
 import 'package:webshop/modules/sales/pages/sales_page.dart';
+import 'package:webshop/modules/inventory/pages/product_modal.dart';
+import 'package:webshop/modules/inventory/providers/inventory_provider.dart';
 import 'package:webshop/modules/zreport/zreports_page.dart';
 import 'package:webshop/shared/widgets/bottom_bar.dart';
 
@@ -46,6 +49,8 @@ class _LayoutPageState extends State<LayoutPage> {
 
   void _onTabTapped(BuildContext context, int index, AppLocalizations? loc,
       InventoryLocalizations locInventory) {
+  void _onTabTapped(BuildContext context, int index, AppLocalizations? loc,
+      InventoryLocalizations locInventory) {
     if (index == 2) {
       _showActionSheet(context, loc, locInventory);
     } else {
@@ -55,6 +60,8 @@ class _LayoutPageState extends State<LayoutPage> {
     }
   }
 
+  void _showActionSheet(BuildContext context, AppLocalizations? loc,
+      InventoryLocalizations locInventory) {
   void _showActionSheet(BuildContext context, AppLocalizations? loc,
       InventoryLocalizations locInventory) {
     List<Widget> actions = [];
@@ -83,8 +90,13 @@ class _LayoutPageState extends State<LayoutPage> {
         break;
       case 1: // Inventory
         actions = [
-          _buildActionTile(locInventory.addProduct),
-          _buildActionTile(locInventory.addNewCategory),
+          _buildActionTile(
+            locInventory.addProduct,
+            onTap: () {
+              Navigator.pop(context);
+              _showAddProductModal(context);
+            },
+          ),
           _buildDivider(),
           _buildCancelTile(loc),
         ];
@@ -92,11 +104,13 @@ class _LayoutPageState extends State<LayoutPage> {
       case 3: // Customers
         actions = [
           _buildActionTile(
+          _buildActionTile(
             loc?.translate('customers.add_customer') ?? 'Add Customer',
             onTap: () {
               Navigator.pop(context);
               _showAddCustomerModal(context);
             },
+          ),
           ),
           _buildDivider(),
           _buildCancelTile(loc),
@@ -116,23 +130,6 @@ class _LayoutPageState extends State<LayoutPage> {
         ));
   }
 
-  // void _showAddCustomerModal(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     backgroundColor: Colors.transparent,
-  //     builder: (context) {
-  //       return CustomerModal(
-  //         onSave: (customerData) async {
-  //           final provider = context.read<CustomerProvider>();
-  //             await provider.addCustomer(customerData);
-  //           if (context.mounted) Navigator.pop(context);
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
   void _showAddCustomerModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -141,6 +138,20 @@ class _LayoutPageState extends State<LayoutPage> {
         onSuccess: () {
           // Refresh your customer list here
           context.read<CustomerProvider>().getCustomers();
+        },
+      ),
+    );
+  }
+
+  void _showAddProductModal(BuildContext context, {Product? product}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => ProductModal(
+        product: product,
+        onSuccess: () {
+          // Refresh product list
+          context.read<InventoryProvider>().loadProducts();
         },
       ),
     );

@@ -10,7 +10,6 @@ import 'package:webshop/modules/receipts/pages/receipts_page.dart';
 import 'package:webshop/shared/widgets/action_button.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/app_left_drawer.dart';
-import 'package:webshop/shared/widgets/grid_stat_card.dart';
 import 'package:webshop/shared/widgets/horizontal_stat_card.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -97,7 +96,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
           // Horizontal Stat Card Section
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             sliver: SliverToBoxAdapter(
               child: HorizontalStatCard(
                 icon: Icons.receipt_long,
@@ -107,35 +106,6 @@ class _DashboardPageState extends State<DashboardPage> {
                 subtitle: loc.translate('dashboard.date'),
                 subtitleValue: provider.date ?? '-',
               ),
-            ),
-          ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 8)),
-
-          // Stats Grid
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 1.4,
-              ),
-              delegate: SliverChildListDelegate([
-                GridStatCard(
-                  title: loc.translate('dashboard.today_receipts'),
-                  value: provider.totalReceipts.toString(),
-                  icon: Icons.receipt_long,
-                  color: AppColors.secondary,
-                ),
-                GridStatCard(
-                  title: loc.translate('dashboard.date'),
-                  value: provider.date ?? '-',
-                  icon: Icons.calendar_month,
-                  color: AppColors.primary,
-                ),
-              ]),
             ),
           ),
 

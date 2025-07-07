@@ -6,6 +6,7 @@ import 'package:webshop/core/localization/inventory_localizations.dart';
 import 'package:webshop/modules/inventory/models/category.dart';
 import 'package:webshop/modules/inventory/models/product.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
+import 'package:webshop/shared/widgets/info_tag.dart';
 import 'package:webshop/shared/widgets/search_field.dart';
 import 'package:webshop/modules/inventory/providers/inventory_provider.dart';
 import 'package:webshop/modules/inventory/pages/product_modal.dart';
@@ -81,63 +82,38 @@ class _InventoryPageState extends State<InventoryPage> {
   Widget _buildCategoryChips(
       InventoryProvider provider, InventoryLocalizations loc) {
     return SizedBox(
-      height: 50,
+      height: 32,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 8),
         itemCount: provider.categories.length + 1,
         itemBuilder: (context, index) {
           if (index == 0) {
+            final isSelected = provider.selectedCategory == null;
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: ChoiceChip(
-                label: Text(loc.allCategories),
-                selected: provider.selectedCategory == null,
-                onSelected: (_) => provider.setCategoryFilter(null),
-                backgroundColor: AppColors.cardLight,
-                selectedColor: AppColors.primary.withOpacity(0.2),
-                labelStyle: TextStyle(
-                  color: provider.selectedCategory == null
-                      ? AppColors.primary
-                      : AppColors.textPrimary,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(
-                    color: provider.selectedCategory == null
-                        ? AppColors.primary
-                        : Colors.grey[300]!,
-                  ),
-                ),
+              child: InfoTag(
+                label: loc.allCategories,
+                color: AppColors.primary,
+                isSelected: isSelected,
+                onTap: () => provider.setCategoryFilter(null),
               ),
             );
           }
 
           final category = provider.categories[index - 1];
+          final isSelected = provider.selectedCategory == category.name;
+
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: GestureDetector(
               onLongPress: () =>
                   _showCategoryOptions(context, category, provider),
-              child: ChoiceChip(
-                label: Text(category.name),
-                selected: provider.selectedCategory == category.name,
-                onSelected: (_) => provider.setCategoryFilter(category.name),
-                backgroundColor: AppColors.cardLight,
-                selectedColor: AppColors.primary.withOpacity(0.2),
-                labelStyle: TextStyle(
-                  color: provider.selectedCategory == category.name
-                      ? AppColors.primary
-                      : AppColors.textPrimary,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(
-                    color: provider.selectedCategory == category.name
-                        ? AppColors.primary
-                        : Colors.grey[300]!,
-                  ),
-                ),
+              child: InfoTag(
+                label: category.name,
+                color: AppColors.primary,
+                isSelected: isSelected,
+                onTap: () => provider.setCategoryFilter(category.name),
               ),
             ),
           );
@@ -261,8 +237,8 @@ class _InventoryPageState extends State<InventoryPage> {
     final theme = Theme.of(context);
 
     return Card(
-      elevation: 2,
-      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0.5,
+      margin: const EdgeInsets.only(bottom: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
@@ -289,10 +265,26 @@ class _InventoryPageState extends State<InventoryPage> {
                         style: theme.textTheme.titleMedium
                             ?.copyWith(fontWeight: FontWeight.w600)),
                     const SizedBox(height: 4),
-                    Text(product.code,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                            color:
-                                theme.colorScheme.onSurface.withOpacity(0.6))),
+                    Row(
+                      children: [
+                        Text(product.code,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                                color:
+                                    theme.colorScheme.onSurface.withOpacity(0.6))),
+                        Text(
+                          " • ",
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                        ),
+                        Text(
+                          product.category ?? "Uncategorized",
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -362,34 +354,6 @@ class _InventoryPageState extends State<InventoryPage> {
       ),
     );
   }
-
-  // void _showProductModal(BuildContext context, Product? product) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     backgroundColor: Colors.transparent,
-  //     builder: (context) {
-  //       return ProductModal(
-  //         product: product,
-  //         onSave: (productData) async {
-  //           final provider = context.read<InventoryProvider>();
-  //           if (product == null) {
-  //             await provider.addProduct(productData);
-  //           } else {
-  //             await provider.updateProduct(productData);
-  //           }
-  //           if (context.mounted) Navigator.pop(context);
-  //         },
-  //         onDelete: product != null
-  //             ? () async {
-  //                 await context.read<InventoryProvider>().deleteProduct(product.id);
-  //                 if (context.mounted) Navigator.pop(context);
-  //               }
-  //             : null,
-  //       );
-  //     },
-  //   );
-  // }
 
   void _showFilterDialog(BuildContext context, InventoryProvider provider) {
     final loc = InventoryLocalizations(context);

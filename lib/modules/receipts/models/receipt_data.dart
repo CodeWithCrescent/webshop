@@ -1,25 +1,31 @@
 import 'package:intl/intl.dart';
+import 'package:webshop/core/utils/helpers.dart';
 
 class ReceiptData {
-  final String receiptNumber;
-  final String receiptDate;
-  final String receiptTime;
-  final String verificationCode;
-  final String zNumber;
-  final String verificationLink;
-  final String isDemo;
-  final String vrn;
-  final String totalExclOfTax;
-  final String totalTax;
-  final String totalInclOfTax;
-  final String discount;
-  final String customerIdType;
-  final String customerIdNumber;
-  final String customerName;
-  final String customerMobile;
+  final Object? invoiceNumber;
+  final Object? receiptNumber;
+  final Object? receiptDate;
+  final Object? receiptTime;
+  final Object? verificationCode;
+  final Object? zNumber;
+  final Object? verificationLink;
+  final Object? isDemo;
+  final Object? vrn;
+  final Object? totalExclOfTax;
+  final Object? totalTax;
+  final Object? totalInclOfTax;
+  final Object? ackCode;
+  final Object? ackMsg;
+  final Object? discount;
+  final Object? customerIdType;
+  final Object? customerIdNumber;
+  final Object? customerName;
+  final Object? customerMobile;
+  final Object? customerVrn;
   final List<ReceiptDataItem> items;
 
   ReceiptData({
+    this.invoiceNumber,
     required this.receiptNumber,
     required this.receiptDate,
     required this.receiptTime,
@@ -31,44 +37,59 @@ class ReceiptData {
     required this.totalExclOfTax,
     required this.totalTax,
     required this.totalInclOfTax,
+    required this.ackCode,
+    required this.ackMsg,
     required this.discount,
-    required this.customerIdType,
-    required this.customerIdNumber,
-    required this.customerName,
-    required this.customerMobile,
+    this.customerIdType,
+    this.customerIdNumber,
+    this.customerName,
+    this.customerMobile,
+    this.customerVrn,
     required this.items,
   });
 
+  /// Parse [receiptDate] as readable format or fallback
   String get formattedDate {
-    final date = DateTime.parse(receiptDate);
-    return DateFormat('d MMMM y').format(date);
+    try {
+      final dateStr = parseString(receiptDate);
+      final date = DateTime.parse(dateStr);
+      return DateFormat('d MMMM y').format(date);
+    } catch (_) {
+      return '';
+    }
   }
 
   factory ReceiptData.fromMap(Map<String, dynamic> map) {
     return ReceiptData(
-      receiptNumber: map['receipt_number'] ?? '',
-      receiptDate: map['receipt_date'] ?? '',
-      receiptTime: map['receipt_time'] ?? '',
-      verificationCode: map['verificationcode'] ?? '',
-      zNumber: map['znum'] ?? '',
-      verificationLink: map['verif_link'] ?? '',
+      invoiceNumber: map['invoice_number'],
+      receiptNumber: map['receipt_number'],
+      receiptDate: map['receipt_date'],
+      receiptTime: map['receipt_time'],
+      verificationCode: map['verificationcode'],
+      zNumber: map['znum'],
+      verificationLink: map['verif_link'],
       isDemo: map['isdemo'] ?? 'no',
-      vrn: map['vrn'] ?? '',
-      totalExclOfTax: map['total_excl_of_tax'] ?? '0',
-      totalTax: map['total_tax'] ?? '0',
-      totalInclOfTax: map['total_incl_of_tax'] ?? '0',
-      discount: map['discount'] ?? '0',
-      customerIdType: map['customer_id_type'] ?? '',
-      customerIdNumber: map['customer_id_number'] ?? '',
-      customerName: map['customer_name'] ?? '',
-      customerMobile: map['customer_mobile'] ?? '',
+      vrn: map['vrn'],
+      totalExclOfTax: map['total_excl_of_tax'],
+      totalTax: map['total_tax'],
+      totalInclOfTax: map['total_incl_of_tax'],
+      ackCode: map['tra_ackcode'],
+      ackMsg: map['tra_ackmsg'],
+      discount: map['discount'],
+      customerIdType: map['customer_id_type'],
+      customerIdNumber: map['customer_id_number'],
+      customerName: map['customer_name'],
+      customerMobile: map['customer_mobile'],
+      customerVrn: map['customer_vrn'],
       items: List<ReceiptDataItem>.from(
-          (map['items'] ?? []).map((x) => ReceiptDataItem.fromMap(x))),
+        (map['items'] ?? []).map((x) => ReceiptDataItem.fromMap(x)),
+      ),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
+      'invoice_number': invoiceNumber,
       'receipt_number': receiptNumber,
       'receipt_date': receiptDate,
       'receipt_time': receiptTime,
@@ -80,11 +101,14 @@ class ReceiptData {
       'total_excl_of_tax': totalExclOfTax,
       'total_tax': totalTax,
       'total_incl_of_tax': totalInclOfTax,
+      'tra_ackcode': ackCode,
+      'tra_ackmsg': ackMsg,
       'discount': discount,
       'customer_id_type': customerIdType,
       'customer_id_number': customerIdNumber,
       'customer_name': customerName,
       'customer_mobile': customerMobile,
+      'customer_vrn': customerVrn,
       'items': items.map((item) => item.toMap()).toList(),
     };
   }

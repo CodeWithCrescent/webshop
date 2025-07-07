@@ -12,7 +12,7 @@ class Product {
   @HiveField(2)
   final String name;
   @HiveField(3)
-  final String category;
+  final String? category;
   @HiveField(4)
   final double price;
   @HiveField(5)
@@ -28,7 +28,7 @@ class Product {
     String? id,
     required this.code,
     required this.name,
-    required this.category,
+    this.category,
     required this.price,
     required this.taxCategory,
     required this.stock,

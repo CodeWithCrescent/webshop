@@ -50,9 +50,9 @@ class ReceiptProvider with ChangeNotifier {
       final url =
           '${ApiEndpoints.getReceipts}?page=$_page&search=$_searchQuery';
       final response = await httpClient.get(url);
-      final data = json.decode(response.body);
 
-      if (response.statusCode == 200) {
+      if (response!.statusCode == 200) {
+      final data = json.decode(response.body);
         final List<dynamic> receiptsData = data['receipts'] ?? [];
         final List<Receipt> newReceipts =
             receiptsData.map((r) => Receipt.fromJson(r)).toList();
@@ -79,9 +79,9 @@ class ReceiptProvider with ChangeNotifier {
     try {
       final url = '${ApiEndpoints.getReceiptData}/$receiptNumber';
       final response = await httpClient.get(url);
-      final data = json.decode(response.body);
 
-      if (response.statusCode == 200) {
+      if (response!.statusCode == 200) {
+      final data = json.decode(response.body);
         return ReceiptData.fromMap(data['receiptData']);
       } else {
         throw Exception('Failed to load receipt details');
