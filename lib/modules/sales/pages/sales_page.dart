@@ -4,6 +4,7 @@ import 'package:webshop/core/constants/app_colors.dart';
 import 'package:webshop/modules/customers/models/customer.dart';
 import 'package:webshop/modules/sales/models/product_selection.dart';
 import 'package:webshop/modules/sales/models/sale_item.dart';
+import 'package:webshop/modules/sales/pages/sale_complete_modal.dart';
 import 'package:webshop/modules/sales/providers/sales_provider.dart';
 import 'package:webshop/modules/sales/widgets/customer_selection_dialog.dart';
 import 'package:webshop/modules/sales/widgets/product_selection_dialog.dart';
@@ -266,7 +267,7 @@ class _TotalsAndCompleteButton extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => const _SaleCompleteModal(),
+      builder: (context) => const SaleCompleteModal(),
     );
   }
 }
@@ -308,14 +309,5 @@ class _TotalRow extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class _SaleCompleteModal extends StatelessWidget {
-  const _SaleCompleteModal();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder(); // Implement as shown in previous example
   }
 }
