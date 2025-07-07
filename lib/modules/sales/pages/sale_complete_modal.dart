@@ -14,6 +14,7 @@ class _SaleCompleteModalState extends State<SaleCompleteModal> {
   String _paymentType = 'CASH';
   bool _isGettingLocation = false;
   String? _locationError;
+  bool _locationPermissionDenied = false;
 
   final List<String> _paymentTypes = [
     'CASH',
@@ -59,27 +60,7 @@ class _SaleCompleteModalState extends State<SaleCompleteModal> {
               ),
             ),
             const SizedBox(height: 16),
-            ListTile(
-              leading: const Icon(Icons.location_on),
-              title: const Text('Record Location'),
-              subtitle: _locationError != null
-                  ? Text(
-                      _locationError!,
-                      style: const TextStyle(color: Colors.red),
-                    )
-                  : provider.latitude != null
-                      ? Text(
-                          'Lat: ${provider.latitude!.toStringAsFixed(4)}, '
-                          'Lng: ${provider.longitude!.toStringAsFixed(4)}',
-                        )
-                      : const Text('Location not recorded'),
-              trailing: _isGettingLocation
-                  ? const CircularProgressIndicator()
-                  : IconButton(
-                      icon: const Icon(Icons.gps_fixed),
-                      onPressed: _getCurrentLocation,
-                    ),
-            ),
+            _buildLocationSection(provider),
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.all(16),
@@ -101,13 +82,65 @@ class _SaleCompleteModalState extends State<SaleCompleteModal> {
     );
   }
 
+  Widget _buildLocationSection(SalesProvider provider) {
+    return ListTile(
+      leading: const Icon(Icons.location_on),
+      title: const Text('Record Location'),
+      subtitle: _locationError != null
+          ? Text(
+              _locationError!,
+              style: const TextStyle(color: Colors.red),
+            )
+          : provider.latitude != null
+              ? Text(
+                  'Lat: ${provider.latitude!.toStringAsFixed(4)}, '
+                  'Lng: ${provider.longitude!.toStringAsFixed(4)}',
+                )
+              : _locationPermissionDenied
+                  ? const Text(
+                      'Location permission denied',
+                      style: TextStyle(color: Colors.red),
+                    )
+                  : const Text('Location not recorded'),
+      trailing: _isGettingLocation
+          ? const CircularProgressIndicator()
+          : IconButton(
+              icon: const Icon(Icons.gps_fixed),
+              onPressed: _getCurrentLocation,
+            ),
+    );
+  }
+
   Future<void> _getCurrentLocation() async {
     setState(() {
       _isGettingLocation = true;
       _locationError = null;
+      _locationPermissionDenied = false;
     });
 
     try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw Exception('Location services are disabled');
+      }
+
+      // Check location permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          setState(() => _locationPermissionDenied = true);
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        setState(() => _locationPermissionDenied = true);
+        return;
+      }
+
+      // Get current position
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
@@ -117,7 +150,7 @@ class _SaleCompleteModalState extends State<SaleCompleteModal> {
         position.longitude,
       );
     } catch (e) {
-      setState(() => _locationError = 'Failed to get location: $e');
+      setState(() => _locationError = 'Failed to get location: ${e.toString()}');
     } finally {
       setState(() => _isGettingLocation = false);
     }
@@ -139,7 +172,7 @@ class _SaleCompleteModalState extends State<SaleCompleteModal> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error completing sale: $e'),
+            content: Text('Error completing sale: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
