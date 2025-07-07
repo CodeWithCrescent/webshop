@@ -131,7 +131,7 @@ class SalesProvider with ChangeNotifier {
         payload,
       );
 
-      if (response.statusCode == 200) {
+      if (response!.statusCode == 200) {
         // Success - clear cart
         clearCart();
       } else {

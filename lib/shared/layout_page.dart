@@ -49,8 +49,6 @@ class _LayoutPageState extends State<LayoutPage> {
 
   void _onTabTapped(BuildContext context, int index, AppLocalizations? loc,
       InventoryLocalizations locInventory) {
-  void _onTabTapped(BuildContext context, int index, AppLocalizations? loc,
-      InventoryLocalizations locInventory) {
     if (index == 2) {
       _showActionSheet(context, loc, locInventory);
     } else {
@@ -60,8 +58,6 @@ class _LayoutPageState extends State<LayoutPage> {
     }
   }
 
-  void _showActionSheet(BuildContext context, AppLocalizations? loc,
-      InventoryLocalizations locInventory) {
   void _showActionSheet(BuildContext context, AppLocalizations? loc,
       InventoryLocalizations locInventory) {
     List<Widget> actions = [];
@@ -104,13 +100,11 @@ class _LayoutPageState extends State<LayoutPage> {
       case 3: // Customers
         actions = [
           _buildActionTile(
-          _buildActionTile(
             loc?.translate('customers.add_customer') ?? 'Add Customer',
             onTap: () {
               Navigator.pop(context);
               _showAddCustomerModal(context);
             },
-          ),
           ),
           _buildDivider(),
           _buildCancelTile(loc),

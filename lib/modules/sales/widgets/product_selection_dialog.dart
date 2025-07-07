@@ -92,7 +92,7 @@ class _ProductSelectionContentState extends State<_ProductSelectionContent> {
         return ListTile(
           title: Text(product.name),
           subtitle: Text('${product.code} • ${product.price.toStringAsFixed(2)} TZS'),
-          trailing: Text(product.category),
+          trailing: Text(product.category ?? ""),
           selected: _selectedProduct?.id == product.id,
           onTap: () => setState(() => _selectedProduct = product),
         );
