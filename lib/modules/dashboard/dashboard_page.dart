@@ -96,7 +96,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
           // Horizontal Stat Card Section
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             sliver: SliverToBoxAdapter(
               child: HorizontalStatCard(
                 icon: Icons.receipt_long,
@@ -108,8 +108,6 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
           ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 8)),
 
           // Quick Actions Section
           SliverToBoxAdapter(child: _buildQuickActionsSection(context, loc)),

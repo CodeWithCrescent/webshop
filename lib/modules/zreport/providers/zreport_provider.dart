@@ -44,7 +44,7 @@ class ZReportProvider with ChangeNotifier {
         '${ApiEndpoints.getZReport}?page=$_page&per_page=$_perPage',
       );
 
-      if (response.statusCode == 200) {
+      if (response!.statusCode == 200) {
         final data = json.decode(response.body);
         final List<dynamic> reportList = data['zreport'];
         final newReports = reportList.map((map) => ZReport.fromMap(map)).toList();

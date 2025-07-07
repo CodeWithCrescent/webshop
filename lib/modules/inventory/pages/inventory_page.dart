@@ -237,8 +237,8 @@ class _InventoryPageState extends State<InventoryPage> {
     final theme = Theme.of(context);
 
     return Card(
-      elevation: 2,
-      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0.5,
+      margin: const EdgeInsets.only(bottom: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
@@ -265,10 +265,26 @@ class _InventoryPageState extends State<InventoryPage> {
                         style: theme.textTheme.titleMedium
                             ?.copyWith(fontWeight: FontWeight.w600)),
                     const SizedBox(height: 4),
-                    Text(product.code,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                            color:
-                                theme.colorScheme.onSurface.withOpacity(0.6))),
+                    Row(
+                      children: [
+                        Text(product.code,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                                color:
+                                    theme.colorScheme.onSurface.withOpacity(0.6))),
+                        Text(
+                          " • ",
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                        ),
+                        Text(
+                          product.category ?? "Uncategorized",
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

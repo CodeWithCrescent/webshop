@@ -173,6 +173,13 @@
     "tin": "TIN Number",
     "vrn": "VRN",
     "serial_number": "Serial Number",
-    "tax_office": "Tax Office"
+    "tax_office": "Tax Office",
+    "contact_info": "Contact Information",
+    "address": "Address",
+    "tax_info": "Tax Information",
+    "system_info": "Systtem Information",
+    "allowed_instances": "Allowed Instances",
+    "installed_instances": "Installed Instances",
+    "update_at_tra": "To change this infortmation, please visit your domicile TRA office."
   }
 }

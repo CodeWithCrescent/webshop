@@ -20,7 +20,7 @@ class ProductAdapter extends TypeAdapter<Product> {
       id: fields[0] as String?,
       code: fields[1] as String,
       name: fields[2] as String,
-      category: fields[3] as String,
+      category: fields[3] as String?,
       price: fields[4] as double,
       taxCategory: fields[5] as int,
       stock: fields[6] as int,

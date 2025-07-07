@@ -24,7 +24,7 @@ class CompanyProfileProvider with ChangeNotifier {
     try {
       final response = await _httpClient.get(ApiEndpoints.companyProfile);
       
-      if (response.statusCode == 200) {
+      if (response!.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         _companyProfile = CompanyProfile.fromMap(data);
         _error = null;

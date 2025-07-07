@@ -31,7 +31,7 @@ class DashboardProvider with ChangeNotifier {
 
       final response = await httpClient.get(ApiEndpoints.dashboard);
 
-      if (response.statusCode == 200) {
+      if (response!.statusCode == 200) {
         final data = jsonDecode(response.body);
         final dashboard = data['dashboard'];
 
@@ -58,7 +58,7 @@ class DashboardProvider with ChangeNotifier {
 
       final response = await httpClient.get(ApiEndpoints.getZReport);
 
-      if (response.statusCode == 200) {
+      if (response!.statusCode == 200) {
         await fetchDashboardData(); // Refresh after success
       } else {
         _error = 'Failed to generate Z report';

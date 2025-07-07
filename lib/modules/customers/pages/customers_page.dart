@@ -100,6 +100,7 @@ class _CustomersPageState extends State<CustomersPage> {
 
   Widget _buildCustomerCard(Customer customer, AppLocalizations? loc) {
     return Card(
+      elevation: 0.5,
       surfaceTintColor: AppColors.cardLight,
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

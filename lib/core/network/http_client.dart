@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -36,19 +37,36 @@ class HttpClient {
     };
   }
 
-  Future<http.Response> get(String url) async {
-    // try {
+  Future<http.Response?> get(String url) async {
+    try {
       final headers = await _getHeaders();
       return await http.get(Uri.parse(url), headers: headers);
-    // } catch (e) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('Business profile is not available')),
-    //   );
-    // }
+    } on SocketException {
+      _showSnackBar('No internet connection.');
+    } on Exception catch (e) {
+      _showSnackBar(e.toString());
+    }
+    return null;
   }
 
-  Future<http.Response> post(String url, Map<String, dynamic> data) async {
-    final headers = await _getHeaders();
-    return await http.post(Uri.parse(url), headers: headers, body: jsonEncode(data));
+  Future<http.Response?> post(String url, Map<String, dynamic> data) async {
+    try {
+      final headers = await _getHeaders();
+      return await http.post(Uri.parse(url), headers: headers, body: jsonEncode(data));
+    } on SocketException {
+      _showSnackBar('No internet connection.');
+    } on Exception catch (e) {
+      _showSnackBar(e.toString());
+    }
+    return null;
+  }
+
+  void _showSnackBar(String message) {
+    final context = navigatorKey.currentContext;
+    if (context != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
   }
 }
