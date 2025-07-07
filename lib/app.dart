@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:webshop/modules/customers/pages/customers_page.dart';
 import 'package:webshop/modules/dashboard/dashboard_page.dart';
 import 'package:webshop/modules/inventory/pages/inventory_page.dart';
+import 'package:webshop/modules/sales/pages/sales_page.dart';
 import 'package:webshop/modules/settings/pages/company_profile_page.dart'; // Add this import
 import 'package:webshop/shared/layout_page.dart';
 import 'core/localization/app_localizations.dart';
@@ -38,6 +39,7 @@ class WebShopApp extends StatelessWidget {
             '/customers': (context) => const CustomersPage(),
             '/receipts': (context) => const ReceiptsPage(),
             '/z-reports': (context) => const ZReportsPage(),
+            '/sales': (context) => const SalesPage(),
           },
           localizationsDelegates: const [
             AppLocalizations.delegate,

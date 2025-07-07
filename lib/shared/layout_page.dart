@@ -8,6 +8,7 @@ import 'package:webshop/modules/customers/pages/customers_page.dart';
 import 'package:webshop/modules/customers/providers/customer_provider.dart';
 import 'package:webshop/modules/dashboard/dashboard_page.dart';
 import 'package:webshop/modules/inventory/pages/inventory_page.dart';
+import 'package:webshop/modules/sales/pages/sales_page.dart';
 import 'package:webshop/modules/zreport/zreports_page.dart';
 import 'package:webshop/shared/widgets/bottom_bar.dart';
 
@@ -43,7 +44,8 @@ class _LayoutPageState extends State<LayoutPage> {
     );
   }
 
-  void _onTabTapped(BuildContext context, int index, AppLocalizations? loc, InventoryLocalizations locInventory) {
+  void _onTabTapped(BuildContext context, int index, AppLocalizations? loc,
+      InventoryLocalizations locInventory) {
     if (index == 2) {
       _showActionSheet(context, loc, locInventory);
     } else {
@@ -53,7 +55,8 @@ class _LayoutPageState extends State<LayoutPage> {
     }
   }
 
-  void _showActionSheet(BuildContext context, AppLocalizations? loc, InventoryLocalizations locInventory) {
+  void _showActionSheet(BuildContext context, AppLocalizations? loc,
+      InventoryLocalizations locInventory) {
     List<Widget> actions = [];
 
     switch (_currentIndex) {
@@ -61,7 +64,17 @@ class _LayoutPageState extends State<LayoutPage> {
       case 4: // Z-Report
         actions = [
           _buildActionTile(
-              loc?.translate('dashboard.cash_sales') ?? 'Cash Sales'),
+            loc?.translate('dashboard.cash_sales') ?? 'Cash Sales',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SalesPage(),
+                ),
+              );
+            },
+          ),
           _buildActionTile(
               loc?.translate('dashboard.create_invoice') ?? 'Create Invoice'),
           _buildDivider(),
@@ -78,13 +91,13 @@ class _LayoutPageState extends State<LayoutPage> {
         break;
       case 3: // Customers
         actions = [
-            _buildActionTile(
+          _buildActionTile(
             loc?.translate('customers.add_customer') ?? 'Add Customer',
             onTap: () {
               Navigator.pop(context);
               _showAddCustomerModal(context);
             },
-            ),
+          ),
           _buildDivider(),
           _buildCancelTile(loc),
         ];
