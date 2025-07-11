@@ -5,10 +5,12 @@ import 'package:webshop/modules/customers/models/customer.dart';
 import 'package:webshop/modules/inventory/models/product.dart';
 import 'package:webshop/modules/sales/models/sale.dart';
 import 'package:webshop/modules/sales/models/sale_item.dart';
+import 'package:webshop/modules/settings/providers/business_profile_provider.dart';
 
 class SalesProvider with ChangeNotifier {
   final HttpClient httpClient;
-  
+  final BusinessProfileProvider businessProfileProvider;
+
   final List<SaleItem> _cartItems = [];
   Customer? _selectedCustomer;
   bool _isLoading = false;
@@ -23,23 +25,31 @@ class SalesProvider with ChangeNotifier {
   double? get latitude => _latitude;
   double? get longitude => _longitude;
 
-  SalesProvider({required this.httpClient});
+  SalesProvider({
+    required this.httpClient,
+    required this.businessProfileProvider,
+  });
 
   void addToCart(Product product, {int quantity = 1}) {
-    final existingIndex = _cartItems.indexWhere((item) => item.productId == product.id);
-    
+    final isVatRegistered =
+        businessProfileProvider.businessProfile?.vrn.isNotEmpty ?? false;
+    final existingIndex =
+        _cartItems.indexWhere((item) => item.productId == product.id);
+
     if (existingIndex >= 0) {
-      // Update quantity if product already in cart
       final existingItem = _cartItems[existingIndex];
       final newQuantity = existingItem.quantity + quantity;
       _cartItems[existingIndex] = existingItem.copyWith(
         quantity: newQuantity,
-        totalAmount: (product.price * newQuantity) + SaleItem.calculateTax(product.price * newQuantity, product.taxCategory),
+        totalAmount: (product.price * newQuantity) +
+            _calculateTax(product.price * newQuantity, product.taxCategory,
+                isVatRegistered),
       );
     } else {
-      // Add new item to cart
-      final totalAmount = (product.price * quantity) + SaleItem.calculateTax(product.price * quantity, product.taxCategory);
-      
+      final totalAmount = (product.price * quantity) +
+          _calculateTax(
+              product.price * quantity, product.taxCategory, isVatRegistered);
+
       _cartItems.add(SaleItem(
         saleId: '',
         productId: product.id,
@@ -49,10 +59,19 @@ class SalesProvider with ChangeNotifier {
         price: product.price,
         taxCategory: product.taxCategory,
         totalAmount: totalAmount,
+        isVatRegistered: isVatRegistered,
       ));
     }
-    
+
     notifyListeners();
+  }
+
+  // Helper method for tax calculation
+  double _calculateTax(double amount, int taxCategory, bool isVatRegistered) {
+    if (!isVatRegistered || taxCategory != 1) {
+      return 0.0;
+    }
+    return amount * 0.18; // 18% VAT for standard rated items
   }
 
   void updateCartItemQuantity(int index, int newQuantity) {
@@ -64,9 +83,11 @@ class SalesProvider with ChangeNotifier {
     final item = _cartItems[index];
     _cartItems[index] = item.copyWith(
       quantity: newQuantity,
-      totalAmount: (item.price * newQuantity) + item.taxAmount,
+      totalAmount: (item.price * newQuantity) +
+          _calculateTax(
+              item.price * newQuantity, item.taxCategory, item.isVatRegistered),
     );
-    
+
     notifyListeners();
   }
 
@@ -109,6 +130,8 @@ class SalesProvider with ChangeNotifier {
   Future<void> completeSale(String paymentType) async {
     _isLoading = true;
     notifyListeners();
+    final isVatRegistered =
+        businessProfileProvider.businessProfile?.vrn.isNotEmpty ?? false;
 
     try {
       final sale = Sale(
@@ -120,6 +143,7 @@ class SalesProvider with ChangeNotifier {
         paymentType: paymentType,
         latitude: _latitude,
         longitude: _longitude,
+        isVatRegistered: isVatRegistered,
       );
 
       // Prepare receipt payload
@@ -154,22 +178,26 @@ class SalesProvider with ChangeNotifier {
         "invoice_id": "INV${DateTime.now().millisecondsSinceEpoch}",
         "invoice_date": sale.date.toIso8601String().split('T')[0],
       },
-      "customer": _selectedCustomer != null ? {
-        "idtype": "5", // Using NIDA as default for demo
-        "idnumber": _selectedCustomer!.id,
-        "mobile": _selectedCustomer!.phoneNumber,
-        "name": _selectedCustomer!.fullName,
-      } : null,
-      "items": _cartItems.map((item) => {
-        "itemcode": item.productCode,
-        "itemdesc": item.productName,
-        "itemqty": item.quantity,
-        "net": item.netAmount,
-        "tax": item.taxAmount,
-        "amount": item.totalAmount,
-        "discountamout": 0,
-        "itemtaxcode": item.taxCategory,
-      }).toList(),
+      "customer": _selectedCustomer != null
+          ? {
+              "idtype": "6", // Using Telephone as default
+              "idnumber": _selectedCustomer!.phoneNumber,
+              "mobile": _selectedCustomer!.phoneNumber,
+              "name": _selectedCustomer!.fullName,
+            }
+          : null,
+      "items": _cartItems
+          .map((item) => {
+                "itemcode": item.productCode,
+                "itemdesc": item.productName,
+                "itemqty": item.quantity,
+                "net": item.netAmount,
+                "tax": item.taxAmount,
+                "amount": item.totalAmount,
+                "discountamout": 0,
+                "itemtaxcode": item.taxCategory,
+              })
+          .toList(),
       "payment": {
         "paymenttype": sale.paymentType,
       }
