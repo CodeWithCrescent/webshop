@@ -51,15 +51,15 @@ class SaleItem {
 
   // Tax calculation based on VAT registration and tax category
   double get taxAmount {
-    // Only apply tax if VAT registered and standard category
     if (!isVatRegistered || taxCategory != 1) {
       return 0.0;
     }
-    return price * quantity * 0.18; // 18% VAT
+    // Calculate tax as: totalAmount * (taxRate / (1 + taxRate))
+    return totalAmount * (0.18 / 1.18);
   }
 
   double get netAmount {
-    return price * quantity;
+    return totalAmount - taxAmount;
   }
 
   Map<String, dynamic> toMap() {
