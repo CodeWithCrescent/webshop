@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
-import 'package:webshop/modules/settings/models/company_profile.dart';
-import 'package:webshop/modules/settings/providers/company_profile_provider.dart';
+import 'package:webshop/modules/settings/models/business_profile.dart';
+import 'package:webshop/modules/settings/providers/business_profile_provider.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 
-class CompanyProfilePage extends StatefulWidget {
-  const CompanyProfilePage({super.key});
+class BusinessProfilePage extends StatefulWidget {
+  const BusinessProfilePage({super.key});
 
   @override
-  State<CompanyProfilePage> createState() => _CompanyProfilePageState();
+  State<BusinessProfilePage> createState() => _BusinessProfilePageState();
 }
 
-class _CompanyProfilePageState extends State<CompanyProfilePage> {
+class _BusinessProfilePageState extends State<BusinessProfilePage> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CompanyProfileProvider>().fetchCompanyProfile();
+      context.read<BusinessProfileProvider>().fetchBusinessProfile();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
-    final provider = context.watch<CompanyProfileProvider>();
-    final profile = provider.companyProfile;
+    final provider = context.watch<BusinessProfileProvider>();
+    final profile = provider.businessProfile;
 
     return Scaffold(
       appBar: WebshopAppBar(
-        title: loc?.translate('settings.company_profile') ?? 'Company Profile',
-        onRefresh: () => provider.fetchCompanyProfile(),
+        title: loc?.translate('settings.business_profile') ?? 'Business Profile',
+        onRefresh: () => provider.fetchBusinessProfile(),
       ),
       body: _buildContent(context, provider, profile, loc),
     );
@@ -38,8 +38,8 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
 
   Widget _buildContent(
     BuildContext context,
-    CompanyProfileProvider provider,
-    CompanyProfile? profile,
+    BusinessProfileProvider provider,
+    BusinessProfile? profile,
     AppLocalizations? loc,
   ) {
     if (provider.isLoading && profile == null) {
@@ -54,7 +54,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
             Text('Error: ${provider.error}'),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => provider.fetchCompanyProfile(),
+              onPressed: () => provider.fetchBusinessProfile(),
               child: Text(loc?.translate('common.retry') ?? 'Retry'),
             ),
           ],
@@ -64,7 +64,8 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
 
     if (profile == null) {
       return Center(
-        child: Text(loc?.translate('settings.no_company_profile') ?? 'No company profile found'),
+        child: Text(loc?.translate('settings.no_business_profile') ??
+            'No business profile found'),
       );
     }
 
@@ -72,7 +73,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Company Card
+          // Business Card
           Card(
             elevation: 4,
             shape: RoundedRectangleBorder(
@@ -123,8 +124,8 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    loc?.translate('settings.update_at_tra') ?? 
-                    'To change this information, please visit your domicile TRA office',
+                    loc?.translate('settings.update_at_tra') ??
+                        'To change this information, please visit your domicile TRA office',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.orange[800],
                         ),
@@ -140,7 +141,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
 
   Widget _buildInfoSection(
     BuildContext context,
-    CompanyProfile profile,
+    BusinessProfile profile,
     AppLocalizations? loc,
   ) {
     return Column(
@@ -158,7 +159,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
           profile.mobile,
           Icons.phone,
         ),
-        
+
         // Address
         _buildSectionHeader(
           context,
@@ -226,7 +227,8 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
         ),
         _buildInfoItem(
           context,
-          loc?.translate('settings.installed_instances') ?? 'Installed Instances',
+          loc?.translate('settings.installed_instances') ??
+              'Installed Instances',
           profile.installedInstances,
           Icons.install_desktop,
         ),
@@ -234,7 +236,8 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
     );
   }
 
-  Widget _buildSectionHeader(BuildContext context, String title, IconData icon) {
+  Widget _buildSectionHeader(
+      BuildContext context, String title, IconData icon) {
     return Padding(
       padding: const EdgeInsets.only(top: 16, bottom: 8),
       child: Row(
