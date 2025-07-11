@@ -44,7 +44,7 @@ class SalesProvider with ChangeNotifier {
       final newQuantity = existingItem.quantity + quantity;
       _cartItems[existingIndex] = existingItem.copyWith(
         quantity: newQuantity,
-        totalAmount: product.price * newQuantity, // price is total amount including tax
+        totalAmount: product.price * newQuantity,
       );
     } else {
       _cartItems.add(SaleItem(
@@ -53,7 +53,7 @@ class SalesProvider with ChangeNotifier {
         productCode: product.code,
         productName: product.name,
         quantity: quantity,
-        price: product.price, // price is total amount including tax
+        price: product.price,
         taxCategory: product.taxCategory,
         totalAmount: product.price * quantity,
         isVatRegistered: isVatRegistered,
@@ -71,7 +71,7 @@ class SalesProvider with ChangeNotifier {
     final item = _cartItems[index];
     _cartItems[index] = item.copyWith(
       quantity: newQuantity,
-      totalAmount: item.price * newQuantity, // price is total amount including tax
+      totalAmount: item.price * newQuantity,
     );
     notifyListeners();
   }
@@ -139,8 +139,8 @@ class SalesProvider with ChangeNotifier {
         payload,
       );
 
-      if (response!.statusCode == 200) {
-        // Success - clear cart
+      if (response!.statusCode == 201) {
+        // Success created http 201 - clear cart
         clearCart();
       } else {
         throw Exception('Failed to complete sale: ${response.statusCode}');

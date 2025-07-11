@@ -42,7 +42,9 @@ class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
     final file = File(
         '${dir.path}/receipt_${parseString(widget.receipt.receiptNumber)}.pdf');
     await file.writeAsBytes(bytes);
-    setState(() => _pdfPath = file.path);
+    if (mounted) {
+      setState(() => _pdfPath = file.path);
+    }
   }
 
   Future<Uint8List> _buildPdf(
