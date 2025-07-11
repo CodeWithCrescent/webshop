@@ -50,7 +50,6 @@ class _ZReportsPageState extends State<ZReportsPage> {
     final currencyFormat = NumberFormat.currency(locale: 'en_US', symbol: 'TZS');
 
     return Scaffold(
-      backgroundColor: AppColors.primary.withOpacity(0.1),
       appBar: WebshopAppBar(
         title: loc?.translate('zreport.title') ?? 'Z-Reports',
         onRefresh: () => provider.fetchZReports(refresh: true),
