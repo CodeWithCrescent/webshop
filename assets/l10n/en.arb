@@ -48,7 +48,7 @@
     "optional": "Optional",
     "logout": "Logout",
     "logout_success": "You have successfully logged out.",
-    "company_profile": "Company Profile",
+    "business_profile": "Business Profile",
     "unexpected_error": "Unexpected error occurred.",
     "addSuccess": "Successfully Added",
     "updateSuccess": "Successfully Updated",
@@ -164,8 +164,8 @@
     "created_by": "Created By"
   },
   "settings": {
-    "company_profile": "Business Profile",
-    "company_name": "Business Name",
+    "business_profile": "Business Profile",
+    "business_name": "Business Name",
     "mobile": "Mobile",
     "address_line1": "Address Line 1",
     "address_line2": "Address Line 2",
