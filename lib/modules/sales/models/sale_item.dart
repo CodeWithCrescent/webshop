@@ -6,8 +6,9 @@ class SaleItem {
   final String productName;
   final int quantity;
   final double price;
-  final int taxCategory; // Store tax category instead of rate
+  final int taxCategory;
   final double totalAmount;
+  final bool isVatRegistered;
 
   SaleItem({
     this.id,
@@ -19,9 +20,9 @@ class SaleItem {
     required this.price,
     required this.taxCategory,
     required this.totalAmount,
+    required this.isVatRegistered,
   });
 
-  // Proper copyWith implementation
   SaleItem copyWith({
     String? id,
     String? saleId,
@@ -32,6 +33,7 @@ class SaleItem {
     double? price,
     int? taxCategory,
     double? totalAmount,
+    bool? isVatRegistered,
   }) {
     return SaleItem(
       id: id ?? this.id,
@@ -43,29 +45,21 @@ class SaleItem {
       price: price ?? this.price,
       taxCategory: taxCategory ?? this.taxCategory,
       totalAmount: totalAmount ?? this.totalAmount,
+      isVatRegistered: isVatRegistered ?? this.isVatRegistered,
     );
   }
 
-  // Helper method to calculate tax amount based on category
+  // Tax calculation based on VAT registration and tax category
   double get taxAmount {
-    return calculateTax(price * quantity, taxCategory);
+    if (!isVatRegistered || taxCategory != 1) {
+      // Only apply tax if VAT registered and standard category
+      return 0.0;
+    }
+    return price * quantity * 0.18; // 18% VAT
   }
 
-  // Helper method to calculate net amount
   double get netAmount {
     return price * quantity;
-  }
-
-  // Static tax calculation method
-  static double calculateTax(double amount, int taxCategory) {
-    switch (taxCategory) {
-      case 1: return amount * 0.18; // Standard 18%
-      case 2: return 0.0;           // Special rate
-      case 3: return 0.0;           // Zero Rated
-      case 4: return 0.0;           // Special Relief
-      case 5: return 0.0;           // Exempted
-      default: return 0.0;
-    }
   }
 
   Map<String, dynamic> toMap() {
@@ -79,6 +73,7 @@ class SaleItem {
       'price': price,
       'taxCategory': taxCategory,
       'totalAmount': totalAmount,
+      'isVatRegistered': isVatRegistered,
     };
   }
 
@@ -93,6 +88,7 @@ class SaleItem {
       price: map['price'],
       taxCategory: map['taxCategory'],
       totalAmount: map['totalAmount'],
+      isVatRegistered: map['isVatRegistered'] ?? false,
     );
   }
 }
