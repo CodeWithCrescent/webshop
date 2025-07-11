@@ -68,6 +68,8 @@ class AuthProvider with ChangeNotifier {
 
         await _prefs.setString('access_token', data['access_token']);
         await _prefs.setInt('token_expiry', expiryTimestamp);
+        await _prefs.setString('name', data['name'] ?? '');
+        await _prefs.setString('email', data['email'] ?? '');
         _isAuthenticated = true;
         
         // Trigger post-login actions
@@ -89,6 +91,8 @@ class AuthProvider with ChangeNotifier {
 
     await _prefs.remove('access_token');
     await _prefs.remove('token_expiry');
+    await _prefs.remove('name');
+    await _prefs.remove('email');
     _isAuthenticated = false;
 
     // Trigger post-logout actions
