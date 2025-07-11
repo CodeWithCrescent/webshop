@@ -39,12 +39,13 @@ Future<void> _init() async {
   Hive.registerAdapter(CategoryAdapter());
   Hive.registerAdapter(CustomerAdapter());
   Hive.registerAdapter(BusinessProfileAdapter());
-  
+
   // Open Hive boxes
   final productBox = await Hive.openBox<Product>('products');
   final categoryBox = await Hive.openBox<Category>('categories');
   final customerBox = await Hive.openBox<Customer>('customers');
-  final businessProfileBox = await Hive.openBox<BusinessProfile>('business_profile');
+  final businessProfileBox =
+      await Hive.openBox<BusinessProfile>('business_profile');
 
   // Create HTTP client
   final httpClient = HttpClient(prefs: prefs, navigatorKey: navigatorKey);
@@ -98,7 +99,10 @@ Future<void> _init() async {
           create: (_) => ZReportProvider(httpClient: httpClient),
         ),
         ChangeNotifierProvider(
-          create: (_) => SalesProvider(httpClient: httpClient),
+          create: (_) => SalesProvider(
+            httpClient: httpClient,
+            businessProfileProvider: businessProfileProvider,
+          ),
         ),
       ],
       child: WebShopApp(),
