@@ -6,8 +6,8 @@ class SettingsLocalizations {
 
   SettingsLocalizations(this.context);
 
-  String get companyProfile => _translate('settings.company_profile');
-  String get companyName => _translate('settings.company_name');
+  String get businessProfile => _translate('settings.business_profile');
+  String get businessName => _translate('settings.business_name');
   String get mobile => _translate('settings.mobile');
   String get addressLine1 => _translate('settings.address_line1');
   String get addressLine2 => _translate('settings.address_line2');
