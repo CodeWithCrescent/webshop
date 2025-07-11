@@ -19,7 +19,8 @@ class BusinessProfileProvider with ChangeNotifier {
   BusinessProfileProvider({
     required HttpClient httpClient,
     required BusinessProfileLocalDataSource localDataSource,
-  }) : _httpClient = httpClient, _localDataSource = localDataSource;
+  })  : _httpClient = httpClient,
+        _localDataSource = localDataSource;
 
   Future<void> fetchBusinessProfile() async {
     // First try local cache
