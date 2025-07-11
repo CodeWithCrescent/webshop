@@ -1,10 +1,7 @@
----
 
 # Webshop
 
 A Flutter-based webshop application.
-
----
 
 ## Technologies & Tools Used
 
@@ -13,8 +10,6 @@ A Flutter-based webshop application.
 * **Java** 22.0.1 (for Android SDK compatibility)
 * **DevTools** 2.25.0
 * **IDE Recommendations:** Visual Studio Code, Android Studio
-
----
 
 ## Getting Started
 
@@ -26,8 +21,6 @@ A Flutter-based webshop application.
    ```bash
    flutter run
    ```
-
----
 
 ```bash
 
