@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:webshop/core/constants/app_colors.dart';
 import 'package:webshop/modules/customers/models/customer.dart';
@@ -49,6 +50,77 @@ class SalesPage extends StatelessWidget {
         quantity: selectedProduct.quantity,
       );
     }
+  }
+
+  static Future<void> _showCustomerPhoneModal(BuildContext context) async {
+    final provider = context.read<SalesProvider>();
+    final phoneController = TextEditingController();
+    bool isValid = false;
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              left: 16,
+              right: 16,
+              top: 16,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Customer Phone Required',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    labelText: 'Phone Number',
+                    prefixText: '+255 ',
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      isValid = value.length >= 9;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.length < 9) {
+                      return 'Please enter a valid phone number';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: isValid
+                        ? () {
+                            provider.selectCustomer(Customer(
+                              id: 'temp-${DateTime.now().millisecondsSinceEpoch}',
+                              fullName: 'Walk-in Customer',
+                              phoneNumber: phoneController.text,
+                            ));
+                            Navigator.pop(context);
+                          }
+                        : null,
+                    child: const Text('CONTINUE'),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -269,12 +341,93 @@ class _TotalsAndCompleteButton extends StatelessWidget {
     );
   }
 
-  void _showCompleteSaleModal(BuildContext context) {
-    showModalBottomSheet(
+  // Update the _showCompleteSaleModal method in _TotalsAndCompleteButton
+  void _showCompleteSaleModal(BuildContext context) async {
+    final provider = context.read<SalesProvider>();
+    
+    // Check if customer is selected
+    if (provider.selectedCustomer == null) {
+      await SalesPage._showCustomerPhoneModal(context);
+      if (provider.selectedCustomer == null) return;
+    }
+
+    // Get location automatically
+    final location = await _getLocationWithRetry(context);
+    if (location == null) {
+      if (context.mounted) {
+        _showLocationErrorModal(context);
+      }
+      return;
+    }
+
+    // Now show the complete sale modal
+    if (context.mounted) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => SaleCompleteModal(location: location),
+      );
+    }
+  }
+
+  // Update the _showLocationErrorModal method
+  void _showLocationErrorModal(BuildContext context) {
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      builder: (context) => const SaleCompleteModal(),
+      builder: (context) => AlertDialog(
+        title: const Text('Location Required'),
+        content: const Text(
+          'You must allow location access to complete the sale. '
+          'Please enable location services in your device settings.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('CANCEL'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Geolocator.openAppSettings();
+            },
+            child: const Text('OPEN SETTINGS'),
+          ),
+        ],
+      ),
     );
+  }
+
+  Future<Position?> _getLocationWithRetry(BuildContext context) async {
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        serviceEnabled = await Geolocator.openLocationSettings();
+        if (!serviceEnabled) return null;
+      }
+
+      // Check permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission != LocationPermission.whileInUse && 
+            permission != LocationPermission.always) {
+          return null;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        return null;
+      }
+
+      // Get current position
+      return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best,
+      );
+    } catch (e) {
+      debugPrint('Location error: $e');
+      return null;
+    }
   }
 }
 

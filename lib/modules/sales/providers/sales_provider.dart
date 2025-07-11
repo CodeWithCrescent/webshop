@@ -36,47 +36,30 @@ class SalesProvider with ChangeNotifier {
 
   Future<void> addToCart(Product product, {int quantity = 1}) async {
     _businessProfile = await _localDataSource.getBusinessProfile();
-
     final isVatRegistered = _businessProfile?.vrn.isNotEmpty ?? false;
-    final existingIndex =
-        _cartItems.indexWhere((item) => item.productId == product.id);
+    final existingIndex = _cartItems.indexWhere((item) => item.productId == product.id);
 
     if (existingIndex >= 0) {
       final existingItem = _cartItems[existingIndex];
       final newQuantity = existingItem.quantity + quantity;
       _cartItems[existingIndex] = existingItem.copyWith(
         quantity: newQuantity,
-        totalAmount: (product.price * newQuantity) +
-            _calculateTax(product.price * newQuantity, product.taxCategory,
-                isVatRegistered),
+        totalAmount: product.price * newQuantity, // price is total amount including tax
       );
     } else {
-      final totalAmount = (product.price * quantity) +
-          _calculateTax(
-              product.price * quantity, product.taxCategory, isVatRegistered);
-
       _cartItems.add(SaleItem(
         saleId: '',
         productId: product.id,
         productCode: product.code,
         productName: product.name,
         quantity: quantity,
-        price: product.price,
+        price: product.price, // price is total amount including tax
         taxCategory: product.taxCategory,
-        totalAmount: totalAmount,
+        totalAmount: product.price * quantity,
         isVatRegistered: isVatRegistered,
       ));
     }
-
     notifyListeners();
-  }
-
-  // Helper method for tax calculation
-  double _calculateTax(double amount, int taxCategory, bool isVatRegistered) {
-    if (!isVatRegistered || taxCategory != 1) {
-      return 0.0;
-    }
-    return amount * 0.18; // 18% VAT for standard rated items
   }
 
   void updateCartItemQuantity(int index, int newQuantity) {
@@ -88,11 +71,8 @@ class SalesProvider with ChangeNotifier {
     final item = _cartItems[index];
     _cartItems[index] = item.copyWith(
       quantity: newQuantity,
-      totalAmount: (item.price * newQuantity) +
-          _calculateTax(
-              item.price * newQuantity, item.taxCategory, item.isVatRegistered),
+      totalAmount: item.price * newQuantity, // price is total amount including tax
     );
-
     notifyListeners();
   }
 
