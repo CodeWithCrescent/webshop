@@ -29,6 +29,7 @@
     "cash_sales": "Cash Sales",
     "customers": "Customers",
     "z_reports": "Z-Reports",
+    "fm_reports": "FM-Reports",
     "receipts": "Receipts"
   },
   "common": {
