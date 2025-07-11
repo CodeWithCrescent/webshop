@@ -7,6 +7,8 @@ import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/core/utils/format_utils.dart';
 import 'package:webshop/modules/dashboard/dashboard_provider.dart';
 import 'package:webshop/modules/receipts/pages/receipts_page.dart';
+import 'package:webshop/modules/sales/pages/sales_page.dart';
+import 'package:webshop/modules/zreport/zreports_page.dart';
 import 'package:webshop/shared/widgets/action_button.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/app_left_drawer.dart';
@@ -274,20 +276,58 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ],
           ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: ActionButton(
+                  title: loc.translate('menu.fm_reports'),
+                  icon: Icons.show_chart,
+                  color: AppColors.secondary,
+                  onTap: () => _navigateToFmReports(context),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ActionButton(
+                  title: loc.translate('menu.z_reports'),
+                  icon: Icons.bar_chart,
+                  color: AppColors.primary,
+                  onTap: () => _navigateToZreports(context),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
   void _navigateToCashSales(BuildContext context) {
-    // TODO: Implement navigation to cash sales
-    debugPrint('Navigate to Cash Sales');
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SalesPage(),
+      ),
+    );
   }
 
   void _navigateToReceipts(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const ReceiptsPage()),
+    );
+  }
+
+  void _navigateToFmReports(BuildContext context) {
+    // TODO: Create page view for FM Reports
+    print("FM Reports Clicked!");
+  }
+
+  void _navigateToZreports(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ZReportsPage()),
     );
   }
 }
