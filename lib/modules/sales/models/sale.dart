@@ -9,6 +9,7 @@ class Sale {
   final String paymentType;
   final double? latitude;
   final double? longitude;
+  final bool isVatRegistered;
 
   Sale({
     this.id,
@@ -21,6 +22,7 @@ class Sale {
     required this.paymentType,
     this.latitude,
     this.longitude,
+    required this.isVatRegistered,
   });
 
   Map<String, dynamic> toMap() {
@@ -35,6 +37,7 @@ class Sale {
       'paymentType': paymentType,
       'latitude': latitude,
       'longitude': longitude,
+      'isVatRegistered': isVatRegistered,
     };
   }
 
@@ -50,6 +53,7 @@ class Sale {
       paymentType: map['paymentType'],
       latitude: map['latitude'],
       longitude: map['longitude'],
+      isVatRegistered: map['isVatRegistered'] ?? false,
     );
   }
 }
