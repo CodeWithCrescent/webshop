@@ -17,7 +17,11 @@ class SalesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: AppColors.primary.withOpacity(0.1),
-      appBar: WebshopAppBar(title: 'Sales', onRefresh: () {},),
+      appBar: WebshopAppBar(
+        title: 'Sales',
+        onRefresh: () {},
+        actions: const [SizedBox()],
+      ),
       body: const Column(
         children: [
           _CustomerSection(),
@@ -33,13 +37,14 @@ class SalesPage extends StatelessWidget {
   }
 
   static void _showProductSelectionDialog(BuildContext context) async {
+    final saleProviderContext = context.read<SalesProvider>();
     final selectedProduct = await showDialog<ProductSelection>(
       context: context,
       builder: (context) => const ProductSelectionDialog(),
     );
 
     if (selectedProduct != null) {
-      context.read<SalesProvider>().addToCart(
+      saleProviderContext.addToCart(
         selectedProduct.product,
         quantity: selectedProduct.quantity,
       );
@@ -86,13 +91,14 @@ class _CustomerSection extends StatelessWidget {
   }
 
   void _showCustomerSelectionDialog(BuildContext context) async {
+    final saleProviderContext = context.read<SalesProvider>();
     final selectedCustomer = await showDialog<Customer>(
       context: context,
       builder: (context) => const CustomerSelectionDialog(),
     );
 
     if (selectedCustomer != null) {
-      context.read<SalesProvider>().selectCustomer(selectedCustomer);
+      saleProviderContext.selectCustomer(selectedCustomer);
     }
   }
 }
@@ -178,7 +184,7 @@ class _CartItemCard extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.remove),
                   onPressed: () => provider.updateCartItemQuantity(
-                    index, 
+                    index,
                     item.quantity - 1,
                   ),
                 ),
@@ -186,7 +192,7 @@ class _CartItemCard extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: () => provider.updateCartItemQuantity(
-                    index, 
+                    index,
                     item.quantity + 1,
                   ),
                 ),

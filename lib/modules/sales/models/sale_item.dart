@@ -51,8 +51,8 @@ class SaleItem {
 
   // Tax calculation based on VAT registration and tax category
   double get taxAmount {
+    // Only apply tax if VAT registered and standard category
     if (!isVatRegistered || taxCategory != 1) {
-      // Only apply tax if VAT registered and standard category
       return 0.0;
     }
     return price * quantity * 0.18; // 18% VAT

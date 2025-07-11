@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:webshop/core/constants/app_text_styles.dart';
 import 'package:webshop/modules/inventory/models/product.dart';
 import 'package:webshop/modules/inventory/providers/inventory_provider.dart';
 import 'package:webshop/modules/sales/models/product_selection.dart';
@@ -10,8 +11,10 @@ class ProductSelectionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Select Product'),
+      title: const Text('Select Product to Sell'),
+      titleTextStyle: AppTextStyles.titleLarge,
       content: const _ProductSelectionContent(),
+      scrollable: true,
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
@@ -57,7 +60,7 @@ class _ProductSelectionContentState extends State<_ProductSelectionContent> {
         TextField(
           controller: _searchController,
           decoration: const InputDecoration(
-            labelText: 'Search products',
+            labelText: 'Search product',
             prefixIcon: Icon(Icons.search),
           ),
           onChanged: (value) => inventoryProvider.setSearchQuery(value),

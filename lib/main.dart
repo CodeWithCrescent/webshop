@@ -101,7 +101,9 @@ Future<void> _init() async {
         ChangeNotifierProvider(
           create: (_) => SalesProvider(
             httpClient: httpClient,
-            businessProfileProvider: businessProfileProvider,
+            localDataSource: BusinessProfileLocalDataSource(
+              businessProfileBox: businessProfileBox,
+            ),
           ),
         ),
       ],

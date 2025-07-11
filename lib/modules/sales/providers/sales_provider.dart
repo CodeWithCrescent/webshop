@@ -5,12 +5,14 @@ import 'package:webshop/modules/customers/models/customer.dart';
 import 'package:webshop/modules/inventory/models/product.dart';
 import 'package:webshop/modules/sales/models/sale.dart';
 import 'package:webshop/modules/sales/models/sale_item.dart';
-import 'package:webshop/modules/settings/providers/business_profile_provider.dart';
+import 'package:webshop/modules/settings/data/local/business_profile_local_data_source.dart';
+import 'package:webshop/modules/settings/models/business_profile.dart';
 
 class SalesProvider with ChangeNotifier {
-  final HttpClient httpClient;
-  final BusinessProfileProvider businessProfileProvider;
+  final HttpClient _httpClient;
+  final BusinessProfileLocalDataSource _localDataSource;
 
+  BusinessProfile? _businessProfile;
   final List<SaleItem> _cartItems = [];
   Customer? _selectedCustomer;
   bool _isLoading = false;
@@ -18,6 +20,7 @@ class SalesProvider with ChangeNotifier {
   double? _latitude;
   double? _longitude;
 
+  BusinessProfile? get businessProfile => _businessProfile;
   List<SaleItem> get cartItems => _cartItems;
   Customer? get selectedCustomer => _selectedCustomer;
   bool get isLoading => _isLoading;
@@ -26,13 +29,15 @@ class SalesProvider with ChangeNotifier {
   double? get longitude => _longitude;
 
   SalesProvider({
-    required this.httpClient,
-    required this.businessProfileProvider,
-  });
+    required HttpClient httpClient,
+    required BusinessProfileLocalDataSource localDataSource,
+  })  : _httpClient = httpClient,
+        _localDataSource = localDataSource;
 
-  void addToCart(Product product, {int quantity = 1}) {
-    final isVatRegistered =
-        businessProfileProvider.businessProfile?.vrn.isNotEmpty ?? false;
+  Future<void> addToCart(Product product, {int quantity = 1}) async {
+    _businessProfile = await _localDataSource.getBusinessProfile();
+
+    final isVatRegistered = _businessProfile?.vrn.isNotEmpty ?? false;
     final existingIndex =
         _cartItems.indexWhere((item) => item.productId == product.id);
 
@@ -130,8 +135,7 @@ class SalesProvider with ChangeNotifier {
   Future<void> completeSale(String paymentType) async {
     _isLoading = true;
     notifyListeners();
-    final isVatRegistered =
-        businessProfileProvider.businessProfile?.vrn.isNotEmpty ?? false;
+    final isVatRegistered = _businessProfile?.vrn.isNotEmpty ?? false;
 
     try {
       final sale = Sale(
@@ -150,7 +154,7 @@ class SalesProvider with ChangeNotifier {
       final payload = _buildReceiptPayload(sale);
 
       // Send to API
-      final response = await httpClient.post(
+      final response = await _httpClient.post(
         ApiEndpoints.generateReceipt,
         payload,
       );
