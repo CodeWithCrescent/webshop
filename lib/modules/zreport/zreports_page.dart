@@ -55,40 +55,45 @@ class _ZReportsPageState extends State<ZReportsPage> {
         title: loc?.translate('zreport.title') ?? 'Z-Reports',
         onRefresh: () => provider.fetchZReports(refresh: true),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: SearchField(
-              controller: _searchController,
-              hintText: loc?.translate('common.search') ?? 'Search Z-Reports',
-              onChanged: provider.setSearchQuery,
-            ),
-          ),
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () => provider.fetchZReports(refresh: true),
-              child: ListView.builder(
-                controller: _scrollController,
-                itemCount: provider.reports.length + (provider.hasMore ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == provider.reports.length) {
-                    return Center(
-                      child: provider.isLoading
-                          ? const Padding(
-                              padding: EdgeInsets.all(16),
-                              child: CircularProgressIndicator(),
-                            )
-                          : const SizedBox(),
-                    );
-                  }
-                  final report = provider.reports[index];
-                  return _buildReportCard(report, currencyFormat);
-                },
+      body: Container(
+        decoration: BoxDecoration(
+          color: AppColors.primary.withOpacity(0.1),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: SearchField(
+                controller: _searchController,
+                hintText: loc?.translate('common.search') ?? 'Search Z-Reports',
+                onChanged: provider.setSearchQuery,
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () => provider.fetchZReports(refresh: true),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: provider.reports.length + (provider.hasMore ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == provider.reports.length) {
+                      return Center(
+                        child: provider.isLoading
+                            ? const Padding(
+                                padding: EdgeInsets.all(16),
+                                child: CircularProgressIndicator(),
+                              )
+                            : const SizedBox(),
+                      );
+                    }
+                    final report = provider.reports[index];
+                    return _buildReportCard(report, currencyFormat);
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
