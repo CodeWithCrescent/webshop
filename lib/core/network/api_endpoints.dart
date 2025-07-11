@@ -7,6 +7,6 @@ class ApiEndpoints {
   static const getReceiptData = '$baseUrl/receiptno';
   static const getZReport = '$baseUrl/zreport';
   static const dashboard = '$baseUrl/dashboard';
-  static const companyProfile = '$baseUrl/companyprofile';
+  static const businessProfile = '$baseUrl/companyprofile';
 }
 

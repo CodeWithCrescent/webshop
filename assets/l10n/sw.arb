@@ -41,7 +41,7 @@
     "delete": "Futa",
     "logout": "Ondoka",
     "logout_success": "Umetoka kwa mafanikio.",
-    "company_profile": "Profaili ya Kampuni",
+    "business_profile": "Profaili ya Kampuni",
     "unexpected_error": "Hitilafu isiyotarajiwa imejitokeza.",
     "addSuccess": "Imeongezwa kwa mafanikio",
     "updateSuccess": "Imesasishwa kwa mafanikio",
@@ -152,8 +152,8 @@
     "filter_date_range": "Eneo la Tarehe"
   },
   "settings": {
-    "company_profile": "Profaili ya Kampuni",
-    "company_name": "Jina la Kampuni",
+    "business_profile": "Profaili ya Kampuni",
+    "business_name": "Jina la Kampuni",
     "mobile": "Simu",
     "address_line1": "Anuani Sehemu ya 1",
     "address_line2": "Anuani Sehemu ya 2",

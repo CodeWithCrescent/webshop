@@ -7,7 +7,7 @@ import 'package:webshop/core/utils/format_utils.dart';
 import 'package:webshop/modules/receipts/models/receipt.dart';
 import 'package:webshop/modules/receipts/pages/receipt_print_view.dart';
 import 'package:webshop/modules/receipts/providers/receipt_provider.dart';
-import 'package:webshop/modules/settings/providers/company_profile_provider.dart';
+import 'package:webshop/modules/settings/providers/business_profile_provider.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/search_field.dart';
 
@@ -28,7 +28,7 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
     _scrollController.addListener(_scrollListener);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ReceiptProvider>().fetchReceipts();
-      context.read<CompanyProfileProvider>().fetchCompanyProfile();
+      context.read<BusinessProfileProvider>().fetchBusinessProfile();
     });
   }
 
@@ -394,10 +394,10 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
   Future<void> _navigateToReceiptDetail(String receiptNumber) async {
     final navigator = Navigator.of(context);
     final provider = Provider.of<ReceiptProvider>(context, listen: false);
-    final company = Provider.of<CompanyProfileProvider>(context, listen: false)
-        .companyProfile;
+    final business = Provider.of<BusinessProfileProvider>(context, listen: false)
+        .businessProfile;
 
-    if (company == null) {
+    if (business == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Business profile is not available')),
       );
@@ -410,7 +410,7 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
       MaterialPageRoute(
         builder: (context) => ReceiptHtmlView(
           receipt: receipt,
-          company: company,
+          business: business,
         ),
       ),
     );

@@ -117,8 +117,6 @@ class _LoginFormState extends State<_LoginForm> {
     String getFriendlyError(String error) {
       final lowerError = error.toLowerCase();
 
-      print(lowerError);
-
       // Connection or network-related errors
       if (lowerError.contains('socketexception') ||
           lowerError.contains('handshakeexception') ||

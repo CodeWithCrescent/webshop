@@ -13,16 +13,16 @@ import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/core/utils/format_utils.dart';
 import 'package:webshop/core/utils/helpers.dart';
 import 'package:webshop/modules/receipts/models/receipt_data.dart';
-import 'package:webshop/modules/settings/models/company_profile.dart';
+import 'package:webshop/modules/settings/models/business_profile.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 
 class ReceiptHtmlView extends StatefulWidget {
   final ReceiptData receipt;
-  final CompanyProfile company;
+  final BusinessProfile business;
   const ReceiptHtmlView({
     super.key,
     required this.receipt,
-    required this.company,
+    required this.business,
   });
   @override
   State<ReceiptHtmlView> createState() => _ReceiptHtmlViewState();
@@ -37,7 +37,7 @@ class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
   }
 
   Future<void> _generatePdfFile() async {
-    final bytes = await _buildPdf(widget.receipt, widget.company);
+    final bytes = await _buildPdf(widget.receipt, widget.business);
     final dir = await getTemporaryDirectory();
     final file = File(
         '${dir.path}/receipt_${parseString(widget.receipt.receiptNumber)}.pdf');
@@ -46,7 +46,7 @@ class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
   }
 
   Future<Uint8List> _buildPdf(
-      ReceiptData receipt, CompanyProfile company) async {
+      ReceiptData receipt, BusinessProfile business) async {
     final pdf = pw.Document();
     final font = await PdfGoogleFonts.courierPrimeBold();
     final ByteData imageData = await rootBundle.load('assets/images/tra.png');
@@ -98,22 +98,22 @@ class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
                           pw.Image(imageProvider, width: 40),
                           pw.SizedBox(height: 10),
                           pw.Text(
-                            company.name,
+                            business.name,
                             style: const pw.TextStyle(fontSize: 14),
                             overflow: pw.TextOverflow.span,
                           ),
                           pw.Text(
-                            company.address2,
+                            business.address2,
                             overflow: pw.TextOverflow.span,
                           ),
-                          pw.Text('MOBILE: ${company.mobile}'),
-                          pw.Text('TIN: ${company.tin}'),
-                          pw.Text('VRN: ${company.vrn}'),
-                          pw.Text('SERIAL NUMBER: ${company.serial}'),
-                          pw.Text('VIN: ${company.vin}',
+                          pw.Text('MOBILE: ${business.mobile}'),
+                          pw.Text('TIN: ${business.tin}'),
+                          pw.Text('VRN: ${business.vrn}'),
+                          pw.Text('SERIAL NUMBER: ${business.serial}'),
+                          pw.Text('VIN: ${business.vin}',
                               overflow: pw.TextOverflow.span),
                           pw.Text(
-                            'TAX OFFICE: ${company.taxoffice}',
+                            'TAX OFFICE: ${business.taxoffice}',
                             overflow: pw.TextOverflow.span,
                           ),
                         ]),
@@ -349,7 +349,7 @@ class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
           icon: const Icon(Icons.print),
           label: const Text("Print or Preview Receipt"),
           onPressed: () async {
-            final pdfBytes = await _buildPdf(widget.receipt, widget.company);
+            final pdfBytes = await _buildPdf(widget.receipt, widget.business);
             await Printing.layoutPdf(
               onLayout: (format) async => pdfBytes,
             );

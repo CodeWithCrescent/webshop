@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/network/api_endpoints.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:webshop/core/network/api_endpoints.dart';
 
 class AuthProvider with ChangeNotifier {
   bool _isAuthenticated = false;
@@ -14,9 +14,20 @@ class AuthProvider with ChangeNotifier {
   String? get error => _error;
 
   late SharedPreferences _prefs;
+  Function()? _onLoginSuccess;
+  Function()? _onLogout;
 
   AuthProvider() {
     _initialize();
+  }
+
+  // Callbacks to be set by the app initialization
+  void setCallbacks({
+    required Function() onLoginSuccess,
+    required Function() onLogout,
+  }) {
+    _onLoginSuccess = onLoginSuccess;
+    _onLogout = onLogout;
   }
 
   void setError(String error) {
@@ -26,19 +37,11 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> _initialize() async {
     _prefs = await SharedPreferences.getInstance();
-
     final token = _prefs.getString('access_token');
     final expiry = _prefs.getInt('token_expiry');
     final now = DateTime.now().millisecondsSinceEpoch;
 
-    if (token != null && expiry != null && now < expiry) {
-      _isAuthenticated = true;
-    } else {
-      _isAuthenticated = false;
-      await _prefs.remove('access_token');
-      await _prefs.remove('token_expiry');
-    }
-
+    _isAuthenticated = token != null && expiry != null && now < expiry;
     notifyListeners();
   }
 
@@ -48,15 +51,8 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     final url = Uri.parse(ApiEndpoints.login);
-
-    final headers = {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    };
-
-    final body = {
-      'client_id': username,
-      'client_secret': password,
-    };
+    final headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+    final body = {'client_id': username, 'client_secret': password};
 
     try {
       final response = await http.post(url, headers: headers, body: body);
@@ -64,7 +60,6 @@ class AuthProvider with ChangeNotifier {
 
       if (data.containsKey('success') && data['success'] == false) {
         _error = data['message'] ?? 'Invalid credentials.';
-        _isAuthenticated = false;
       } else if (data.containsKey('access_token')) {
         final expiresIn = int.tryParse(data['expires_in'].toString()) ?? 0;
         final expiryTimestamp = DateTime.now()
@@ -73,17 +68,15 @@ class AuthProvider with ChangeNotifier {
 
         await _prefs.setString('access_token', data['access_token']);
         await _prefs.setInt('token_expiry', expiryTimestamp);
-        await _prefs.setString('name', data['name'] ?? '');
-        await _prefs.setString('email', data['email'] ?? '');
-
         _isAuthenticated = true;
-      } else {
-        _error = 'Unexpected response from server.';
-        _isAuthenticated = false;
+        
+        // Trigger post-login actions
+        if (_onLoginSuccess != null) {
+          await _onLoginSuccess!();
+        }
       }
     } catch (e) {
-      _error = '$e';
-      _isAuthenticated = false;
+      _error = 'Login failed: ${e.toString()}';
     }
 
     _isLoading = false;
@@ -96,12 +89,14 @@ class AuthProvider with ChangeNotifier {
 
     await _prefs.remove('access_token');
     await _prefs.remove('token_expiry');
-    await _prefs.remove('name');
-    await _prefs.remove('email');
-
     _isAuthenticated = false;
-    _isLoading = false;
 
+    // Trigger post-logout actions
+    if (_onLogout != null) {
+      await _onLogout!();
+    }
+
+    _isLoading = false;
     notifyListeners();
   }
 }

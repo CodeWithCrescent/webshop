@@ -1,22 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'company_profile.dart';
+part of 'business_profile.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class CompanyProfileAdapter extends TypeAdapter<CompanyProfile> {
+class BusinessProfileAdapter extends TypeAdapter<BusinessProfile> {
   @override
   final int typeId = 6;
 
   @override
-  CompanyProfile read(BinaryReader reader) {
+  BusinessProfile read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return CompanyProfile(
+    return BusinessProfile(
       name: fields[0] as String,
       allowedInstances: fields[1] as String,
       installedInstances: fields[2] as String,
@@ -33,7 +33,7 @@ class CompanyProfileAdapter extends TypeAdapter<CompanyProfile> {
   }
 
   @override
-  void write(BinaryWriter writer, CompanyProfile obj) {
+  void write(BinaryWriter writer, BusinessProfile obj) {
     writer
       ..writeByte(12)
       ..writeByte(0)
@@ -68,7 +68,7 @@ class CompanyProfileAdapter extends TypeAdapter<CompanyProfile> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CompanyProfileAdapter &&
+      other is BusinessProfileAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

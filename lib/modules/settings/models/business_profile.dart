@@ -1,9 +1,9 @@
 import 'package:hive/hive.dart';
 
-part 'company_profile.g.dart';
+part 'business_profile.g.dart';
 
 @HiveType(typeId: 6)
-class CompanyProfile {
+class BusinessProfile {
   @HiveField(0)
   final String name;
   @HiveField(1)
@@ -29,7 +29,7 @@ class CompanyProfile {
   @HiveField(11)
   final String taxoffice;
 
-  CompanyProfile({
+  BusinessProfile({
     required this.name,
     required this.allowedInstances,
     required this.installedInstances,
@@ -44,8 +44,8 @@ class CompanyProfile {
     required this.taxoffice,
   });
 
-  factory CompanyProfile.fromMap(Map<String, dynamic> map) {
-    return CompanyProfile(
+  factory BusinessProfile.fromMap(Map<String, dynamic> map) {
+    return BusinessProfile(
       name: map['name'] ?? '',
       allowedInstances: map['allowed_instances'] ?? '',
       installedInstances: map['installed_instances'] ?? '',

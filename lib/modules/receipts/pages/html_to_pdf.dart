@@ -13,17 +13,17 @@ import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/core/utils/format_utils.dart';
 import 'package:webshop/core/utils/helpers.dart';
 import 'package:webshop/modules/receipts/models/receipt_data.dart';
-import 'package:webshop/modules/settings/models/company_profile.dart';
+import 'package:webshop/modules/settings/models/business_profile.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 
 class ReceiptHtmlView extends StatefulWidget {
   final ReceiptData receipt;
-  final CompanyProfile company;
+  final BusinessProfile business;
 
   const ReceiptHtmlView({
     super.key,
     required this.receipt,
-    required this.company,
+    required this.business,
   });
 
   @override
@@ -34,7 +34,7 @@ class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
   String? _pdfPath;
 
   Future<void> _generatePdf() async {
-    final htmlContent = _buildHtml(widget.receipt, widget.company);
+    final htmlContent = _buildHtml(widget.receipt, widget.business);
 
     final directory = Platform.isAndroid
         ? await getExternalStorageDirectory()
@@ -139,7 +139,7 @@ class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
 
   @override
   Widget build(BuildContext context) {
-    final htmlContent = _buildHtml(widget.receipt, widget.company);
+    final htmlContent = _buildHtml(widget.receipt, widget.business);
     final loc = AppLocalizations.of(context);
 
     return Scaffold(
@@ -167,8 +167,8 @@ class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
         ));
   }
 
-  /// HTML BUILDER (injects receipt + company data)
-  String _buildHtml(ReceiptData receipt, CompanyProfile company) {
+  /// HTML BUILDER (injects receipt + business data)
+  String _buildHtml(ReceiptData receipt, BusinessProfile business) {
     final qrCode = QrImageView(data: parseString(receipt.verificationLink), size: 280,);
     return '''
 <!DOCTYPE html>
@@ -181,13 +181,13 @@ class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
   <div style="text-align: center; font-weight: 900;">*** START OF LEGAL RECEIPT ***</div><br>
   <div style="text-align: center;">
     <img src="assets/images/tra.png" alt="TRA logo" style="max-width:65px;" />
-    <div style="font-weight: 900;">${company.name}</div>
-    <div>${company.address1}</div>
-    <div><span style="font-weight: 900;">MOBILE:</span> ${company.mobile}</div>
-    <div><span style="font-weight: 900;">TIN:</span> ${company.tin}</div>
-    <div><span style="font-weight: 900;">VRN:</span> ${company.vrn}</div>
-    <div><span style="font-weight: 900;">SERIAL NO:</span> ${company.serial}</div>
-    <div><span style="font-weight: 900;">TAX OFFICE:</span> ${company.taxoffice}</div>
+    <div style="font-weight: 900;">${business.name}</div>
+    <div>${business.address1}</div>
+    <div><span style="font-weight: 900;">MOBILE:</span> ${business.mobile}</div>
+    <div><span style="font-weight: 900;">TIN:</span> ${business.tin}</div>
+    <div><span style="font-weight: 900;">VRN:</span> ${business.vrn}</div>
+    <div><span style="font-weight: 900;">SERIAL NO:</span> ${business.serial}</div>
+    <div><span style="font-weight: 900;">TAX OFFICE:</span> ${business.taxoffice}</div>
   </div>
   <div style="border-top: 1px dotted #000; margin: 10px 0;"></div>
   <div style="text-align: left; font-weight: 900;">CUSTOMER NAME: ${receipt.customerName}</div>
