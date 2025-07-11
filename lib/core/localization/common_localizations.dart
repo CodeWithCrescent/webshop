@@ -14,7 +14,7 @@ class CommonLocalizations {
   String get delete => _translate('common.delete');
   String get logout => _translate('common.logout');
   String get logoutSuccess => _translate('common.logout_success');
-  String get companyProfile => _translate('common.company_profile');
+  String get businessProfile => _translate('common.business_profile');
   String get unexpectedError => _translate('common.unexpected_error');
   String get addSuccess => _translate('common.addSuccess');
   String get updateSuccess => _translate('common.updateSuccess');
