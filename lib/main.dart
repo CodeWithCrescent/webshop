@@ -9,7 +9,9 @@ import 'package:webshop/modules/inventory/data/local/product_local_datasource.da
 import 'package:webshop/modules/inventory/providers/inventory_provider.dart';
 import 'package:webshop/modules/receipts/providers/receipt_provider.dart';
 import 'package:webshop/modules/sales/providers/sales_provider.dart';
-import 'package:webshop/modules/settings/providers/company_profile_provider.dart';
+import 'package:webshop/modules/settings/data/local/business_profile_local_data_source.dart';
+import 'package:webshop/modules/settings/models/business_profile.dart';
+import 'package:webshop/modules/settings/providers/business_profile_provider.dart';
 import 'package:webshop/modules/zreport/providers/zreport_provider.dart';
 import 'app.dart';
 import 'modules/dashboard/dashboard_provider.dart';
@@ -36,21 +38,44 @@ Future<void> _init() async {
   Hive.registerAdapter(ProductAdapter());
   Hive.registerAdapter(CategoryAdapter());
   Hive.registerAdapter(CustomerAdapter());
-
+  Hive.registerAdapter(BusinessProfileAdapter());
+  
   // Open Hive boxes
   final productBox = await Hive.openBox<Product>('products');
   final categoryBox = await Hive.openBox<Category>('categories');
   final customerBox = await Hive.openBox<Customer>('customers');
+  final businessProfileBox = await Hive.openBox<BusinessProfile>('business_profile');
 
   // Create HTTP client
   final httpClient = HttpClient(prefs: prefs, navigatorKey: navigatorKey);
 
+  // Create providers
+  final authProvider = AuthProvider();
+  final businessProfileProvider = BusinessProfileProvider(
+    httpClient: httpClient,
+    localDataSource: BusinessProfileLocalDataSource(
+      businessProfileBox: businessProfileBox,
+    ),
+  );
+
+  // Set up the callbacks
+  authProvider.setCallbacks(
+    onLoginSuccess: () async {
+      await businessProfileProvider.fetchBusinessProfile();
+    },
+    onLogout: () async {
+      await businessProfileProvider.clearProfile();
+    },
+  );
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => authProvider),
         ChangeNotifierProvider(create: (_) => ThemeProvider(prefs)),
-        ChangeNotifierProvider(create: (_) => DashboardProvider(prefs, httpClient)),
+        ChangeNotifierProvider(
+          create: (_) => DashboardProvider(prefs, httpClient),
+        ),
         ChangeNotifierProvider(
           create: (_) => InventoryProvider(
             localDataSource: ProductLocalDataSource(
@@ -59,20 +84,22 @@ Future<void> _init() async {
             ),
           ),
         ),
-        ChangeNotifierProvider(
-          create: (_) => CompanyProfileProvider(httpClient: httpClient),
-        ),
+        ChangeNotifierProvider(create: (_) => businessProfileProvider),
         ChangeNotifierProvider(
           create: (_) => CustomerProvider(
             httpClient: httpClient,
             localDataSource: CustomerLocalDataSource(customerBox: customerBox),
           ),
         ),
-        ChangeNotifierProvider(create: (_) => ReceiptProvider(httpClient: httpClient)),
+        ChangeNotifierProvider(
+          create: (_) => ReceiptProvider(httpClient: httpClient),
+        ),
         ChangeNotifierProvider(
           create: (_) => ZReportProvider(httpClient: httpClient),
         ),
-        ChangeNotifierProvider(create: (_) => SalesProvider(httpClient: httpClient)),
+        ChangeNotifierProvider(
+          create: (_) => SalesProvider(httpClient: httpClient),
+        ),
       ],
       child: WebShopApp(),
     ),
