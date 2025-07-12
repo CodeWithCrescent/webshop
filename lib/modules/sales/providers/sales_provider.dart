@@ -165,7 +165,7 @@ class SalesProvider with ChangeNotifier {
       "customer": _selectedCustomer != null
           ? {
               "idtype": "6", // Using Telephone as default
-              "idnumber": _selectedCustomer!.phoneNumber,
+              "idnumber": _selectedCustomer!.id.toUpperCase(),
               "mobile": _selectedCustomer!.phoneNumber,
               "name": _selectedCustomer!.fullName,
             }
