@@ -166,7 +166,9 @@
     "created_by": "Created By"
   },
   "settings": {
+    "profile": "Profile",
     "business_profile": "Business Profile",
+    "user_profile": "User Profile",
     "business_name": "Business Name",
     "mobile": "Mobile",
     "address_line1": "Address Line 1",

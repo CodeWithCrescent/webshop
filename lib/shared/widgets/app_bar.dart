@@ -6,12 +6,14 @@ class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback onRefresh;
   final List<Widget>? actions;
+  final PreferredSizeWidget? bottom;
 
   const WebshopAppBar({
     super.key,
     required this.title,
     required this.onRefresh,
     this.actions,
+    this.bottom,
   });
 
   @override
@@ -44,6 +46,7 @@ class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
                     tooltip: 'Refresh',
                   ),
                 ],
+          bottom: bottom,
         ),
       ),
     );

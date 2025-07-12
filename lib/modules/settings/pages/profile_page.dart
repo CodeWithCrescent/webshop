@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/modules/settings/pages/business_profile_page.dart';
 import 'package:webshop/modules/settings/pages/user_profile_page.dart';
+import 'package:webshop/shared/widgets/app_bar.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -26,9 +28,12 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
+      appBar: WebshopAppBar(
+        title: loc?.translate('settings.profile') ?? 'Profile',
+        onRefresh: () {},
+        actions: const [SizedBox()],
         bottom: TabBar(
           controller: _tabController,
           tabs: const [

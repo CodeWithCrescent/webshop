@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/modules/settings/models/business_profile.dart';
 import 'package:webshop/modules/settings/providers/business_profile_provider.dart';
-import 'package:webshop/shared/widgets/app_bar.dart';
 
 class BusinessProfilePage extends StatefulWidget {
   const BusinessProfilePage({super.key});
@@ -28,10 +27,6 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
     final profile = provider.businessProfile;
 
     return Scaffold(
-      appBar: WebshopAppBar(
-        title: loc?.translate('settings.business_profile') ?? 'Business Profile',
-        onRefresh: () => provider.fetchBusinessProfile(),
-      ),
       body: _buildContent(context, provider, profile, loc),
     );
   }

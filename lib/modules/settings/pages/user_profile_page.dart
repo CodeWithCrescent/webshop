@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webshop/shared/providers/auth_provider.dart';
-import 'package:webshop/shared/widgets/app_bar.dart';
-import 'package:webshop/core/localization/app_localizations.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
@@ -31,7 +29,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     return Scaffold(
@@ -47,12 +44,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
           return Column(
             children: [
-              WebshopAppBar(
-                title: loc?.translate('settings.user_profile') ?? 'User Profile',
-                onRefresh: () => setState(() {
-                  _userPrefsFuture = _loadUserPrefs();
-                }),
-              ),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
