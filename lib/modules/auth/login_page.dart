@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../shared/providers/auth_provider.dart';
-import '../../../core/localization/app_localizations.dart';
-import '../../../shared/widgets/app_logo.dart';
-import '../../../shared/widgets/gradient_button.dart';
+import 'package:webshop/core/constants/app_colors.dart';
+import 'package:webshop/core/constants/app_text_styles.dart';
+import 'package:webshop/core/localization/app_localizations.dart';
+import 'package:webshop/shared/providers/auth_provider.dart';
+import 'package:webshop/shared/widgets/app_logo.dart';
+import 'package:webshop/shared/widgets/gradient_button.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -113,6 +113,11 @@ class _LoginFormState extends State<_LoginForm> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    // Messages from HTTP Client
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final message = args?['message'] as String?;
+    final messageType = args?['messageType'] as String?;
+
     // Map raw error to localized message
     String getFriendlyError(String error) {
       final lowerError = error.toLowerCase();
@@ -150,6 +155,19 @@ class _LoginFormState extends State<_LoginForm> {
       Future.microtask(
         () => Navigator.pushReplacementNamed(context, '/layout'),
       );
+    }
+
+    // Message from HTTP Client
+    if (message != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: messageType == 'error' ? AppColors.error : null,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      });
     }
 
     return Form(
