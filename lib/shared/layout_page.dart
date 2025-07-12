@@ -13,6 +13,7 @@ import 'package:webshop/modules/sales/pages/sales_page.dart';
 import 'package:webshop/modules/inventory/pages/product_modal.dart';
 import 'package:webshop/modules/inventory/providers/inventory_provider.dart';
 import 'package:webshop/modules/settings/pages/profile_page.dart';
+import 'package:webshop/shared/providers/auth_provider.dart';
 import 'package:webshop/shared/widgets/bottom_bar.dart';
 
 class LayoutPage extends StatefulWidget {
@@ -24,6 +25,7 @@ class LayoutPage extends StatefulWidget {
 
 class _LayoutPageState extends State<LayoutPage> {
   int _currentIndex = 0;
+
   final List<Widget> _pages = [
     const DashboardPage(),
     const InventoryPage(),
@@ -31,6 +33,23 @@ class _LayoutPageState extends State<LayoutPage> {
     const CustomersPage(),
     const ProfilePage(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthentication();
+  }
+
+  Future<void> _checkAuthentication() async {
+    final authProvider = context.read<AuthProvider>();
+
+    if (!authProvider.isAuthenticated) {
+      await authProvider.logout();
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +83,7 @@ class _LayoutPageState extends State<LayoutPage> {
 
     switch (_currentIndex) {
       case 0: // Home
-      case 4: // Z-Report
+      case 4: // Profile
         actions = [
           _buildActionTile(
             loc?.translate('dashboard.cash_sales') ?? 'Cash Sales',
@@ -79,7 +98,8 @@ class _LayoutPageState extends State<LayoutPage> {
             },
           ),
           _buildActionTile(
-              loc?.translate('dashboard.create_invoice') ?? 'Create Invoice'),
+            loc?.translate('dashboard.create_invoice') ?? 'Create Invoice',
+          ),
           _buildDivider(),
           _buildCancelTile(loc),
         ];
@@ -115,13 +135,14 @@ class _LayoutPageState extends State<LayoutPage> {
     }
 
     showModalBottomSheet(
-        context: context,
-        useSafeArea: true,
-        isScrollControlled: true,
-        builder: (context) => Wrap(children: actions),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ));
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) => Wrap(children: actions),
+    );
   }
 
   void _showAddCustomerModal(BuildContext context) {
@@ -130,7 +151,6 @@ class _LayoutPageState extends State<LayoutPage> {
       isScrollControlled: true,
       builder: (context) => CustomerModal(
         onSuccess: () {
-          // Refresh your customer list here
           context.read<CustomerProvider>().getCustomers();
         },
       ),
@@ -144,7 +164,6 @@ class _LayoutPageState extends State<LayoutPage> {
       builder: (context) => ProductModal(
         product: product,
         onSuccess: () {
-          // Refresh product list
           context.read<InventoryProvider>().loadProducts();
         },
       ),
