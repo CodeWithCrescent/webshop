@@ -3,6 +3,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:webshop/modules/sales/providers/sales_provider.dart';
+import 'package:webshop/shared/utils/auth_utils.dart';
 
 class SaleCompleteModal extends StatefulWidget {
   final Position location;
@@ -33,6 +34,9 @@ class _SaleCompleteModalState extends State<SaleCompleteModal> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkAndRedirectAuth(context);
+    });
     _resolveAddress();
   }
 

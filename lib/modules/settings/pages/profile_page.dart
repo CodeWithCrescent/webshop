@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/modules/settings/pages/business_profile_page.dart';
 import 'package:webshop/modules/settings/pages/user_profile_page.dart';
+import 'package:webshop/shared/utils/auth_utils.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -18,6 +19,9 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkAndRedirectAuth(context);
+    });
     _tabController = TabController(length: 2, vsync: this);
   }
 

@@ -9,7 +9,7 @@ import 'package:webshop/modules/dashboard/dashboard_provider.dart';
 import 'package:webshop/modules/receipts/pages/receipts_page.dart';
 import 'package:webshop/modules/sales/pages/sales_page.dart';
 import 'package:webshop/modules/zreport/zreports_page.dart';
-import 'package:webshop/shared/providers/auth_provider.dart';
+import 'package:webshop/shared/utils/auth_utils.dart';
 import 'package:webshop/shared/widgets/action_button.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/horizontal_stat_card.dart';
@@ -26,22 +26,10 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => _checkAuthentication());
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkAndRedirectAuth(context);
       _fetchDashboardData();
     });
-  }
-
-  Future<void> _checkAuthentication() async {
-    final authProvider = context.read<AuthProvider>();
-    await authProvider.checkAuthStatus();
-
-    if (!authProvider.isAuthenticated) {
-      await authProvider.logout();
-      if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/login');
-      }
-    }
   }
 
   Future<void> _fetchDashboardData() async {

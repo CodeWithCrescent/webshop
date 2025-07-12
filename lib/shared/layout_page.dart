@@ -13,7 +13,6 @@ import 'package:webshop/modules/sales/pages/sales_page.dart';
 import 'package:webshop/modules/inventory/pages/product_modal.dart';
 import 'package:webshop/modules/inventory/providers/inventory_provider.dart';
 import 'package:webshop/modules/settings/pages/profile_page.dart';
-import 'package:webshop/shared/providers/auth_provider.dart';
 import 'package:webshop/shared/widgets/bottom_bar.dart';
 
 class LayoutPage extends StatefulWidget {
@@ -37,19 +36,6 @@ class _LayoutPageState extends State<LayoutPage> {
   @override
   void initState() {
     super.initState();
-    _checkAuthentication();
-  }
-
-  Future<void> _checkAuthentication() async {
-    final authProvider = context.read<AuthProvider>();
-    await authProvider.checkAuthStatus();
-
-    if (!authProvider.isAuthenticated) {
-      await authProvider.logout();
-      if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/login');
-      }
-    }
   }
 
   @override

@@ -5,6 +5,7 @@ import 'package:webshop/core/constants/app_colors.dart';
 import 'package:webshop/core/localization/inventory_localizations.dart';
 import 'package:webshop/modules/inventory/models/category.dart';
 import 'package:webshop/modules/inventory/models/product.dart';
+import 'package:webshop/shared/utils/auth_utils.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/info_tag.dart';
 import 'package:webshop/shared/widgets/refreshable_widget.dart';
@@ -27,6 +28,7 @@ class _InventoryPageState extends State<InventoryPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkAndRedirectAuth(context);
       context.read<InventoryProvider>().init();
     });
 

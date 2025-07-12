@@ -8,6 +8,7 @@ import 'package:webshop/modules/receipts/models/receipt.dart';
 import 'package:webshop/modules/receipts/pages/receipt_print_view.dart';
 import 'package:webshop/modules/receipts/providers/receipt_provider.dart';
 import 'package:webshop/modules/settings/providers/business_profile_provider.dart';
+import 'package:webshop/shared/utils/auth_utils.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/refreshable_widget.dart';
 import 'package:webshop/shared/widgets/search_field.dart';
@@ -27,7 +28,9 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkAndRedirectAuth(context);
       context.read<ReceiptProvider>().fetchReceipts();
       context.read<BusinessProfileProvider>().fetchBusinessProfile();
     });

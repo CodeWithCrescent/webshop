@@ -8,6 +8,7 @@ import 'package:webshop/core/utils/format_utils.dart';
 import 'package:webshop/modules/customers/models/customer.dart';
 import 'package:webshop/modules/customers/pages/customer_modal.dart';
 import 'package:webshop/modules/customers/providers/customer_provider.dart';
+import 'package:webshop/shared/utils/auth_utils.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/info_tag.dart';
 import 'package:webshop/shared/widgets/refreshable_widget.dart';
@@ -25,6 +26,7 @@ class _CustomersPageState extends State<CustomersPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkAndRedirectAuth(context);
       context.read<CustomerProvider>().fetchCustomers();
     });
   }

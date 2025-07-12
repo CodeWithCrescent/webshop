@@ -14,6 +14,7 @@ import 'package:webshop/core/utils/format_utils.dart';
 import 'package:webshop/core/utils/helpers.dart';
 import 'package:webshop/modules/receipts/models/receipt_data.dart';
 import 'package:webshop/modules/settings/models/business_profile.dart';
+import 'package:webshop/shared/utils/auth_utils.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 
 class ReceiptHtmlView extends StatefulWidget {
@@ -32,6 +33,45 @@ class ReceiptHtmlView extends StatefulWidget {
 
 class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
   String? _pdfPath;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkAndRedirectAuth(context);
+    });
+    _generatePdf();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final htmlContent = _buildHtml(widget.receipt, widget.business);
+    final loc = AppLocalizations.of(context);
+
+    return Scaffold(
+        appBar: WebshopAppBar(
+          title: loc?.translate('receipts.preview_title') ?? 'Receipt Preview',
+          onRefresh: () {},
+          actions: [
+            if (_pdfPath != null)
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: _showShareOptions,
+              ),
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SizedBox(
+            child: SingleChildScrollView(
+              child: Container(
+                  padding: const EdgeInsets.all(32),
+                  decoration: BoxDecoration(color: Theme.of(context).cardColor),
+                  child: HtmlWidget(htmlContent)),
+            ),
+          ),
+        ));
+  }
 
   Future<void> _generatePdf() async {
     final htmlContent = _buildHtml(widget.receipt, widget.business);
@@ -129,42 +169,6 @@ class _ReceiptHtmlViewState extends State<ReceiptHtmlView> {
         );
       },
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _generatePdf();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final htmlContent = _buildHtml(widget.receipt, widget.business);
-    final loc = AppLocalizations.of(context);
-
-    return Scaffold(
-        appBar: WebshopAppBar(
-          title: loc?.translate('receipts.preview_title') ?? 'Receipt Preview',
-          onRefresh: () {},
-          actions: [
-            if (_pdfPath != null)
-              IconButton(
-                icon: const Icon(Icons.share),
-                onPressed: _showShareOptions,
-              ),
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SizedBox(
-            child: SingleChildScrollView(
-              child: Container(
-                  padding: const EdgeInsets.all(32),
-                  decoration: BoxDecoration(color: Theme.of(context).cardColor),
-                  child: HtmlWidget(htmlContent)),
-            ),
-          ),
-        ));
   }
 
   /// HTML BUILDER (injects receipt + business data)
