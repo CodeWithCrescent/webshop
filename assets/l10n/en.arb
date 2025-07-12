@@ -30,6 +30,7 @@
     "customers": "Customers",
     "z_reports": "Z-Reports",
     "fm_reports": "FM-Reports",
+    "profile": "Profile",
     "receipts": "Receipts"
   },
   "common": {
