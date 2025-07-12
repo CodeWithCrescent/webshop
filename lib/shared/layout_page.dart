@@ -42,6 +42,7 @@ class _LayoutPageState extends State<LayoutPage> {
 
   Future<void> _checkAuthentication() async {
     final authProvider = context.read<AuthProvider>();
+    await authProvider.checkAuthStatus();
 
     if (!authProvider.isAuthenticated) {
       await authProvider.logout();

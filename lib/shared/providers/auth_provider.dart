@@ -21,7 +21,6 @@ class AuthProvider with ChangeNotifier {
     _initialize();
   }
 
-  // Callbacks to be set by the app initialization
   void setCallbacks({
     required Function() onLoginSuccess,
     required Function() onLogout,
@@ -37,12 +36,21 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> _initialize() async {
     _prefs = await SharedPreferences.getInstance();
+    await checkAuthStatus();
+  }
+
+  /// Check if the token is still valid
+  Future<void> checkAuthStatus() async {
     final token = _prefs.getString('access_token');
     final expiry = _prefs.getInt('token_expiry');
     final now = DateTime.now().millisecondsSinceEpoch;
 
+    final wasAuthenticated = _isAuthenticated;
     _isAuthenticated = token != null && expiry != null && now < expiry;
-    notifyListeners();
+
+    if (wasAuthenticated != _isAuthenticated) {
+      notifyListeners();
+    }
   }
 
   Future<void> login(String username, String password) async {
@@ -71,8 +79,7 @@ class AuthProvider with ChangeNotifier {
         await _prefs.setString('name', data['name'] ?? '');
         await _prefs.setString('email', data['email'] ?? '');
         _isAuthenticated = true;
-        
-        // Trigger post-login actions
+
         if (_onLoginSuccess != null) {
           await _onLoginSuccess!();
         }
@@ -95,7 +102,6 @@ class AuthProvider with ChangeNotifier {
     await _prefs.remove('email');
     _isAuthenticated = false;
 
-    // Trigger post-logout actions
     if (_onLogout != null) {
       await _onLogout!();
     }
