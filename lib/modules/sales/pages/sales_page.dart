@@ -351,7 +351,7 @@ class _TotalsAndCompleteButton extends StatelessWidget {
     }
 
     // Get location automatically
-    final location = await _getLocationWithRetry(context);
+    final location = await _getLocationWithRetry();
     if (location == null) {
       if (context.mounted) {
         _showLocationErrorModal(context);
@@ -396,7 +396,7 @@ class _TotalsAndCompleteButton extends StatelessWidget {
     );
   }
 
-  Future<Position?> _getLocationWithRetry(BuildContext context) async {
+  Future<Position?> _getLocationWithRetry() async { // TODO: Removed BuildContext
     try {
       // Check if location services are enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();

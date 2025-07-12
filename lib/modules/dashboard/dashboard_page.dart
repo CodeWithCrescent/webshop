@@ -315,7 +315,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   void _navigateToFmReports(BuildContext context) {
     // TODO: Create page view for FM Reports
-    print("FM Reports Clicked!");
+    debugPrint("FM Reports Clicked!");
   }
 
   void _navigateToZreports(BuildContext context) {
