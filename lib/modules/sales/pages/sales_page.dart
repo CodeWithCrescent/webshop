@@ -105,7 +105,7 @@ class SalesPage extends StatelessWidget {
                         ? () {
                             provider.selectCustomer(Customer(
                               id: 'temp-${DateTime.now().millisecondsSinceEpoch}',
-                              fullName: 'Walk-in Customer',
+                              fullName: '',
                               phoneNumber: phoneController.text,
                             ));
                             Navigator.pop(context);
