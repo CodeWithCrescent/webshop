@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/shared/providers/auth_provider.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -11,16 +13,23 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   late Future<Map<String, String?>> _userPrefsFuture;
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() {
     _userPrefsFuture = _loadUserPrefs();
   }
 
   Future<Map<String, String?>> _loadUserPrefs() async {
     final prefs = await SharedPreferences.getInstance();
+    _refreshController.refreshCompleted();
     return {
       'name': prefs.getString('name') ?? 'Guest',
       'email': prefs.getString('email') ?? 'guest@webshop.co.tz',
@@ -29,10 +38,19 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    return Scaffold(
-      body: FutureBuilder<Map<String, String?>>(
+    return SmartRefresher(
+      controller: _refreshController,
+      onRefresh: _loadUserData,
+      header: const ClassicHeader(
+        completeText: 'Refresh completed',
+        refreshingText: 'Refreshing...',
+        releaseText: 'Release to refresh',
+        idleText: 'Pull down to refresh',
+      ),
+      child: FutureBuilder<Map<String, String?>>(
         future: _userPrefsFuture,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -42,32 +60,36 @@ class _UserProfilePageState extends State<UserProfilePage> {
           final name = snapshot.data!['name']!;
           final email = snapshot.data!['email']!;
 
-          return Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      // User Profile Card
-                      _buildProfileCard(context, name, email),
-                      
-                      const SizedBox(height: 24),
-                      
-                      // User Information Section
-                      _buildUserInfoSection(context, name, email),
-                      
-                      // Spacer to push logout button down
-                      const SizedBox(height: 40),
-                    ],
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 80),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        // User Profile Card
+                        _buildProfileCard(context, name, email),
+
+                        const SizedBox(height: 24),
+
+                        // User Information Section
+                        _buildUserInfoSection(context, name, email),
+
+                        // Spacer to push logout button down
+                        const SizedBox(height: 40),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              
-              // Logout Button
-              _buildLogoutButton(context, authProvider),
-              const SizedBox(height: 16),
-            ],
+
+                // Logout Button
+                _buildLogoutButton(context, authProvider, loc),
+                const SizedBox(height: 16),
+              ],
+            ),
           );
         },
       ),
@@ -92,8 +114,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
             Text(
               name,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
@@ -108,7 +130,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  Widget _buildUserInfoSection(BuildContext context, String name, String email) {
+  Widget _buildUserInfoSection(
+      BuildContext context, String name, String email) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -130,7 +153,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           email,
           Icons.email,
         ),
-        
+
         // App Settings
         _buildSectionHeader(
           context,
@@ -140,20 +163,21 @@ class _UserProfilePageState extends State<UserProfilePage> {
         _buildInfoItem(
           context,
           'Language',
-          'English', // You can make this dynamic
+          'English',
           Icons.language,
         ),
         _buildInfoItem(
           context,
           'Theme',
-          'System Default', // You can make this dynamic
+          'System Default',
           Icons.color_lens,
         ),
       ],
     );
   }
 
-  Widget _buildSectionHeader(BuildContext context, String title, IconData icon) {
+  Widget _buildSectionHeader(
+      BuildContext context, String title, IconData icon) {
     return Padding(
       padding: const EdgeInsets.only(top: 16, bottom: 8),
       child: Row(
@@ -163,9 +187,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
           Text(
             title,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).primaryColor,
-            ),
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
           ),
         ],
       ),
@@ -192,8 +216,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 Text(
                   label,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+                        color: Colors.grey[600],
+                      ),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -210,14 +234,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  Widget _buildLogoutButton(BuildContext context, AuthProvider authProvider) {
+  Widget _buildLogoutButton(BuildContext context, AuthProvider authProvider, AppLocalizations? loc) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton.icon(
           icon: const Icon(Icons.logout),
-          label: const Text('Logout'),
+          label: Text(loc?.translate('common.logout') ?? 'Logout'),
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
             backgroundColor: Colors.red,

@@ -11,7 +11,8 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
+class _ProfilePageState extends State<ProfilePage> 
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -32,14 +33,18 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     return Scaffold(
       appBar: WebshopAppBar(
         title: loc?.translate('settings.profile') ?? 'Profile',
-        onRefresh: () {},
-        actions: const [SizedBox()],
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'Business'),
-            Tab(text: 'User'),
-          ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: TabBar(
+            controller: _tabController,
+            indicatorColor: Colors.white,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white.withOpacity(0.7),
+            tabs: const [
+              Tab(text: 'Business'),
+              Tab(text: 'User'),
+            ],
+          ),
         ),
       ),
       body: TabBarView(

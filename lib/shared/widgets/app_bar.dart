@@ -4,14 +4,14 @@ import 'package:webshop/core/constants/app_colors.dart';
 
 class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  final VoidCallback onRefresh;
+  final VoidCallback? onRefresh;
   final List<Widget>? actions;
   final PreferredSizeWidget? bottom;
 
   const WebshopAppBar({
     super.key,
     required this.title,
-    required this.onRefresh,
+    this.onRefresh,
     this.actions,
     this.bottom,
   });

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/modules/settings/models/business_profile.dart';
@@ -12,12 +13,19 @@ class BusinessProfilePage extends StatefulWidget {
 }
 
 class _BusinessProfilePageState extends State<BusinessProfilePage> {
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BusinessProfileProvider>().fetchBusinessProfile();
+      _loadBusinessProfile();
     });
+  }
+
+  Future<void> _loadBusinessProfile() async {
+    await context.read<BusinessProfileProvider>().fetchBusinessProfile();
+    _refreshController.refreshCompleted();
   }
 
   @override
@@ -26,8 +34,16 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
     final provider = context.watch<BusinessProfileProvider>();
     final profile = provider.businessProfile;
 
-    return Scaffold(
-      body: _buildContent(context, provider, profile, loc),
+    return SmartRefresher(
+      controller: _refreshController,
+      onRefresh: _loadBusinessProfile,
+      header: const ClassicHeader(
+        completeText: 'Refresh completed',
+        refreshingText: 'Refreshing...',
+        releaseText: 'Release to refresh',
+        idleText: 'Pull down to refresh',
+      ),
+      child: _buildContent(context, provider, profile, loc),
     );
   }
 
@@ -49,7 +65,7 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
             Text('Error: ${provider.error}'),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => provider.fetchBusinessProfile(),
+              onPressed: _loadBusinessProfile,
               child: Text(loc?.translate('common.retry') ?? 'Retry'),
             ),
           ],
@@ -65,7 +81,8 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.only(bottom: 80),
       child: Column(
         children: [
           // Business Card
