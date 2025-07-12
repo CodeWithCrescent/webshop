@@ -22,7 +22,7 @@ class BottomBar extends StatelessWidget {
       TabItem(icon: Icons.inventory_2_outlined, title: loc.translate('menu.inventory')),
       TabItem(icon: Icons.add, title: loc.translate('menu.cash_sales')),
       TabItem(icon: Icons.people_alt_outlined, title: loc.translate('menu.customers')),
-      TabItem(icon: Icons.bar_chart, title: loc.translate('menu.z_reports')),
+      TabItem(icon: Icons.person_pin, title: loc.translate('menu.profile')),
     ];
 
     return BottomBarCreative(

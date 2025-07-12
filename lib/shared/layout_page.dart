@@ -12,7 +12,7 @@ import 'package:webshop/modules/inventory/pages/inventory_page.dart';
 import 'package:webshop/modules/sales/pages/sales_page.dart';
 import 'package:webshop/modules/inventory/pages/product_modal.dart';
 import 'package:webshop/modules/inventory/providers/inventory_provider.dart';
-import 'package:webshop/modules/zreport/zreports_page.dart';
+import 'package:webshop/modules/settings/pages/profile_page.dart';
 import 'package:webshop/shared/widgets/bottom_bar.dart';
 
 class LayoutPage extends StatefulWidget {
@@ -29,7 +29,7 @@ class _LayoutPageState extends State<LayoutPage> {
     const InventoryPage(),
     const Placeholder(),
     const CustomersPage(),
-    const ZReportsPage(),
+    const ProfilePage(),
   ];
 
   @override
