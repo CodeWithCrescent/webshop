@@ -56,7 +56,6 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
     return Scaffold(
       appBar: WebshopAppBar(
         title: loc?.translate('receipts.title') ?? 'Receipts',
-        onRefresh: () => provider.fetchReceipts(refresh: true),
       ),
       body: Container(
         decoration: BoxDecoration(

@@ -38,7 +38,7 @@ class ReceiptProvider with ChangeNotifier {
     if (refresh) {
       _page = 1;
       _hasMore = true;
-      _receipts = [];
+      // _receipts = [];
     }
 
     if (!_hasMore) return;

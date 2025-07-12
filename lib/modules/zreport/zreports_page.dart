@@ -53,7 +53,6 @@ class _ZReportsPageState extends State<ZReportsPage> {
     return Scaffold(
       appBar: WebshopAppBar(
         title: loc?.translate('zreport.title') ?? 'Z-Reports',
-        onRefresh: () => provider.fetchZReports(refresh: true),
       ),
       body: Container(
         decoration: BoxDecoration(
