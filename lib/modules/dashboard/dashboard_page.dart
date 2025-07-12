@@ -26,7 +26,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
-    _checkAuthentication();
+    Future.microtask(() => _checkAuthentication());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchDashboardData();
     });
