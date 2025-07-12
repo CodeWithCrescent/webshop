@@ -36,6 +36,44 @@ class _UserProfilePageState extends State<UserProfilePage> {
     };
   }
 
+  Future<void> _showLogoutConfirmation(BuildContext context) async {
+    final loc = AppLocalizations.of(context);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(loc?.translate('common.confirm_logout') ?? 'Confirm Logout'),
+          content: Text(
+            loc?.translate('common.logout_confirmation_message') ?? 
+            'Are you sure you want to logout?',
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(loc?.translate('common.cancel') ?? 'Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: Text(
+                loc?.translate('common.logout') ?? 'Logout',
+                style: const TextStyle(color: Colors.red),
+              ),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await authProvider.logout();
+                if (mounted) {
+                  Navigator.of(context).pushReplacementNamed('/login');
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
@@ -234,19 +272,27 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  Widget _buildLogoutButton(BuildContext context, AuthProvider authProvider, AppLocalizations? loc) {
+  Widget _buildLogoutButton(
+    BuildContext context, 
+    AuthProvider authProvider, 
+    AppLocalizations? loc,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
         width: double.infinity,
-        child: TextButton.icon(
-          icon: const Icon(Icons.logout),
+        child: ElevatedButton.icon(
+          icon: const Icon(Icons.logout, size: 20),
           label: Text(loc?.translate('common.logout') ?? 'Logout'),
-          onPressed: () async {
-            final navigator = Navigator.of(context);
-            await authProvider.logout();
-            navigator.pushReplacementNamed('/login');
-          },
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.red,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          onPressed: () => _showLogoutConfirmation(context),
         ),
       ),
     );
