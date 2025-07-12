@@ -40,22 +40,22 @@ class _CustomersPageState extends State<CustomersPage> {
         title: loc?.translate('customers.title') ?? 'Customers',
         onRefresh: () => provider.fetchCustomers(),
       ),
-      body: RefreshableWidget(
-        onRefresh: () => provider.fetchCustomers(),
-        builder: (context) => Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: SearchField(
-                hintText: loc?.translate('common.search') ?? 'Search customers',
-                onChanged: provider.setSearchQuery,
-              ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SearchField(
+              hintText: loc?.translate('common.search') ?? 'Search customers',
+              onChanged: provider.setSearchQuery,
             ),
-            Expanded(
-              child: _buildCustomerList(provider, loc),
+          ),
+          Expanded(
+            child: RefreshableWidget(
+              onRefresh: () => provider.fetchCustomers(),
+              builder: (context) => _buildCustomerList(provider, loc),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -130,7 +130,9 @@ class _CustomersPageState extends State<CustomersPage> {
                         onPressed: () => _makePhoneCall(customer.phoneNumber),
                       ),
                       IconButton(
-                        icon: SvgPicture.asset('assets/images/whatsapp-icon.svg', width: 32),
+                        icon: SvgPicture.asset(
+                            'assets/images/whatsapp-icon.svg',
+                            width: 32),
                         onPressed: () => _openWhatsApp(customer.phoneNumber),
                       ),
                     ],

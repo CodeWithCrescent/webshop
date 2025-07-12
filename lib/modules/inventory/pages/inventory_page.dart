@@ -20,12 +20,31 @@ class InventoryPage extends StatefulWidget {
 }
 
 class _InventoryPageState extends State<InventoryPage> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<InventoryProvider>().init();
     });
+
+    _scrollController.addListener(() {
+      final provider = context.read<InventoryProvider>();
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200 &&
+          provider.hasMore &&
+          !provider.isLoading) {
+        provider.loadNextPage();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -80,8 +99,7 @@ class _InventoryPageState extends State<InventoryPage> {
               Expanded(
                 child: RefreshableWidget(
                   onRefresh: () => provider.init(),
-                  builder: (context) =>
-                      Expanded(child: _buildProductList(provider, loc)),
+                  builder: (context) => _buildProductList(provider, loc),
                 ),
               ),
             ],
@@ -207,7 +225,7 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  Widget _buildProductList(
+   Widget _buildProductList(
       InventoryProvider provider, InventoryLocalizations loc) {
     if (provider.products.isEmpty) {
       return Center(
@@ -237,9 +255,17 @@ class _InventoryPageState extends State<InventoryPage> {
     }
 
     return ListView.builder(
+      controller: _scrollController,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      itemCount: provider.products.length,
+      itemCount: provider.products.length + (provider.hasMore ? 1 : 0),
       itemBuilder: (context, index) {
+        if (index == provider.products.length) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
         return _buildProductCard(provider.products[index], loc);
       },
     );

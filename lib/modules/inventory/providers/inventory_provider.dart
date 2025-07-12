@@ -16,7 +16,7 @@ enum ProductSortOption {
 
 class InventoryProvider with ChangeNotifier {
   final ProductLocalDataSource localDataSource;
-  
+
   List<Product> _products = [];
   List<Product> _filteredProducts = [];
   List<Category> _categories = [];
@@ -26,8 +26,16 @@ class InventoryProvider with ChangeNotifier {
   bool _isLoading = false;
   String? _error;
 
+  // Pagination
+  int _currentPage = 1;
+  final int _pageSize = 20;
+  bool _hasMore = true;
+
+  // Debouncer
   Timer? _debounceTimer;
   final Debouncer _searchDebouncer = Debouncer(delay: const Duration(milliseconds: 300));
+
+  InventoryProvider({required this.localDataSource});
 
   List<Product> get products => _filteredProducts;
   List<Category> get categories => _categories;
@@ -36,8 +44,7 @@ class InventoryProvider with ChangeNotifier {
   ProductSortOption get sortOption => _sortOption;
   bool get isLoading => _isLoading;
   String? get error => _error;
-
-  InventoryProvider({required this.localDataSource});
+  bool get hasMore => _hasMore;
 
   @override
   void dispose() {
@@ -47,6 +54,8 @@ class InventoryProvider with ChangeNotifier {
   }
 
   Future<void> init() async {
+    _currentPage = 1;
+    _hasMore = true;
     await loadProducts();
     await loadCategories();
   }
@@ -54,10 +63,10 @@ class InventoryProvider with ChangeNotifier {
   Future<void> loadProducts() async {
     _isLoading = true;
     notifyListeners();
-    
+
     try {
       _products = await localDataSource.getProducts();
-      _applyFilters();
+      _applyFilters(resetPage: true);
       _error = null;
     } catch (e) {
       _error = e.toString();
@@ -76,10 +85,91 @@ class InventoryProvider with ChangeNotifier {
     }
   }
 
+  void _applyFilters({bool resetPage = false}) {
+    if (resetPage) {
+      _currentPage = 1;
+      _hasMore = true;
+    }
+
+    List<Product> filtered = _products.where((product) {
+      final matchesSearch = _searchQuery.isEmpty ||
+          product.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          product.code.toLowerCase().contains(_searchQuery.toLowerCase());
+
+      final matchesCategory =
+          _selectedCategory == null || product.category == _selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    }).toList();
+
+    _sortProducts(filtered);
+
+    final int startIndex = (_currentPage - 1) * _pageSize;
+    final int endIndex = startIndex + _pageSize;
+
+    if (startIndex >= filtered.length) {
+      _hasMore = false;
+      return;
+    }
+
+    _filteredProducts = filtered.sublist(
+      startIndex,
+      endIndex > filtered.length ? filtered.length : endIndex,
+    );
+
+    _hasMore = endIndex < filtered.length;
+    notifyListeners();
+  }
+
+  void loadNextPage() {
+    if (_isLoading || !_hasMore) return;
+
+    _currentPage++;
+    _applyFilters();
+  }
+
+  void _sortProducts(List<Product> list) {
+    switch (_sortOption) {
+      case ProductSortOption.nameAsc:
+        list.sort((a, b) => a.name.compareTo(b.name));
+        break;
+      case ProductSortOption.nameDesc:
+        list.sort((a, b) => b.name.compareTo(a.name));
+        break;
+      case ProductSortOption.priceAsc:
+        list.sort((a, b) => a.price.compareTo(b.price));
+        break;
+      case ProductSortOption.priceDesc:
+        list.sort((a, b) => b.price.compareTo(a.price));
+        break;
+      case ProductSortOption.stockAsc:
+        list.sort((a, b) => a.stock.compareTo(b.stock));
+        break;
+      case ProductSortOption.stockDesc:
+        list.sort((a, b) => b.stock.compareTo(a.stock));
+        break;
+    }
+  }
+
+  void setSearchQuery(String query) {
+    _searchQuery = query;
+    _searchDebouncer.run(() => _applyFilters(resetPage: true));
+  }
+
+  void setCategoryFilter(String? category) {
+    _selectedCategory = category;
+    _applyFilters(resetPage: true);
+  }
+
+  void setSortOption(ProductSortOption option) {
+    _sortOption = option;
+    _applyFilters(resetPage: true);
+  }
+
   Future<void> addProduct(Product product) async {
     _isLoading = true;
     notifyListeners();
-    
+
     try {
       await localDataSource.addProduct(product);
       await loadProducts();
@@ -95,7 +185,7 @@ class InventoryProvider with ChangeNotifier {
   Future<void> updateProduct(Product product) async {
     _isLoading = true;
     notifyListeners();
-    
+
     try {
       await localDataSource.updateProduct(product);
       await loadProducts();
@@ -111,7 +201,7 @@ class InventoryProvider with ChangeNotifier {
   Future<void> deleteProduct(String productId) async {
     _isLoading = true;
     notifyListeners();
-    
+
     try {
       await localDataSource.deleteProduct(productId);
       await loadProducts();
@@ -139,7 +229,6 @@ class InventoryProvider with ChangeNotifier {
       final oldCategory = _categories.firstWhere((c) => c.id == category.id);
 
       if (oldCategory.name != category.name) {
-        // Update products that use the old name
         await localDataSource.updateCategoryName(oldCategory.name, category.name);
       }
 
@@ -151,14 +240,13 @@ class InventoryProvider with ChangeNotifier {
         _selectedCategory = category.name;
       }
 
-      _applyFilters();
+      _applyFilters(resetPage: true);
     } catch (e) {
       debugPrint('Error updating category: $e');
       rethrow;
     }
   }
 
-  /// Deletes category and all its products!!
   Future<void> deleteCategory(String categoryId) async {
     try {
       final categoryToDelete = _categories.firstWhere(
@@ -167,13 +255,9 @@ class InventoryProvider with ChangeNotifier {
       );
       final categoryName = categoryToDelete.name;
 
-      // Delete products of that category
       await localDataSource.deleteProductsByCategory(categoryName);
-
-      // Delete category
       await localDataSource.deleteCategory(categoryId);
 
-      // Reload state
       await loadCategories();
       await loadProducts();
 
@@ -181,62 +265,10 @@ class InventoryProvider with ChangeNotifier {
         _selectedCategory = null;
       }
 
-      _applyFilters();
+      _applyFilters(resetPage: true);
     } catch (e) {
       debugPrint('Error deleting category and its products: $e');
       rethrow;
-    }
-  }
-
-  void setSearchQuery(String query) {
-    _searchQuery = query;
-    _searchDebouncer.run(_applyFilters);
-  }
-
-  void setCategoryFilter(String? category) {
-    _selectedCategory = category;
-    _applyFilters();
-  }
-
-  void setSortOption(ProductSortOption option) {
-    _sortOption = option;
-    _applyFilters();
-  }
-
-  void _applyFilters() {
-    _filteredProducts = _products.where((product) {
-      final matchesSearch = _searchQuery.isEmpty ||
-          product.name.toLowerCase().contains(_searchQuery.toLowerCase()) || 
-          product.code.toLowerCase().contains(_searchQuery.toLowerCase());
-      final matchesCategory = _selectedCategory == null || 
-                            product.category == _selectedCategory;
-      return matchesSearch && matchesCategory;
-    }).toList();
-
-    _sortProducts();
-    notifyListeners();
-  }
-
-  void _sortProducts() {
-    switch (_sortOption) {
-      case ProductSortOption.nameAsc:
-        _filteredProducts.sort((a, b) => a.name.compareTo(b.name));
-        break;
-      case ProductSortOption.nameDesc:
-        _filteredProducts.sort((a, b) => b.name.compareTo(a.name));
-        break;
-      case ProductSortOption.priceAsc:
-        _filteredProducts.sort((a, b) => a.price.compareTo(b.price));
-        break;
-      case ProductSortOption.priceDesc:
-        _filteredProducts.sort((a, b) => b.price.compareTo(a.price));
-        break;
-      case ProductSortOption.stockAsc:
-        _filteredProducts.sort((a, b) => a.stock.compareTo(b.stock));
-        break;
-      case ProductSortOption.stockDesc:
-        _filteredProducts.sort((a, b) => b.stock.compareTo(a.stock));
-        break;
     }
   }
 }
