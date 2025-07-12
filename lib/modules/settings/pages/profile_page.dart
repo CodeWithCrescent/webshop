@@ -33,6 +33,7 @@ class _ProfilePageState extends State<ProfilePage>
     return Scaffold(
       appBar: WebshopAppBar(
         title: loc?.translate('settings.profile') ?? 'Profile',
+        appBarHeight: 96,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
           child: TabBar(

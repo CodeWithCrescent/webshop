@@ -11,7 +11,6 @@ import 'package:webshop/modules/sales/pages/sales_page.dart';
 import 'package:webshop/modules/zreport/zreports_page.dart';
 import 'package:webshop/shared/widgets/action_button.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
-import 'package:webshop/shared/widgets/app_left_drawer.dart';
 import 'package:webshop/shared/widgets/horizontal_stat_card.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -41,8 +40,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       backgroundColor: AppColors.primary.withOpacity(0.1),
       appBar: WebshopAppBar(
-        title: loc.translate('dashboard.title'),
-        onRefresh: _fetchDashboardData,
+        title: loc.translate('common.app_name'),
       ),
       body: Consumer<DashboardProvider>(
         builder: (context, provider, child) {
@@ -57,7 +55,6 @@ class _DashboardPageState extends State<DashboardPage> {
           return _buildDashboardContent(context, provider, loc);
         },
       ),
-      drawer: const AppLeftDrawer(),
     );
   }
 

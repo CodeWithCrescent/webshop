@@ -82,7 +82,7 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
 
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.only(bottom: 80),
+      padding: const EdgeInsets.only(bottom: 96, left: 16, right: 16, top: 16),
       child: Column(
         children: [
           // Business Card

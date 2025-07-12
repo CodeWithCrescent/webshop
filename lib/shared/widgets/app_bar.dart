@@ -7,6 +7,7 @@ class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onRefresh;
   final List<Widget>? actions;
   final PreferredSizeWidget? bottom;
+  final double? appBarHeight;
 
   const WebshopAppBar({
     super.key,
@@ -14,12 +15,13 @@ class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onRefresh,
     this.actions,
     this.bottom,
+    this.appBarHeight,
   });
 
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight),
+      preferredSize: Size.fromHeight(appBarHeight ?? kToolbarHeight),
       child: Container(
         decoration: BoxDecoration(
           gradient: AppColors.primaryGradient,
@@ -39,13 +41,15 @@ class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
           elevation: 0,
           actions: actions != null && actions!.isNotEmpty
               ? actions
-              : [
-                  IconButton(
-                    icon: const Icon(Icons.refresh),
-                    onPressed: onRefresh,
-                    tooltip: 'Refresh',
-                  ),
-                ],
+              : onRefresh != null
+                  ? [
+                      IconButton(
+                        icon: const Icon(Icons.refresh),
+                        onPressed: onRefresh,
+                        tooltip: 'Refresh',
+                      ),
+                    ]
+                  : [const SizedBox()],
           bottom: bottom,
         ),
       ),
@@ -53,5 +57,5 @@ class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(appBarHeight ?? kToolbarHeight);
 }

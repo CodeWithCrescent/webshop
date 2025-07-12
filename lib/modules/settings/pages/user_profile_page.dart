@@ -79,7 +79,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         _buildUserInfoSection(context, name, email),
 
                         // Spacer to push logout button down
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 16),
                       ],
                     ),
                   ),
@@ -239,14 +239,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
         width: double.infinity,
-        child: ElevatedButton.icon(
+        child: TextButton.icon(
           icon: const Icon(Icons.logout),
           label: Text(loc?.translate('common.logout') ?? 'Logout'),
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.red,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-          ),
           onPressed: () async {
             final navigator = Navigator.of(context);
             await authProvider.logout();
