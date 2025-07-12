@@ -12,6 +12,7 @@ import 'package:webshop/modules/zreport/zreports_page.dart';
 import 'package:webshop/shared/widgets/action_button.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/horizontal_stat_card.dart';
+import 'package:webshop/shared/widgets/refreshable_widget.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -29,8 +30,8 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
-  void _fetchDashboardData() {
-    Provider.of<DashboardProvider>(context, listen: false).fetchDashboardData();
+  Future<void> _fetchDashboardData() async {
+    await Provider.of<DashboardProvider>(context, listen: false).fetchDashboardData();
   }
 
   @override
@@ -44,21 +45,24 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
       body: Consumer<DashboardProvider>(
         builder: (context, provider, child) {
-          if (provider.isLoading) {
+          if (provider.isLoading && !provider.hasData) {
             return const Center(child: SpinKitCircle(color: AppColors.primary));
           }
 
           if (provider.error != null) {
-            return _buildErrorWidget(provider.error!);
+            return _buildErrorWidget(provider.error!, provider);
           }
 
-          return _buildDashboardContent(context, provider, loc);
+          return RefreshableWidget(
+            onRefresh: _fetchDashboardData,
+            builder: (context) => _buildDashboardContent(context, provider, loc),
+          );
         },
       ),
     );
   }
 
-  Widget _buildErrorWidget(String error) {
+  Widget _buildErrorWidget(String error, DashboardProvider provider) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -72,6 +76,11 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
             textAlign: TextAlign.center,
           ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => provider.fetchDashboardData(),
+            child: const Text('Retry'),
+          ),
         ],
       ),
     );
@@ -82,39 +91,27 @@ class _DashboardPageState extends State<DashboardPage> {
     DashboardProvider provider,
     AppLocalizations loc,
   ) {
-    return RefreshIndicator(
-      onRefresh: () async => _fetchDashboardData(),
-      color: AppColors.primary,
-      child: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          // Welcome Section
-          SliverToBoxAdapter(child: _buildWelcomeSection(provider, loc)),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 8)),
-
-          // Horizontal Stat Card Section
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            sliver: SliverToBoxAdapter(
-              child: HorizontalStatCard(
-                icon: Icons.receipt_long,
-                iconColor: AppColors.secondary,
-                title: loc.translate('dashboard.today_receipts'),
-                value: provider.totalReceipts.toString(),
-                subtitle: loc.translate('dashboard.date'),
-                subtitleValue: provider.date ?? '-',
-              ),
+    return CustomScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      slivers: [
+        SliverToBoxAdapter(child: _buildWelcomeSection(provider, loc)),
+        const SliverToBoxAdapter(child: SizedBox(height: 8)),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          sliver: SliverToBoxAdapter(
+            child: HorizontalStatCard(
+              icon: Icons.receipt_long,
+              iconColor: AppColors.secondary,
+              title: loc.translate('dashboard.today_receipts'),
+              value: provider.totalReceipts ?? '0',
+              subtitle: loc.translate('dashboard.date'),
+              subtitleValue: provider.date ?? '-',
             ),
           ),
-
-          // Quick Actions Section
-          SliverToBoxAdapter(child: _buildQuickActionsSection(context, loc)),
-
-          // Bottom padding
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
-        ],
-      ),
+        ),
+        SliverToBoxAdapter(child: _buildQuickActionsSection(context, loc)),
+        const SliverToBoxAdapter(child: SizedBox(height: 24)),
+      ],
     );
   }
 

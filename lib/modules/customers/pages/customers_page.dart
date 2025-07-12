@@ -10,6 +10,7 @@ import 'package:webshop/modules/customers/pages/customer_modal.dart';
 import 'package:webshop/modules/customers/providers/customer_provider.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/info_tag.dart';
+import 'package:webshop/shared/widgets/refreshable_widget.dart';
 import 'package:webshop/shared/widgets/search_field.dart';
 
 class CustomersPage extends StatefulWidget {
@@ -39,9 +40,9 @@ class _CustomersPageState extends State<CustomersPage> {
         title: loc?.translate('customers.title') ?? 'Customers',
         onRefresh: () => provider.fetchCustomers(),
       ),
-      body: RefreshIndicator(
+      body: RefreshableWidget(
         onRefresh: () => provider.fetchCustomers(),
-        child: Column(
+        builder: (context) => Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(16),

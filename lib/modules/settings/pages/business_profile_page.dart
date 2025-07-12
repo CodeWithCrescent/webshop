@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/modules/settings/models/business_profile.dart';
 import 'package:webshop/modules/settings/providers/business_profile_provider.dart';
+import 'package:webshop/shared/widgets/refreshable_widget.dart';
 
 class BusinessProfilePage extends StatefulWidget {
   const BusinessProfilePage({super.key});
@@ -13,8 +13,6 @@ class BusinessProfilePage extends StatefulWidget {
 }
 
 class _BusinessProfilePageState extends State<BusinessProfilePage> {
-  final RefreshController _refreshController = RefreshController(initialRefresh: false);
-
   @override
   void initState() {
     super.initState();
@@ -25,7 +23,6 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
 
   Future<void> _loadBusinessProfile() async {
     await context.read<BusinessProfileProvider>().fetchBusinessProfile();
-    _refreshController.refreshCompleted();
   }
 
   @override
@@ -34,16 +31,9 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
     final provider = context.watch<BusinessProfileProvider>();
     final profile = provider.businessProfile;
 
-    return SmartRefresher(
-      controller: _refreshController,
+    return RefreshableWidget(
       onRefresh: _loadBusinessProfile,
-      header: const ClassicHeader(
-        completeText: 'Refresh completed',
-        refreshingText: 'Refreshing...',
-        releaseText: 'Release to refresh',
-        idleText: 'Pull down to refresh',
-      ),
-      child: _buildContent(context, provider, profile, loc),
+      builder: (context) => _buildContent(context, provider, profile, loc),
     );
   }
 

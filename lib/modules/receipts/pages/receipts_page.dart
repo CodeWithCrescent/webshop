@@ -9,6 +9,7 @@ import 'package:webshop/modules/receipts/pages/receipt_print_view.dart';
 import 'package:webshop/modules/receipts/providers/receipt_provider.dart';
 import 'package:webshop/modules/settings/providers/business_profile_provider.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
+import 'package:webshop/shared/widgets/refreshable_widget.dart';
 import 'package:webshop/shared/widgets/search_field.dart';
 
 class ReceiptsPage extends StatefulWidget {
@@ -100,9 +101,10 @@ class _ReceiptsPageState extends State<ReceiptsPage> {
             ),
             const SizedBox(height: 8),
             Expanded(
-              child: RefreshIndicator(
+              child: RefreshableWidget(
                 onRefresh: () => provider.fetchReceipts(refresh: true),
-                child: ListView.builder(
+                enablePullUp: provider.hasMore,
+                builder: (context) => ListView.builder(
                   controller: _scrollController,
                   itemCount:
                       provider.receipts.length + (provider.hasMore ? 1 : 0),

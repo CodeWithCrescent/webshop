@@ -6,6 +6,7 @@ import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/modules/zreport/models/zreport.dart';
 import 'package:webshop/modules/zreport/providers/zreport_provider.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
+import 'package:webshop/shared/widgets/refreshable_widget.dart';
 import 'package:webshop/shared/widgets/search_field.dart';
 
 class ZReportsPage extends StatefulWidget {
@@ -69,9 +70,10 @@ class _ZReportsPageState extends State<ZReportsPage> {
               ),
             ),
             Expanded(
-              child: RefreshIndicator(
+              child: RefreshableWidget(
                 onRefresh: () => provider.fetchZReports(refresh: true),
-                child: ListView.builder(
+                enablePullUp: provider.hasMore,
+                builder: (context) => ListView.builder(
                   controller: _scrollController,
                   itemCount: provider.reports.length + (provider.hasMore ? 1 : 0),
                   itemBuilder: (context, index) {

@@ -7,6 +7,7 @@ import 'package:webshop/modules/inventory/models/category.dart';
 import 'package:webshop/modules/inventory/models/product.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/info_tag.dart';
+import 'package:webshop/shared/widgets/refreshable_widget.dart';
 import 'package:webshop/shared/widgets/search_field.dart';
 import 'package:webshop/modules/inventory/providers/inventory_provider.dart';
 import 'package:webshop/modules/inventory/pages/product_modal.dart';
@@ -37,20 +38,31 @@ class _InventoryPageState extends State<InventoryPage> {
         title: loc.title,
         onRefresh: () => context.read<InventoryProvider>().init(),
       ),
-      body: RefreshIndicator(
-        onRefresh: () => context.read<InventoryProvider>().init(),
-        child: Consumer<InventoryProvider>(
-          builder: (context, provider, _) {
-            if (provider.isLoading && provider.products.isEmpty) {
-              return const Center(
-                  child: SpinKitCircle(color: AppColors.primary));
-            }
+      body: Consumer<InventoryProvider>(
+        builder: (context, provider, _) {
+          if (provider.isLoading && provider.products.isEmpty) {
+            return const Center(child: SpinKitCircle(color: AppColors.primary));
+          }
 
-            if (provider.error != null) {
-              return Center(child: Text('Error: ${provider.error}'));
-            }
+          if (provider.error != null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Error: ${provider.error}'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => provider.init(),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
 
-            return Column(
+          return RefreshableWidget(
+            onRefresh: () => provider.init(),
+            builder: (context) => Column(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16),
@@ -72,15 +84,14 @@ class _InventoryPageState extends State<InventoryPage> {
                 _buildCategoryChips(provider, loc),
                 Expanded(child: _buildProductList(provider, loc)),
               ],
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildCategoryChips(
-      InventoryProvider provider, InventoryLocalizations loc) {
+  Widget _buildCategoryChips(InventoryProvider provider, InventoryLocalizations loc) {
     return SizedBox(
       height: 32,
       child: ListView.builder(
@@ -107,8 +118,7 @@ class _InventoryPageState extends State<InventoryPage> {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: GestureDetector(
-              onLongPress: () =>
-                  _showCategoryOptions(context, category, provider),
+              onLongPress: () => _showCategoryOptions(context, category, provider),
               child: InfoTag(
                 label: category.name,
                 color: AppColors.primary,
@@ -122,8 +132,7 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  void _showCategoryOptions(
-      BuildContext context, Category category, InventoryProvider provider) {
+  void _showCategoryOptions(BuildContext context, Category category, InventoryProvider provider) {
     final loc = InventoryLocalizations(context);
 
     showDialog(
@@ -154,8 +163,7 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  void _showEditCategoryDialog(
-      BuildContext context, Category category, InventoryProvider provider) {
+  void _showEditCategoryDialog(BuildContext context, Category category, InventoryProvider provider) {
     final loc = InventoryLocalizations(context);
     final controller = TextEditingController(text: category.name);
 
@@ -195,8 +203,7 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  Widget _buildProductList(
-      InventoryProvider provider, InventoryLocalizations loc) {
+  Widget _buildProductList(InventoryProvider provider, InventoryLocalizations loc) {
     if (provider.products.isEmpty) {
       return Center(
         child: Column(
@@ -269,8 +276,7 @@ class _InventoryPageState extends State<InventoryPage> {
                       children: [
                         Text(product.code,
                             style: theme.textTheme.bodySmall?.copyWith(
-                                color:
-                                    theme.colorScheme.onSurface.withOpacity(0.6))),
+                                color: theme.colorScheme.onSurface.withOpacity(0.6))),
                         Text(
                           " • ",
                           style: theme.textTheme.bodySmall?.copyWith(
@@ -321,7 +327,6 @@ class _InventoryPageState extends State<InventoryPage> {
       builder: (context) => ProductModal(
         product: product,
         onSuccess: () {
-          // Refresh product list
           context.read<InventoryProvider>().loadProducts();
         },
         onDelete: product != null
@@ -382,8 +387,7 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  String _getSortOptionText(
-      ProductSortOption option, InventoryLocalizations loc) {
+  String _getSortOptionText(ProductSortOption option, InventoryLocalizations loc) {
     switch (option) {
       case ProductSortOption.nameAsc:
         return loc.sortNameAsc;

@@ -9,6 +9,7 @@ class DashboardProvider with ChangeNotifier {
   final HttpClient httpClient;
 
   bool _isLoading = false;
+  bool _hasData = false;
   String? _error;
   String? _totalAmount;
   String? _totalMonthAmount;
@@ -16,6 +17,7 @@ class DashboardProvider with ChangeNotifier {
   String? _totalReceipts;
 
   bool get isLoading => _isLoading;
+  bool get hasData => _hasData;
   String? get error => _error;
   String? get totalMonthAmount => _totalMonthAmount;
   String? get totalReceipts => _totalReceipts;
@@ -40,11 +42,14 @@ class DashboardProvider with ChangeNotifier {
         _date = dashboard['date'] ?? '-';
         _totalReceipts = dashboard['total_rct'] ?? '0';
         _error = null;
+        _hasData = true;
       } else {
         _error = 'Failed to load dashboard data';
+        _hasData = false;
       }
     } catch (e) {
       _error = e.toString();
+      _hasData = false;
     } finally {
       _isLoading = false;
       notifyListeners();

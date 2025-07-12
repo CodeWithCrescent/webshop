@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/shared/providers/auth_provider.dart';
+import 'package:webshop/shared/widgets/refreshable_widget.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
@@ -13,8 +13,6 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
-  final RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
   late Future<Map<String, String?>> _userPrefsFuture;
 
   @override
@@ -23,13 +21,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
     _loadUserData();
   }
 
-  void _loadUserData() {
-    _userPrefsFuture = _loadUserPrefs();
+  Future<void> _loadUserData() async {
+    setState(() {
+      _userPrefsFuture = _loadUserPrefs();
+    });
   }
 
   Future<Map<String, String?>> _loadUserPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    _refreshController.refreshCompleted();
     return {
       'name': prefs.getString('name') ?? 'Guest',
       'email': prefs.getString('email') ?? 'guest@webshop.co.tz',
@@ -71,66 +70,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
           ],
         );
       },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    return SmartRefresher(
-      controller: _refreshController,
-      onRefresh: _loadUserData,
-      header: const ClassicHeader(
-        completeText: 'Refresh completed',
-        refreshingText: 'Refreshing...',
-        releaseText: 'Release to refresh',
-        idleText: 'Pull down to refresh',
-      ),
-      child: FutureBuilder<Map<String, String?>>(
-        future: _userPrefsFuture,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final name = snapshot.data!['name']!;
-          final email = snapshot.data!['email']!;
-
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 80),
-            child: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        // User Profile Card
-                        _buildProfileCard(context, name, email),
-
-                        const SizedBox(height: 24),
-
-                        // User Information Section
-                        _buildUserInfoSection(context, name, email),
-
-                        // Spacer to push logout button down
-                        const SizedBox(height: 16),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Logout Button
-                _buildLogoutButton(context, authProvider, loc),
-                const SizedBox(height: 16),
-              ],
-            ),
-          );
-        },
-      ),
     );
   }
 
@@ -286,6 +225,59 @@ class _UserProfilePageState extends State<UserProfilePage> {
           label: Text(loc?.translate('common.logout') ?? 'Logout'),
           onPressed: () => _showLogoutConfirmation(context),
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    return RefreshableWidget(
+      onRefresh: _loadUserData,
+      builder: (context) => FutureBuilder<Map<String, String?>>(
+        future: _userPrefsFuture,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final name = snapshot.data!['name']!;
+          final email = snapshot.data!['email']!;
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 80),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        // User Profile Card
+                        _buildProfileCard(context, name, email),
+
+                        const SizedBox(height: 24),
+
+                        // User Information Section
+                        _buildUserInfoSection(context, name, email),
+
+                        // Spacer to push logout button down
+                        const SizedBox(height: 16),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Logout Button
+                _buildLogoutButton(context, authProvider, loc),
+                const SizedBox(height: 16),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

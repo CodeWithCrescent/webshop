@@ -17,7 +17,6 @@ class SalesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: AppColors.primary.withOpacity(0.1),
       appBar: WebshopAppBar(
         title: 'Sales',
         onRefresh: () {},
