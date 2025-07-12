@@ -281,17 +281,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
         width: double.infinity,
-        child: ElevatedButton.icon(
+        child: TextButton.icon(
           icon: const Icon(Icons.logout, size: 20),
           label: Text(loc?.translate('common.logout') ?? 'Logout'),
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.red,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
           onPressed: () => _showLogoutConfirmation(context),
         ),
       ),

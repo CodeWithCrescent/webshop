@@ -49,6 +49,8 @@
     "apply": "Apply",
     "optional": "Optional",
     "logout": "Logout",
+    "confirm_logout": "Confirm Logout",
+    "logout_confirmation_message": "Are you sure you want to log out?",
     "logout_success": "You have successfully logged out.",
     "business_profile": "Business Profile",
     "unexpected_error": "Unexpected error occurred.",
