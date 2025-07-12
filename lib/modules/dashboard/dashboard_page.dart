@@ -9,6 +9,7 @@ import 'package:webshop/modules/dashboard/dashboard_provider.dart';
 import 'package:webshop/modules/receipts/pages/receipts_page.dart';
 import 'package:webshop/modules/sales/pages/sales_page.dart';
 import 'package:webshop/modules/zreport/zreports_page.dart';
+import 'package:webshop/shared/providers/auth_provider.dart';
 import 'package:webshop/shared/widgets/action_button.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/horizontal_stat_card.dart';
@@ -25,13 +26,26 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
+    _checkAuthentication();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchDashboardData();
     });
   }
 
+  Future<void> _checkAuthentication() async {
+    final authProvider = context.read<AuthProvider>();
+
+    if (!authProvider.isAuthenticated) {
+      await authProvider.logout();
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      }
+    }
+  }
+
   Future<void> _fetchDashboardData() async {
-    await Provider.of<DashboardProvider>(context, listen: false).fetchDashboardData();
+    await Provider.of<DashboardProvider>(context, listen: false)
+        .fetchDashboardData();
   }
 
   @override
@@ -55,7 +69,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
           return RefreshableWidget(
             onRefresh: _fetchDashboardData,
-            builder: (context) => _buildDashboardContent(context, provider, loc),
+            builder: (context) =>
+                _buildDashboardContent(context, provider, loc),
           );
         },
       ),
