@@ -38,7 +38,6 @@ class _CustomersPageState extends State<CustomersPage> {
       backgroundColor: AppColors.primary.withOpacity(0.1),
       appBar: WebshopAppBar(
         title: loc?.translate('customers.title') ?? 'Customers',
-        onRefresh: () => provider.fetchCustomers(),
       ),
       body: Column(
         children: [

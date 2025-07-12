@@ -374,7 +374,7 @@ class _InventoryPageState extends State<InventoryPage> {
                       SnackBar(
                         content: Text(
                             InventoryLocalizations(context).deletedSuccess),
-                        backgroundColor: Colors.green,
+                        backgroundColor: AppColors.success,
                       ),
                     );
                   }
@@ -382,7 +382,7 @@ class _InventoryPageState extends State<InventoryPage> {
                   messenger.showSnackBar(
                     SnackBar(
                       content: Text(e.toString()),
-                      backgroundColor: Colors.red,
+                      backgroundColor: AppColors.error,
                     ),
                   );
                 }
