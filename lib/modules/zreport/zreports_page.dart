@@ -5,6 +5,7 @@ import 'package:webshop/core/constants/app_colors.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/modules/zreport/models/zreport.dart';
 import 'package:webshop/modules/zreport/providers/zreport_provider.dart';
+import 'package:webshop/shared/providers/auth_provider.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
 import 'package:webshop/shared/widgets/refreshable_widget.dart';
 import 'package:webshop/shared/widgets/search_field.dart';
@@ -23,10 +24,22 @@ class _ZReportsPageState extends State<ZReportsPage> {
   @override
   void initState() {
     super.initState();
+    _checkAuthentication();
     _scrollController.addListener(_scrollListener);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ZReportProvider>().fetchZReports();
     });
+  }
+
+  Future<void> _checkAuthentication() async {
+    final authProvider = context.read<AuthProvider>();
+
+    if (!authProvider.isAuthenticated) {
+      await authProvider.logout();
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      }
+    }
   }
 
   @override
