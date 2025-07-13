@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:webshop/core/constants/app_colors.dart';
@@ -13,7 +14,9 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final routeArgs = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final routeArgs =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
     return Scaffold(
       body: Container(
@@ -52,7 +55,8 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLoginFormCard(BuildContext context, Map<String, dynamic>? routeArgs) {
+  Widget _buildLoginFormCard(
+      BuildContext context, Map<String, dynamic>? routeArgs) {
     return Container(
       width: double.infinity,
       constraints: const BoxConstraints(maxWidth: 500),
@@ -124,7 +128,8 @@ class _LoginFormState extends State<_LoginForm> {
   }
 
   void _handleRouteMessage() {
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final message = args?['message'] as String?;
     final messageType = args?['messageType'] as String?;
 
@@ -178,7 +183,8 @@ class _LoginFormState extends State<_LoginForm> {
     );
   }
 
-  void _handleAuthStateChanges(BuildContext context, AuthProvider authProvider) {
+  void _handleAuthStateChanges(
+      BuildContext context, AuthProvider authProvider) {
     if (authProvider.isAuthenticated) {
       Future.microtask(() {
         Navigator.pushReplacementNamed(context, '/layout');
@@ -191,7 +197,7 @@ class _LoginFormState extends State<_LoginForm> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final loc = AppLocalizations.of(context)!;
         final error = _getFriendlyError(loc, authProvider.error!);
-        
+
         _showSnackBar(context, error, isError: true);
         _snackBarShown = true;
         _scheduleErrorClear(authProvider);
@@ -208,7 +214,8 @@ class _LoginFormState extends State<_LoginForm> {
     });
   }
 
-  void _showSnackBar(BuildContext context, String message, {required bool isError}) {
+  void _showSnackBar(BuildContext context, String message,
+      {required bool isError}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -365,7 +372,8 @@ class _LoginFormState extends State<_LoginForm> {
     );
   }
 
-  Future<void> _handleLogin(BuildContext context, AuthProvider authProvider) async {
+  Future<void> _handleLogin(
+      BuildContext context, AuthProvider authProvider) async {
     if (_formKey.currentState!.validate()) {
       try {
         await authProvider.login(
@@ -402,7 +410,8 @@ class _LoginFormState extends State<_LoginForm> {
     return error;
   }
 
-  bool _isNetworkError(String error) => error.contains('socketexception') ||
+  bool _isNetworkError(String error) =>
+      error.contains('socketexception') ||
       error.contains('handshakeexception') ||
       error.contains('failed host lookup') ||
       error.contains('timeout') ||
