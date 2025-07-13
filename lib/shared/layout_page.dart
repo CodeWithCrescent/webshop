@@ -52,6 +52,7 @@ class _LayoutPageState extends State<LayoutPage> {
               image: DecorationImage(
                 image: AssetImage('assets/images/bg.png'),
                 fit: BoxFit.cover,
+                opacity: 0.05,
               ),
             ),
           ),

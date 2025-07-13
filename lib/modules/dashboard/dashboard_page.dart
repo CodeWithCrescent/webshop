@@ -131,6 +131,11 @@ class _DashboardPageState extends State<DashboardPage> {
       decoration: BoxDecoration(
         gradient: AppColors.primaryGradient,
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
+        image: const DecorationImage(
+          image: AssetImage('assets/images/bg.png'),
+          fit: BoxFit.cover,
+          // opacity: 0.05,
+        ),
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withOpacity(0.1),

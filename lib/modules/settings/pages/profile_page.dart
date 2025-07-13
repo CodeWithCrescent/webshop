@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:webshop/core/constants/app_colors.dart';
 import 'package:webshop/core/localization/app_localizations.dart';
 import 'package:webshop/modules/settings/pages/business_profile_page.dart';
 import 'package:webshop/modules/settings/pages/user_profile_page.dart';
@@ -35,6 +36,7 @@ class _ProfilePageState extends State<ProfilePage>
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
     return Scaffold(
+      backgroundColor: AppColors.primary.withOpacity(0.1),
       appBar: WebshopAppBar(
         title: loc?.translate('settings.profile') ?? 'Profile',
         appBarHeight: 120,
