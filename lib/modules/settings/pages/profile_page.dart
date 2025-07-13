@@ -37,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage>
     return Scaffold(
       appBar: WebshopAppBar(
         title: loc?.translate('settings.profile') ?? 'Profile',
-        appBarHeight: 96,
+        appBarHeight: 120,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
           child: TabBar(
@@ -47,12 +47,10 @@ class _ProfilePageState extends State<ProfilePage>
             unselectedLabelColor: Colors.white.withOpacity(0.7),
             tabs: const [
               Tab(
-                icon: Icon(Icons.business),
-                text: 'Business',
+                text: 'Business'
               ),
               Tab(
-                icon: Icon(Icons.person),
-                text: 'User',
+                text: 'User'
               ),
             ],
           ),
