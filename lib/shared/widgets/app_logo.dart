@@ -22,14 +22,14 @@ class AppLogo extends StatelessWidget {
           width: 2,
         ),
         borderRadius: BorderRadius.circular(size * 0.3),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.backgroundLight.withOpacity(0.4),
-            blurRadius: 15,
-            spreadRadius: 2,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: AppColors.backgroundLight.withOpacity(0.4),
+        //     blurRadius: 15,
+        //     spreadRadius: 2,
+        //     offset: const Offset(0, 8),
+        //   ),
+        // ],
       ),
       child: Center(
         child: Image.asset(

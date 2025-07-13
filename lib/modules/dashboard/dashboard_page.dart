@@ -47,8 +47,7 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: AppColors.primary.withOpacity(0.1),
       appBar: const WebshopAppBar(
         // title: loc.translate('common.app_name'),
-        title: AppLogo(size: 40),
-        centerTitle: false,
+        title: AppLogo(size: 35),
       ),
       body: Consumer<DashboardProvider>(
         builder: (context, provider, child) {
@@ -176,7 +175,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
-                  Icons.dashboard,
+                  Icons.bar_chart_outlined,
                   color: AppColors.textLight,
                   size: 28,
                 ),
