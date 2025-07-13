@@ -12,7 +12,7 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> 
+class _ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -46,8 +46,14 @@ class _ProfilePageState extends State<ProfilePage>
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white.withOpacity(0.7),
             tabs: const [
-              Tab(text: 'Business'),
-              Tab(text: 'User'),
+              Tab(
+                icon: Icon(Icons.business),
+                text: 'Business',
+              ),
+              Tab(
+                icon: Icon(Icons.person),
+                text: 'User',
+              ),
             ],
           ),
         ),
