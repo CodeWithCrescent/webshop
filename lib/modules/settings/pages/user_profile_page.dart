@@ -259,7 +259,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         // User Profile Card
                         _buildProfileCard(context, name, email),
 
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 8),
 
                         // User Information Section
                         _buildUserInfoSection(context, name, email),

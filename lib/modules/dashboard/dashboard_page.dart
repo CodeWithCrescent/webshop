@@ -134,7 +134,7 @@ class _DashboardPageState extends State<DashboardPage> {
         image: const DecorationImage(
           image: AssetImage('assets/images/bg.png'),
           fit: BoxFit.cover,
-          // opacity: 0.05,
+          opacity: 0.1,
         ),
         boxShadow: [
           BoxShadow(

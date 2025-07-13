@@ -103,7 +103,7 @@ class SalesPage extends StatelessWidget {
                     onPressed: isValid
                         ? () {
                             provider.selectCustomer(Customer(
-                              id: 'temp-${DateTime.now().millisecondsSinceEpoch}',
+                              id: 'CUST${DateTime.now().millisecondsSinceEpoch}',
                               fullName: '',
                               phoneNumber: phoneController.text,
                             ));
