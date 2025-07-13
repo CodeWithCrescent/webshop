@@ -89,6 +89,7 @@ class _LoginFormState extends State<_LoginForm> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscureText = true;
+  bool _snackBarShown = false;
 
   @override
   void initState() {
@@ -100,20 +101,10 @@ class _LoginFormState extends State<_LoginForm> {
   }
 
   @override
-  void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     final loc = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    // Messages from HTTP Client
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final message = args?['message'] as String?;
@@ -152,14 +143,8 @@ class _LoginFormState extends State<_LoginForm> {
       return error;
     }
 
-    if (authProvider.isAuthenticated) {
-      Future.microtask(
-        () => Navigator.pushReplacementNamed(context, '/layout'),
-      );
-    }
-
-    // Message from HTTP Client
-    if (message != null || authProvider.error != null) {
+    // Show the error only once after build
+    if (!_snackBarShown && (message != null || authProvider.error != null)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -172,7 +157,37 @@ class _LoginFormState extends State<_LoginForm> {
             duration: const Duration(seconds: 5),
           ),
         );
+
+        _snackBarShown = true;
+
+        // Clear the error after the snackbar duration
+        Future.delayed(const Duration(seconds: 5), () {
+          if (authProvider.error != null) {
+            authProvider.clearError();
+          }
+        });
       });
+    }
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final authProvider = Provider.of<AuthProvider>(context);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    if (authProvider.isAuthenticated) {
+      Future.microtask(
+        () => Navigator.pushReplacementNamed(context, '/layout'),
+      );
     }
 
     return Form(

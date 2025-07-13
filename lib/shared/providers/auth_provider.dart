@@ -34,6 +34,11 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void clearError() {
+    _error = null;
+    notifyListeners();
+  }
+
   Future<void> _initialize() async {
     _prefs = await SharedPreferences.getInstance();
     await checkAuthStatus();
