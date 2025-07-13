@@ -74,8 +74,8 @@ class AuthProvider with ChangeNotifier {
       if (data.containsKey('success') && data['success'] == false) {
         _error = data['message'] ?? 'Invalid credentials.';
       } else if (data.containsKey('access_token')) {
-        // final expiresIn = int.tryParse(data['expires_in'].toString()) ?? 0;
-        final expiresIn = int.tryParse("30") ?? 0;
+        final expiresIn = int.tryParse(data['expires_in'].toString()) ?? 0;
+        // final expiresIn = int.tryParse("30") ?? 0;
         final expiryTimestamp = DateTime.now()
             .add(Duration(seconds: expiresIn))
             .millisecondsSinceEpoch;

@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:webshop/core/constants/app_colors.dart';
 
 class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
+  final dynamic title;
+  final bool centerTitle;
   final VoidCallback? onRefresh;
   final List<Widget>? actions;
   final PreferredSizeWidget? bottom;
@@ -12,6 +13,7 @@ class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
   const WebshopAppBar({
     super.key,
     required this.title,
+    this.centerTitle = true,
     this.onRefresh,
     this.actions,
     this.bottom,
@@ -28,10 +30,13 @@ class WebshopAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         child: AppBar(
           systemOverlayStyle: SystemUiOverlayStyle.light,
-          title: Text(
-            title,
-            style: const TextStyle(color: AppColors.textLight),
-          ),
+          title: title is String
+              ? Text(
+                  title,
+                  style: const TextStyle(color: AppColors.textLight),
+                )
+              : title as Widget,
+          centerTitle: centerTitle,
           titleTextStyle: const TextStyle(
             color: AppColors.textLight,
             fontSize: 22,

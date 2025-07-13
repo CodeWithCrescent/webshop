@@ -12,6 +12,7 @@ import 'package:webshop/modules/zreport/zreports_page.dart';
 import 'package:webshop/shared/utils/auth_utils.dart';
 import 'package:webshop/shared/widgets/action_button.dart';
 import 'package:webshop/shared/widgets/app_bar.dart';
+import 'package:webshop/shared/widgets/app_logo.dart';
 import 'package:webshop/shared/widgets/horizontal_stat_card.dart';
 import 'package:webshop/shared/widgets/refreshable_widget.dart';
 
@@ -44,8 +45,10 @@ class _DashboardPageState extends State<DashboardPage> {
 
     return Scaffold(
       backgroundColor: AppColors.primary.withOpacity(0.1),
-      appBar: WebshopAppBar(
-        title: loc.translate('common.app_name'),
+      appBar: const WebshopAppBar(
+        // title: loc.translate('common.app_name'),
+        title: AppLogo(size: 40),
+        centerTitle: false,
       ),
       body: Consumer<DashboardProvider>(
         builder: (context, provider, child) {
