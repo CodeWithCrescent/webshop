@@ -45,7 +45,19 @@ class _LayoutPageState extends State<LayoutPage> {
 
     return Scaffold(
       extendBody: true,
-      body: _pages[_currentIndex],
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/bg.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          _pages[_currentIndex],
+        ],
+      ),
       bottomNavigationBar: BottomBar(
         selectedIndex: _currentIndex,
         onTap: (index) => _onTabTapped(context, index, loc, locInventory),
