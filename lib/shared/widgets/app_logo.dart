@@ -9,18 +9,22 @@ class AppLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: size,
+      width: size * 4,
       height: size,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [AppColors.primary, AppColors.primaryLight],
+          colors: [AppColors.backgroundLight, AppColors.backgroundLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
+        ),
+        border: Border.all(
+          color: AppColors.primary,
+          width: 2,
         ),
         borderRadius: BorderRadius.circular(size * 0.3),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.4),
+            color: AppColors.backgroundLight.withOpacity(0.4),
             blurRadius: 15,
             spreadRadius: 2,
             offset: const Offset(0, 8),
@@ -29,11 +33,10 @@ class AppLogo extends StatelessWidget {
       ),
       child: Center(
         child: Image.asset(
-          'assets/images/logo.png',
-          width: size * 0.6,
+          'assets/images/logo-1.png',
+          // width: size * 0.6,
           height: size * 0.6,
           fit: BoxFit.cover,
-          color: Colors.white,
         ),
       ),
     );

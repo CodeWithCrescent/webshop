@@ -36,8 +36,8 @@ class LoginPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Logo
-                  const AppLogo(size: 80),
-                  const SizedBox(height: 32),
+                  const AppLogo(size: 55),
+                  const SizedBox(height: 40),
 
                   // Login form card
                   Container(
@@ -114,7 +114,8 @@ class _LoginFormState extends State<_LoginForm> {
     final colorScheme = theme.colorScheme;
 
     // Messages from HTTP Client
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final message = args?['message'] as String?;
     final messageType = args?['messageType'] as String?;
 
@@ -158,12 +159,16 @@ class _LoginFormState extends State<_LoginForm> {
     }
 
     // Message from HTTP Client
-    if (message != null) {
+    if (message != null || authProvider.error != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(message),
-            backgroundColor: messageType == 'error' ? AppColors.error : null,
+            content: Text(message ?? getFriendlyError(authProvider.error!)),
+            backgroundColor: message != null
+                ? messageType == 'error'
+                    ? AppColors.error
+                    : AppColors.success
+                : AppColors.error,
             duration: const Duration(seconds: 5),
           ),
         );
@@ -190,31 +195,6 @@ class _LoginFormState extends State<_LoginForm> {
             ),
           ),
           const SizedBox(height: 32),
-
-          if (authProvider.error != null)
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: colorScheme.error.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.error_outline, color: colorScheme.error),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      getFriendlyError(authProvider.error!),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.error,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-          if (authProvider.error != null) const SizedBox(height: 16),
 
           // Username
           Text(

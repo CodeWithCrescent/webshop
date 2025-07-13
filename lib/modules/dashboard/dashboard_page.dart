@@ -33,6 +33,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> _fetchDashboardData() async {
+    checkAndRedirectAuth(context);
     await Provider.of<DashboardProvider>(context, listen: false)
         .fetchDashboardData();
   }
