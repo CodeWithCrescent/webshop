@@ -40,32 +40,6 @@ class _SaleCompleteModalState extends State<SaleCompleteModal> {
     _resolveAddress();
   }
 
-  Future<void> _resolveAddress() async {
-    try {
-      final placemarks = await placemarkFromCoordinates(
-        widget.location.latitude,
-        widget.location.longitude,
-      );
-      
-      if (placemarks.isNotEmpty) {
-        final place = placemarks.first;
-        setState(() {
-          _address = [
-            if (place.street != null) place.street,
-            if (place.subLocality != null) place.subLocality,
-            if (place.locality != null) place.locality,
-          ].where((part) => part != null && part.isNotEmpty).join(', ');
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _addressError = 'Could not determine exact address';
-      });
-    } finally {
-      setState(() => _isResolvingAddress = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<SalesProvider>();
@@ -122,6 +96,32 @@ class _SaleCompleteModalState extends State<SaleCompleteModal> {
         ),
       ),
     );
+  }
+
+  Future<void> _resolveAddress() async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        widget.location.latitude,
+        widget.location.longitude,
+      );
+      
+      if (placemarks.isNotEmpty) {
+        final place = placemarks.first;
+        setState(() {
+          _address = [
+            if (place.street != null) place.street,
+            if (place.subLocality != null) place.subLocality,
+            if (place.locality != null) place.locality,
+          ].where((part) => part != null && part.isNotEmpty).join(', ');
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _addressError = 'Could not determine exact address';
+      });
+    } finally {
+      setState(() => _isResolvingAddress = false);
+    }
   }
 
   Widget _buildLocationSection() {
